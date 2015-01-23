@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:pages="pages.*"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="700" height="850" currentState="Login"
+			   backgroundColor.Login="#F3EBD7"
+			   width.Main="700" height.Main="850">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.controls.Alert;
+			import mx.controls.buttonBarClasses.ButtonBarButton;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import spark.components.NavigatorContent;
+			
+			import valueObjects.DataReportVO;
+			import valueObjects.UserVO;	
+			
+			[Bindable] public var activeUser:UserVO = new UserVO();
+			public var activeReport:DataReportVO = null;
+			[Bindable] public var reportList:ArrayCollection = new ArrayCollection();
+			public var monthList:ArrayList = new ArrayList(["January","February","March","April","May","June","July","August","September","October","November","December"]);
+
+			//public var pageLoginButton:ButtonBarButton;
+			//public var pageHomeButton:ButtonBarButton;
+			//public var pageReportingButton:ButtonBarButton;
+			//public var pageFeedbackButton:ButtonBarButton;
+			
+			protected function mainState_enterStateHandler(event:FlexEvent):void
+			{
+				//pageHomeButton = pageButtonBar.getChildAt(0) as ButtonBarButton;
+				//pageReportingButton = pageButtonBar.getChildAt(1) as ButtonBarButton;
+				//pageFeedbackButton = pageButtonBar.getChildAt(2) as ButtonBarButton;
+				//pageHomeButton.enabled = true;
+				//pageReportingButton.enabled = true;
+				//pageFeedbackButton.enabled = true;
+				//pageViewstack.selectedChild = pageHome;
+				pageHome.refresh();
+			}
+			
+			public function goToPage(page:NavigatorContent):void
+			{
+				//when going to Home, leave everything open
+				//when going to Reporting, close all pages except Home
+				pageViewstack.selectedChild = page;
+				if(page == pageHome)
+				{
+					pageHome.refresh();
+				}
+				if(page == pageReporting)
+				{
+					
+				}
+				
+			}	
+			
+			protected function homeButton_clickHandler(event:MouseEvent):void
+			{
+				goToPage(pageHome);
+			}
+			
+			protected function logoutButton_clickHandler(event:MouseEvent):void
+			{
+				currentState = "Login";
+				activeUser = null;
+				pageLogin.resetPage();
+			}
+			
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="Main"/>
+		<s:State name="Login"/>
+	</s:states>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<pages:LoginPage id="pageLogin" width="100%" height="100%" label="Login" includeIn="Login"/>
+	
+	<mx:ViewStack id="pageViewstack" includeIn="Main" x="0" y="93" width="100%" height="100%"  creationPolicy="all">
+		<pages:HomePage id="pageHome" width="100%" height="100%" label="Home" />
+		<pages:ReportingPage id="pageReporting" width="100%" height="100%" label="Reporting"/> 
+		<pages:FeedbackPage id="pageFeedback" width="100%" height="100%" label="Feedback" />
+		<pages:AccountPage id="pageAccount" width="100%" height="100%" label="Account" />
+	</mx:ViewStack>
+	<s:BorderContainer includeIn="Main" x="2" y="3" width="695" height="90"
+					   backgroundColor="#B5DAE3" borderWeight="2" cornerRadius="3"
+					   dropShadowVisible="false">
+		<s:layout>
+			<s:BasicLayout/>
+		</s:layout>
+		<s:Button id="homeButton" x="12" y="12" height="52" label="Home"
+				  click="homeButton_clickHandler(event)"/>
+		<s:Button id="logoutButton" x="606" y="12" height="52" label="Logout" click="logoutButton_clickHandler(event)"/>
+		<s:Label id="organizationLabel" y="56" fontSize="20" text="{activeUser.name}"  width="100%" textAlign="center"/>
+		<s:Image x="235" y="3" source="assets/img/SbirtDash5.png"/>
+		<!--
+		<s:Label id="totalPrescreensLabel" x="138" y="41" fontSize="14" text="Total Prescreens: 9999"/>
+		<s:Label id="totalServicesLabel" x="138" y="63" fontSize="14" text="Total Services: 9999"/>
+		<s:Label id="reportDueLabel" x="372" y="43" fontSize="14" text="Next Report Due: #####"/>
+		-->
+	</s:BorderContainer>
+	<!--<mx:ToggleButtonBar id="pageButtonBar" includeIn="Main" x="12" y="10" direction="vertical"
+						dataProvider="{pageViewstack}" creationComplete="mainState_enterStateHandler(event)"/>
+	-->
+</s:Application>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009"
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					xmlns:components="components.*"
+					xmlns:gpraservice="services.gpraservice.*"
+					xmlns:styles="com.adobe.fiber.styles.*"
+					xmlns:clientservice="services.clientservice.*"
+					xmlns:datareportservice="services.datareportservice.*">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.ArrayUtil;
+			import mx.validators.NumberValidator;
+			
+			import valueObjects.DataReportVO;
+			
+			[Bindable] private var global:SBIRTDashFlex = FlexGlobals.topLevelApplication as SBIRTDashFlex;
+		
+			public function refresh():void
+			{
+				//load report list
+				getDataReportsResult.token = dataReportService.getDataReports(global.activeUser.autoid);
+			}
+			
+			protected function getDataReportsResult_resultHandler(event:ResultEvent):void
+			{
+				global.reportList = getDataReportsResult.lastResult;
+			}
+			
+			private function reportLabelFunction(item:Object):String 
+			{
+				var report:DataReportVO = item as DataReportVO;
+				return global.monthList.getItemAt(report.month-1) + " " + report.year;
+			}
+			
+			protected function loadReportButton_clickHandler(event:MouseEvent):void
+			{
+				if(reportDropDown.selectedIndex > -1)
+				{
+					global.activeReport = reportDropDown.selectedItem;
+					global.pageReporting.prepare();
+					global.pageReporting.populate(global.activeReport);
+					global.goToPage(global.pageReporting);
+				}
+			}
+			
+			protected function generateFeedbackButton_clickHandler(event:MouseEvent):void
+			{
+				if(reportDropDownFeedback.selectedIndex > -1)
+				{
+					global.activeReport = reportDropDownFeedback.selectedItem;
+					global.pageFeedback.populate(global.activeReport);
+					global.goToPage(global.pageFeedback);
+				}
+			}
+			
+			protected function newReportButton_clickHandler(event:MouseEvent):void
+			{
+				global.pageReporting.prepare();
+				global.goToPage(global.pageReporting);
+			}
+			
+			protected function profileButton_clickHandler(event:MouseEvent):void
+			{
+				global.pageAccount.prepare();
+				global.goToPage(global.pageAccount);
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:CallResponder id="getDataReportsResult" result="getDataReportsResult_resultHandler(event)"/>
+		<datareportservice:DataReportService id="dataReportService"
+											 fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)"
+											 showBusyCursor="true"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Group y="2" width="600" height="250" horizontalCenter="0">
+		<s:Image source="assets/img/reportingTab.png"/>
+		<s:Group x="237" y="0" width="363" height="100%">
+			<s:Label y="27" fontSize="18" text="Monthly Data" width="100%" textAlign="center"/>
+			<s:RichText y="66" height="32" width="100%" textAlign="center"
+						text="Enter data on your monthly SBIRT activites."/>
+			<s:Button id="newReportButton" y="85" width="120" height="36" label="New Data!" horizontalCenter="0"
+					  click="newReportButton_clickHandler(event)"/>
+			<s:Label y="155" text="Or edit a previous month's data." width="100%" textAlign="center"/>
+			<s:Group y="172" horizontalCenter="0">
+				<s:Label y="5" text="Select Month:"/>
+				<s:DropDownList id="reportDropDown" x="80" dataProvider="{global.reportList}" labelFunction="reportLabelFunction"></s:DropDownList>
+			</s:Group>
+			<s:Button id="loadReportButton" y="201" width="120" height="36" label="Edit Data!" horizontalCenter="0"
+					  click="loadReportButton_clickHandler(event)"/>
+		</s:Group>
+	</s:Group>
+	<s:Group y="252" width="600" height="250" horizontalCenter="0">
+		<s:Image source="assets/img/mainPageTab2.png"/>
+		<s:Group x="237" y="0" width="363" height="100%">
+			<s:Label y="27" fontSize="18" text="Feedback Reports" width="100%" textAlign="center"/>
+			<s:RichText y="66" height="32" width="226" textAlign="center" horizontalCenter="0"
+						text="View statistics on your monthly data and generate PDF reports."/>
+			<s:Group y="116" horizontalCenter="0">
+				<s:Label y="5" text="Select Month:"/>
+				<s:DropDownList id="reportDropDownFeedback" x="80" dataProvider="{global.reportList}" labelFunction="reportLabelFunction"></s:DropDownList>
+			</s:Group>
+			<s:Button id="generateFeedbackButton" y="144" width="120" height="36" label="Generate Report!" horizontalCenter="0"
+					  click="generateFeedbackButton_clickHandler(event)"/>
+		</s:Group>
+	</s:Group>
+	<!--
+	<s:Group y="504" width="600" height="250" horizontalCenter="0">
+		<s:Image source="assets/img/mainPageTab3.png"/>
+		<s:Group x="237" y="0" width="363" height="100%">
+			<s:Label y="27" fontSize="18" text="Organization Profile" width="100%" textAlign="center"/>
+			<s:RichText y="66" height="32" width="226" textAlign="center" horizontalCenter="0"
+						text="Edit organization details and view SBIRT goals and progress."/>
+			<s:Label x="0" y="121" width="100%" text="Profile Summary: etc etc etc etc"
+					 textAlign="center"/>
+			<s:Button id="profileButton" y="148" width="120" height="36" label="View Profile!" horizontalCenter="0"
+					  click="profileButton_clickHandler(event)"/>
+		</s:Group>
+	</s:Group>
+	-->
+</s:NavigatorContent>

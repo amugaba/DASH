@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="256" height="277">
+	<s:layout>
+		<s:VerticalLayout horizontalAlign="center" gap="-4"/>
+	</s:layout>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			
+			[Bindable] public var label:String = "";
+			[Bindable] public var dataProvider:ArrayCollection;
+			
+			private function pieLabel(data:Object, field:String, index:Number, percentValue:Number):String
+			{
+				//If the index is the first or last item, make the label one line
+				if(index == 0 || index == dataProvider.length-1)
+					return data.label + " (" + percentValue.toFixed(1) + "%)";
+				else
+					return data.label + "\n (" + percentValue.toFixed(1) + "%)";
+
+			}
+			
+			public function getPieChart():PieChart
+			{
+				return pieChart;
+			}
+			
+			public function setDataProvider(data:ArrayCollection):void
+			{
+				if(data.length == 0)
+					return;
+				if(data.length == 1)
+				{
+					dataProvider = data;
+					return;
+				}
+				//Sort the data so that the smallest value is first and the second smallest value is last
+				var smallest:Object = data.getItemAt(0);
+				var secondSmallest:Object = data.getItemAt(1);
+				
+				for(var i:int = 1; i < data.length; i++)
+				{
+					var dataPoint:Object = data.getItemAt(i);
+					if(dataPoint.value < secondSmallest.value)
+						secondSmallest = dataPoint;
+					if(dataPoint.value < smallest.value)
+					{
+						secondSmallest = smallest;
+						smallest = dataPoint;
+					}
+				}
+				data.removeItemAt(data.getItemIndex(smallest));
+				data.removeItemAt(data.getItemIndex(secondSmallest));
+				var sortedData:ArrayCollection = new ArrayCollection([smallest]);
+				sortedData.addAll(data);
+				sortedData.addItem(secondSmallest);
+				
+				dataProvider = sortedData;
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";		
+		.axisStyle {
+			fontSize:12;
+		}
+	</fx:Style>
+	<s:Label fontSize="16" text="{label}"/>
+	<mx:PieChart id="pieChart" width="256" height="256" dataProvider="{dataProvider}" showDataTips="true" styleName="axisStyle">
+		<mx:series>
+			<mx:PieSeries id="pieSeries" field="value" labelPosition="inside" insideLabelSizeLimit="8"  labelFunction="pieLabel"/>
+		</mx:series>
+	</mx:PieChart>
+	
+</s:Group>

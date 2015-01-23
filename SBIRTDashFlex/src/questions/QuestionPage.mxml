@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx" 
+					xmlns:custom="components.*"
+					xmlns:gpraservice="services.gpraservice.*"
+					xmlns:styles="com.adobe.fiber.styles.*"
+					xmlns:clientservice="services.clientservice.*">
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeFormatter;
+			import flash.globalization.LocaleID;
+			
+			import mx.containers.Form;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.validators.DateValidator;
+			import mx.validators.NumberValidator;
+			import mx.validators.StringValidator;
+			import mx.validators.ValidationResult;
+			import mx.validators.Validator;
+			
+			import skip.*;
+			
+			import spark.events.IndexChangeEvent;
+			
+			protected var questionDict:Dictionary = new Dictionary();
+			protected var validators:Array = new Array();
+			protected var dateFormatter:DateTimeFormatter = new DateTimeFormatter(LocaleID.DEFAULT);
+			
+			protected var constructed:Boolean = false;
+			
+			protected function resetQuestions():void
+			{
+				for each(var q:QuestionClass in questionDict)
+				{
+					q.restoreDefault();
+				}
+			}
+			
+			//Refresh page function
+			//sets all controls to reflect current data
+			//refresh called by other pages when data is changed
+			//or just always refresh when you return to a page
+			
+			protected function validatePage():Boolean
+			{
+				var results:Array = new Array();
+				var ev:ValidationResultEvent;
+				for each(var v:Validator in validators)
+				{
+					ev = v.validate();
+					if(ev.results != null)
+					{
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			protected function skipAndValidate():void
+			{
+				for each(var question:QuestionList in questionDict)
+				{
+					for each(var skipPat:SkipPattern in question.skipPatterns)
+						skipPat.skipHandler(null);
+					if(question.validator != null)
+						if(!question.isSkipped && question.inputControl.enabled)
+							question.validator.validate();
+				}
+			}
+			
+			protected function addNumberValidator(question:QuestionClass, min:Number = Number.NaN, max:Number = Number.NaN, isInt:Boolean = false):NumberValidator
+			{
+				var nv:NumberValidator = new NumberValidator();
+				nv.required = true;
+				nv.source = question.inputControl;
+				if(question is QuestionText || question is QuestionTextRefusable)
+					nv.property = "text";
+				else if(question is QuestionList)
+					nv.property = "selectedIndex";
+				if(!isNaN(min))
+					nv.minValue = min;
+				if(!isNaN(max))
+					nv.maxValue = max;
+				if(isInt)
+					nv.domain = "int";
+				question.validator = nv;
+				return nv;
+			}
+			
+			protected function addDropDownValidator(question:QuestionClass, validAnswers:Array):DropDownValidator
+			{
+				var dv:DropDownValidator = new DropDownValidator();
+				dv.required = true;
+				dv.source = question.inputControl;
+				dv.property = "selectedItem";
+				dv.validAnswers = validAnswers;
+				question.validator = dv;
+				return dv;
+			}
+			
+			protected function addRequiredValidator(question:QuestionClass):Validator
+			{
+				var v:Validator = new Validator();
+				v.required = true;
+				v.source = question.inputControl;
+				if(question is QuestionText || question is QuestionTextRefusable)
+					v.property = "text";
+				else if(question is QuestionList)
+					v.property = "selectedIndex";
+				question.validator = v;
+				return v;
+			}
+			
+			protected function addStringValidator(question:QuestionClass, minLength:int, maxLength:int):StringValidator
+			{
+				var sv:StringValidator = new StringValidator();
+				sv.required = true;
+				sv.source = question.inputControl;
+				sv.property = "text";
+				sv.minLength = minLength;
+				sv.maxLength = maxLength;
+				question.validator = sv;
+				return sv;
+			}
+			
+			protected function addDateAgeValidator(question:QuestionClass, minType:String, min:int, maxType:String, max:int):DateValidator
+			{
+				var dv:DateAgeValidator = new DateAgeValidator();
+				dv.required = true;
+				dv.source = question.inputControl;
+				dv.property = "text";
+				dv.minType = minType;
+				dv.min = min;
+				dv.maxType = maxType;
+				dv.max = max;
+				validators.push(dv);
+				return dv;
+			}
+			
+			protected function addSkipDropDown(sourceQuestion:QuestionClass, skipAnswers:Array, skipQuestions:Array):void
+			{
+				var skipPat:SkipPattern = new SkipPattern(sourceQuestion,skipQuestions,skipAnswers,[IndexChangeEvent.CHANGE]);
+				sourceQuestion.skipPatterns.push(skipPat);
+			}
+			protected function addSkipDropDownMultiple(handler:SkipMultipleHandler, sourceQuestion:QuestionClass, skipAnswers:Array):void
+			{
+				var skipPat:SkipPatternMultiple = new SkipPatternMultiple(handler,sourceQuestion,skipAnswers,[IndexChangeEvent.CHANGE]);
+				sourceQuestion.skipPatterns.push(skipPat);
+			}
+			protected function addSkipTextNumberMultiple(handler:SkipMultipleHandler, sourceQuestion:QuestionClass, skipAnswers:Array):void
+			{
+				var skipPat:SkipPatternMultiple = new SkipPatternMultiple(handler,sourceQuestion,skipAnswers,[FlexEvent.VALUE_COMMIT,FocusEvent.MOUSE_FOCUS_CHANGE]);
+				sourceQuestion.skipPatterns.push(skipPat);
+			}
+			protected function createSkipMultipleHandler(skipQuestions:Array):SkipMultipleHandler
+			{
+				var qArray:Array = [];
+				for each(var q:QuestionClass in skipQuestions)
+					qArray.push(q);
+				return new SkipMultipleHandler(qArray);
+			}
+			protected function addSkipTextNumber(sourceQuestion:QuestionClass, skipQuestions:Array, skipAnswers:Array):void
+			{
+				var qArray:Array = [];
+				for each(var q:QuestionClass in skipQuestions)
+					qArray.push(q);
+				//(getQuestion(sourceQuestion) as QuestionTextNumber).addSkip(qArray,min,max,invert);
+				var skipPat:SkipPattern = new SkipPattern(sourceQuestion,qArray,skipAnswers,[FlexEvent.VALUE_COMMIT,FocusEvent.MOUSE_FOCUS_CHANGE]);
+				sourceQuestion.skipPatterns.push(skipPat);
+			}
+			protected function addSkipTextRange(sourceQuestion:QuestionClass, skipQuestions:Array, min:int=0,max:int=0,invert:Boolean=false):void
+			{
+				var qArray:Array = [];
+				for each(var q:QuestionClass in skipQuestions)
+					qArray.push(q);
+				//(getQuestion(sourceQuestion) as QuestionTextNumber).addSkip(qArray,min,max,invert);
+				var skipPat:SkipPattern = new SkipPatternRange(sourceQuestion,qArray,min,max,invert,[FlexEvent.VALUE_COMMIT,FocusEvent.MOUSE_FOCUS_CHANGE]);
+				sourceQuestion.skipPatterns.push(skipPat);
+			}
+			
+			protected function validateForm(form:Form):Array
+			{
+				var results:Array = new Array();
+				var ev:ValidationResultEvent;
+				for(var i:int; i < form.numElements; i++)
+				{
+					if(form.getElementAt(i) is QuestionClass)
+					{
+						var q:QuestionClass = form.getElementAt(i) as QuestionClass;
+						if(q.validator != null && q.validator.enabled)
+						{
+							if(!q.isSkipped && q.inputControl.enabled)
+							{
+								ev = q.validator.validate();
+								if(ev.results != null)
+								{
+									for each(var vr:ValidationResult in ev.results)
+									{
+										var s:String = "";
+										
+										s += vr.errorMessage;
+										results.push(s);
+									}
+								}
+							}
+							else
+							{
+								var evt:ValidationResultEvent = new ValidationResultEvent(ValidationResultEvent.VALID);
+								q.validator.dispatchEvent(evt);
+							}
+						}
+					}
+				}
+				return results;
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		
+	</fx:Declarations>
+</s:NavigatorContent>

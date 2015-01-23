@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			  xmlns:s="library://ns.adobe.com/flex/spark" 
+			  xmlns:mx="library://ns.adobe.com/flex/mx"
+			  width="573" height="270" backgroundColor="#FFFFFF"
+			  borderWeight="2">
+	<s:layout>
+		<s:VerticalLayout horizontalAlign="center" paddingTop="7" gap="0"/>
+	</s:layout>
+	<fx:Script>
+		<![CDATA[
+			import mx.charts.chartClasses.IAxis;
+			import mx.collections.ArrayCollection;
+			
+			import valueObjects.DataReportVO;
+			
+			private static var monthValues:ArrayCollection = new ArrayCollection(["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]);
+			private var year:int = 2014;
+			[Bindable] public var label:String = "";
+			
+			private function monthLabel(labelValue:Object, previousLabelValue:Object, axis:IAxis):String
+			{
+				var value:int = (labelValue as int) - 1;
+				var yearDiff:int = Math.floor(value/12); //the year difference from the newest year
+				var month:int = value - yearDiff*12; //undo the addition of the year value to get the month
+				var finalYear:int = this.year + yearDiff;
+				var label:String = monthValues.getItemAt(month) + " \n'" + finalYear.toString().substr(2); 
+				return label;
+			}
+			
+			private function percentLabel(labelValue:Object, previousLabelValue:Object, axis:IAxis):String
+			{
+				var label:String = (labelValue as Number)*100 + "%"; 
+				return label;
+			}
+			
+			public function setDataProvider(dataPoints:ArrayCollection, yValueName:String):void
+			{
+				var newestPoint:DataReportDetailed = dataPoints[dataPoints.length-1];
+				var oldestPoint:DataReportDetailed = dataPoints[0];
+				
+				this.year = newestPoint.year;
+				monthAxis.maximum = newestPoint.monthYear;
+				monthAxis.minimum = oldestPoint.monthYear;
+				lineSeries.yField = yValueName;
+				chart.dataProvider = dataPoints;
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";		
+		.axisStyle {
+			fontSize:12;
+		}
+	</fx:Style>
+	<s:Label y="36" fontSize="16" text="{label}"/>
+	<mx:LineChart id="chart" styleName="axisStyle" showDataTips="true" x="10" y="20" width="537" height="241">
+		<mx:verticalAxis>
+			<mx:LinearAxis id="rateAxis" title="Capture Rate" labelFunction="{percentLabel}" interval="0.1" minimum="0" maximum="1" />
+		</mx:verticalAxis>
+		<mx:series>
+			<mx:LineSeries id="lineSeries" yField="yValue" xField="monthYear"/>
+		</mx:series>
+		<mx:horizontalAxis>
+			<mx:LinearAxis id="monthAxis" title="Month" labelFunction="{monthLabel}" interval="1" minimum="1" maximum="12" />
+		</mx:horizontalAxis>
+		<mx:verticalAxisRenderers>
+			<mx:AxisRenderer axis="{rateAxis}" verticalAxisTitleAlignment="vertical"/>
+		</mx:verticalAxisRenderers>
+	</mx:LineChart>
+</s:BorderContainer>

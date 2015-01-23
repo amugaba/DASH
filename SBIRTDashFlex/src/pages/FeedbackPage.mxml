@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<questions:QuestionPage xmlns:fx="http://ns.adobe.com/mxml/2009"
+						xmlns:s="library://ns.adobe.com/flex/spark"
+						xmlns:mx="library://ns.adobe.com/flex/mx"
+						xmlns:questions="questions.*"
+						xmlns:datareportservice="services.datareportservice.*" xmlns:feedback="feedback.*">
+	<fx:Script>
+		<![CDATA[
+			import feedback.DataConcern;
+			import feedback.DataReportDetailed;
+			import feedback.PDFCreator;
+			import feedback.ReportWriter;
+			import feedback.Troubleshooter;
+			
+			import flashx.textLayout.conversion.TextConverter;
+			
+			import mx.charts.chartClasses.IAxis;
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.containers.FormItem;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import questions.BetterFormItem;
+			import questions.QuestionClass;
+			
+			import valueObjects.DataReportVO;
+			
+			//Static layout variables
+			[Bindable] private static var titleX:int = 300;
+			[Bindable] private static var titleY:int = 0;
+			[Bindable] private static var textX:int = 20;
+			[Bindable] private static var textY1:int = 30;
+			[Bindable] private static var textY2:int = 400;
+			[Bindable] private static var pieX:int = 410;
+			[Bindable] private static var pieY:int = 365;
+			[Bindable] private static var chartX:int = 49;
+			[Bindable] private static var chartY:int = 80;			
+			
+			public var global:SBIRTDashFlex = FlexGlobals.topLevelApplication as SBIRTDashFlex;
+			public var activeReport:DataReportDetailed;
+			
+			[Bindable] private var prescreenBreakdown:ArrayCollection = new ArrayCollection();
+			[Bindable] private var screeningBreakdown:ArrayCollection = new ArrayCollection();
+			[Bindable] private var servicesBreakdown:ArrayCollection = new ArrayCollection();
+			
+			private var reportWriter:ReportWriter;
+			
+			protected function createReportPDF(event:MouseEvent):void
+			{				
+				Alert.show("This may take up to a minute. Please be patient.", "Create PDF Report?",Alert.YES|Alert.NO, null, generatePDF);
+			}
+			
+			private function generatePDF(event:CloseEvent):void
+			{
+				if(event.detail == Alert.YES)
+				{
+					var pdfCreator:PDFCreator = new PDFCreator();
+					var bytes:ByteArray = pdfCreator.createPDF(reportWriter, this);
+					var fileRef:FileReference = new FileReference();
+					fileRef.save(bytes,"SBIRT Dash Report " + reportWriter.reportPeriodLabel + ".pdf");
+				}
+			}
+			
+			public function resetPage():void
+			{
+				tabNavigator.selectedIndex = 0;
+				
+				prescreenBreakdown.removeAll();
+				screeningBreakdown.removeAll();
+				servicesBreakdown.removeAll();
+			}
+			
+			public function populate(report:DataReportVO):void
+			{			
+				resetPage();
+				reportWriter = new ReportWriter(report, global.reportList, global.activeUser);
+				activeReport = reportWriter.activeReport;
+				reportPeriodLabel.text = "Report of Activities: " + reportWriter.reportPeriodLabel;
+				
+				//Apply the data to the line charts
+				captureRateLine.setDataProvider(reportWriter.reports, "prescreenCaptureRate");
+				screeningRateLine.setDataProvider(reportWriter.reports, "screenCaptureRate");
+				servicesRateLine.setDataProvider(reportWriter.reports, "serviceCaptureRate");
+				
+				//Create pie graphs
+				addDataCategory(prescreenBreakdown, activeReport.negativePrescreens, "Negative");
+				addDataCategory(prescreenBreakdown, activeReport.alcoholPrescreens, "Alcohol");
+				addDataCategory(prescreenBreakdown, activeReport.drugPrescreens, "Drugs");
+				addDataCategory(prescreenBreakdown, activeReport.bothPrescreens, "Both");
+				
+				addDataCategory(screeningBreakdown, activeReport.educationScores, "Education");
+				addDataCategory(screeningBreakdown, activeReport.biScores, "BI");
+				addDataCategory(screeningBreakdown, activeReport.btScores, "BT");
+				addDataCategory(screeningBreakdown, activeReport.rtScores, "RT");
+				
+				addDataCategory(servicesBreakdown, activeReport.bis, "BI");
+				addDataCategory(servicesBreakdown, activeReport.bts, "BT");
+				addDataCategory(servicesBreakdown, activeReport.rts, "RT");
+				
+				prescreenPie.setDataProvider(prescreenBreakdown);
+				screeningPie.setDataProvider(screeningBreakdown);
+				servicesPie.setDataProvider(servicesBreakdown);
+				
+				//Apply narrative to text fields
+				textFieldPrescreen1.textFlow = TextConverter.importToFlow(reportWriter.prescreenCaptureText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				textFieldPrescreen2.textFlow = TextConverter.importToFlow(reportWriter.prescreenDistributionText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				textFieldScreening1.textFlow = TextConverter.importToFlow(reportWriter.screenCaptureText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				textFieldScreening2.textFlow = TextConverter.importToFlow(reportWriter.screenDistributionText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				textFieldServices1.textFlow = TextConverter.importToFlow(reportWriter.serviceCaptureText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				textFieldServices2.textFlow = TextConverter.importToFlow(reportWriter.serviceDistributionText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				
+				//Add DataConcerns to Troubleshooting page
+				var ts:Troubleshooter = new Troubleshooter(reportWriter);
+				var concernString:String = "";
+				for(var i:int = 0; i < 4; i++)
+				{
+					var dc:DataConcern = ts.concerns.getItemAt(i) as DataConcern;
+					if(dc.score != 0)
+					{
+						if(i > 0)
+							concernString += "<br /><br />";
+						
+						concernString += (i+1) + ". <b>" + dc.summary + "</b> - Your value this month of ";
+						
+						if(dc.isPercent)
+							concernString += "<b>" + (dc.currentValue*100).toFixed(1) + "%</b>";
+						else
+							concernString += "<b>" + dc.currentValue + "</b>";
+						
+						if(dc.deviation() < 0)
+							concernString += " is noticeably <b>less</b> than the ";
+						else
+							concernString += " is noticeably <b>greater</b> than the ";
+						
+						if(dc.isAverageGoal)
+							concernString += "average value of ";
+						else
+							concernString += "goal value of ";
+						
+						if(dc.isPercent)
+							concernString += "<b>" + (dc.goal*100).toFixed(1) + "%</b>.";
+						else
+							concernString += "<b>" + dc.goal.toFixed(1) + "</b>.";
+						
+						concernString += "<br /><br />" + dc.explanation;
+					}
+				}
+				concernsText.textFlow = TextConverter.importToFlow(concernString, TextConverter.TEXT_FIELD_HTML_FORMAT);
+			}
+			
+			protected function addDataCategory(dataList:ArrayCollection, value:Object, label:String):void
+			{
+				if(value < 0)
+					return;
+				var obj:Object = new Object();
+				obj.label = label;
+				obj.value = value;
+				dataList.addItem(obj);
+			}
+			
+			protected function concernsExplanationButton_clickHandler(event:MouseEvent):void
+			{
+				Alert.show("These concerns represent possible problems in the SBIRT process at your clinic. They were identified based on the data you reported this month.\n\n" +
+					"Your clinic’s activity and its data naturally vary from month to month. Some of these concerns may be due to that " +
+					"normal variation rather than a systemic problem.\n\nIf you notice a concern reappearing for several months, it is much more likely to be a problem.");
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<datareportservice:DataReportService id="dataReportService"
+											 fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)"
+											 showBusyCursor="true"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";
+	</fx:Style>
+	<s:Label id="reportPeriodLabel" y="7" fontSize="22" text="Report of Activities:" width="100%" textAlign="center"/>
+	<s:Button x="572" y="22" height="27" label="Export to PDF!" click="createReportPDF(event)"/>
+	<mx:TabNavigator x="5" y="39" width="680" height="669" id="tabNavigator">
+		<!-- Prescreen Page -->
+		<s:NavigatorContent width="100%" height="100%" label="Prescreening">
+			<s:Label y="{titleY}" fontSize="18" text="Prescreening" width="100%" textAlign="center"/>
+			<s:RichEditableText id="textFieldPrescreen1" x="{textX}" y="{textY1}" width="630" />
+			<s:RichEditableText id="textFieldPrescreen2" x="{textX}" y="{textY2}" width="385" />
+			<feedback:PieChartSBIRT id="prescreenPie" x="{pieX}" y="{pieY}"  label="Prescreening Distribution"/>
+			<feedback:MonthlyLineChart x="{chartX}" y="{chartY}" id="captureRateLine" label="Prescreen Capture Rate by Month"/>
+		</s:NavigatorContent>
+		
+		<!-- Screen Page -->
+		<s:NavigatorContent width="100%" height="100%" label="Screening">
+			<s:Label y="{titleY}" fontSize="18" text="Screening" width="100%" textAlign="center"/>
+			<s:RichEditableText id="textFieldScreening1" x="{textX}" y="{textY1}" width="630" />
+			<s:RichEditableText id="textFieldScreening2" x="{textX}" y="{textY2}" width="385" />
+			<feedback:PieChartSBIRT id="screeningPie" x="{pieX}" y="{pieY}"  label="Screening Distribution"/>
+			<feedback:MonthlyLineChart x="{chartX}" y="{chartY}" id="screeningRateLine" label="Screening Capture Rate by Month"/>
+		</s:NavigatorContent>
+		
+		<!-- Services Page -->
+		<s:NavigatorContent width="100%" height="100%" label="Services">
+			<s:Label y="{titleY}" fontSize="18" text="Services" width="100%" textAlign="center"/>
+			<s:RichEditableText id="textFieldServices1" x="{textX}" y="{textY1}" width="630" />
+			<s:RichEditableText id="textFieldServices2" x="{textX}" y="{textY2}" width="385" />
+			<feedback:PieChartSBIRT id="servicesPie" x="{pieX}" y="{pieY}" dataProvider="{servicesBreakdown}" label="Services Distribution"/>
+			<feedback:MonthlyLineChart x="{chartX}" y="{chartY}" id="servicesRateLine" label="Service Capture Rate by Month"/>
+		</s:NavigatorContent>
+		
+		<!-- Troubleshooting -->
+		<s:NavigatorContent id="concernsPage" width="100%" height="100%" label="Concerns">
+			<s:Label y="{titleY}" fontSize="18" text="Possible Concerns" width="100%" textAlign="center"/>
+			<s:Button id="concernsExplanationButton" x="297" y="22" height="20" label="Explanation"
+					  click="concernsExplanationButton_clickHandler(event)"/>
+			<s:RichEditableText id="concernsText" x="{textX}" y="65" width="630" />
+		</s:NavigatorContent>
+
+	</mx:TabNavigator>
+</questions:QuestionPage>

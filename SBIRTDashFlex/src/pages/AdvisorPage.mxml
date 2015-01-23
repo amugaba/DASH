@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<questions:QuestionPage xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						xmlns:s="library://ns.adobe.com/flex/spark" 
+						xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:questions="questions.*" width="400" height="300">
+	<fx:Script>
+		<![CDATA[
+			import flashx.textLayout.conversion.TextConverter;
+			
+			import mx.core.FlexGlobals;
+			
+			protected var global:SBIRTDashFlex = FlexGlobals.topLevelApplication as SBIRTDashFlex;
+			
+			public function prepare():void
+			{
+				if(constructed)
+				{
+					resetPage();
+					return;
+				}
+				constructed = true;
+				
+				explanationText.textFlow = TextConverter("One or more concerns were identified based on the data you reported this month. These concerns represent <b>possible</b> problems " +
+					"in the SBIRT process at your clinic.<br /><br />Your clinic’s activity and its data naturally vary from month to month. Some of these concerns may be due to that " +
+					"normal variation rather than a systemic problem. If you notice a concern reappearing for several months, it is much more likely to be a problem.<br /><br />This " +
+					"advisor can guide you through investigating each concern. If you decide that a concern is truly a problem, the advisor can recommend courses of action to correct " +
+					"the problem.", TextConverter.TEXT_FIELD_HTML_FORMAT);
+
+			}
+			
+			protected function resetPage():void
+			{
+				tabNavigator.selectedIndex = 0; 
+			}
+			
+			public function populate(report:DataReportVO):void
+			{
+				
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<mx:TabNavigator x="5" y="39" width="680" height="669" id="tabNavigator">
+		<!-- Summary Page -->
+		<s:NavigatorContent width="100%" height="100%" label="Summary">
+			<s:RichEditableText id="explanationText" x="50" y="50" width="630" />
+			<s:RichEditableText id="textFieldPrescreen2" x="{textX}" y="{textY2}" width="385" />
+			<feedback:PieChartSBIRT id="prescreenPie" x="{pieX}" y="{pieY}"  label="Prescreening Distribution"/>
+			<feedback:MonthlyLineChart x="{chartX}" y="{chartY}" id="captureRateLine" label="Prescreen Capture Rate by Month"/>
+		</s:NavigatorContent>
+		
+		<!-- Screen Page -->
+		<s:NavigatorContent width="100%" height="100%" label="Advisor">
+			<s:Label x="{titleX}" y="{titleY}" fontSize="18" fontWeight="normal" text="Screening"/>
+			<s:RichEditableText id="textFieldScreening1" x="{textX}" y="{textY1}" width="630" />
+			<s:RichEditableText id="textFieldScreening2" x="{textX}" y="{textY2}" width="385" />
+			<feedback:PieChartSBIRT id="screeningPie" x="{pieX}" y="{pieY}"  label="Screening Distribution"/>
+			<feedback:MonthlyLineChart x="{chartX}" y="{chartY}" id="screeningRateLine" label="Screening Capture Rate by Month"/>
+		</s:NavigatorContent>
+		
+		<!-- Services Page -->
+		<s:NavigatorContent width="100%" height="100%" label="Page 3">
+			<s:Label x="{titleX}" y="{titleY}" fontSize="18" fontWeight="normal" text="Services"/>
+			<s:RichEditableText id="textFieldServices1" x="{textX}" y="{textY1}" width="630" />
+			<s:RichEditableText id="textFieldServices2" x="{textX}" y="{textY2}" width="385" />
+			<feedback:PieChartSBIRT id="servicesPie" x="{pieX}" y="{pieY}" dataProvider="{servicesBreakdown}" label="Services Distribution"/>
+			<feedback:MonthlyLineChart x="{chartX}" y="{chartY}" id="servicesRateLine" label="Service Capture Rate by Month"/>
+		</s:NavigatorContent>
+		
+		<!-- Troubleshooting -->
+		<s:NavigatorContent width="100%" height="100%" label="Troubleshooting">
+			<s:Label x="{titleX}" y="{titleY}" fontSize="18" fontWeight="normal" text="Possible Concerns"/>
+			<s:Form id="troubleForm">
+				
+			</s:Form>
+		</s:NavigatorContent>
+		
+	</mx:TabNavigator>
+</questions:QuestionPage>

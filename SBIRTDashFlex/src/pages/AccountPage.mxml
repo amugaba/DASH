@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<questions:QuestionPage xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						xmlns:s="library://ns.adobe.com/flex/spark" 
+						xmlns:mx="library://ns.adobe.com/flex/mx" 
+						xmlns:questions="questions.*">
+	<fx:Script>
+		<![CDATA[
+			import mx.core.FlexGlobals;
+			
+			import questions.QuestionClass;
+			import questions.QuestionText;
+			
+			import spark.components.FormItem;
+			
+			protected var global:SBIRTDashFlex = FlexGlobals.topLevelApplication as SBIRTDashFlex;
+			
+			//private var uniquePatientsLabel:QuestionClass = new QuestionClass("<b>Account Info</b>");
+			private var firstName:QuestionText = new QuestionText("First Name","");
+			private var lastName:QuestionText = new QuestionText("Last Name","");
+			private var orgName:QuestionText = new QuestionText("Organization","");
+			private var emailAddress:QuestionText = new QuestionText("Email Address","");
+			private var phoneNumber:QuestionText = new QuestionText("Phone Number","");
+			
+
+			public function prepare():void
+			{
+				if(constructed)
+				{
+					resetPage();
+					return;
+				}
+				
+				//Add questions
+				var i:FormItem = new FormItem();
+				i.label = "Make changes any changes to your account info. Then click the Save button.";
+				infoForm.addElement(i);
+				
+				infoForm.addElement(firstName);
+				infoForm.addElement(lastName);
+				infoForm.addElement(orgName);
+				infoForm.addElement(emailAddress);
+				infoForm.addElement(phoneNumber);
+				//addHRule(reportingForm);
+			}
+			
+			
+			protected function saveButton_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			private function resetPage():void
+			{
+				// TODO Auto Generated method stub
+				
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Label x="246" y="16" fontSize="22" fontWeight="normal" text="Organization Profile"/>
+	<mx:TabNavigator x="7" y="24" width="685" height="650" paddingLeft="-15" paddingTop="-5" id="tabNavigator">
+		<s:NavigatorContent width="100%" height="100%" label="Page 1">
+			<mx:Form id="infoForm" width="100%" height="100%" labelWidth="450">
+			</mx:Form>
+		</s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%" label="Page 2">
+			<mx:Form id="reportingForm2" width="100%" height="100%" labelWidth="450">
+			</mx:Form>
+			<s:Button id="saveButton" x="312" y="472" height="42" label="Save"
+					  click="saveButton_clickHandler(event)"/>
+		</s:NavigatorContent>
+	</mx:TabNavigator>
+	
+</questions:QuestionPage>
