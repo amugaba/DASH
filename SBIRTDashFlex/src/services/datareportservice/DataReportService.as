@@ -17,8 +17,8 @@ public class DataReportService extends _Super_DataReportService
     {
         super.preInitializeService();
         // Initialization customization goes here
-		//serviceControl.endpoint = "https://bl-iprc-webserv.ads.iu.edu/SBIRT/DASH/gateway.php";
-		serviceControl.endpoint = "https://www.drugs.indiana.edu/SBIRT/DASH/gateway.php";
+		if(SBIRTDashFlex.DEBUG_MODE == 0)
+			serviceControl.endpoint = "https://www.drugs.indiana.edu/SBIRT/DASH/gateway.php";
     }
                
 }

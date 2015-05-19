@@ -22,6 +22,8 @@
 			import valueObjects.DataReportVO;
 			import valueObjects.UserVO;	
 			
+			public static var DEBUG_MODE:int = 2;//0 = release, 1 = remote debug, 2 = local debug
+			
 			[Bindable] public var activeUser:UserVO = new UserVO();
 			public var activeReport:DataReportVO = null;
 			[Bindable] public var reportList:ArrayCollection = new ArrayCollection();
@@ -55,7 +57,7 @@
 				}
 				if(page == pageReporting)
 				{
-					
+					pageReporting.tabNavigator.selectedIndex = 0;
 				}
 				
 			}	
@@ -88,6 +90,7 @@
 		<pages:ReportingPage id="pageReporting" width="100%" height="100%" label="Reporting"/> 
 		<pages:FeedbackPage id="pageFeedback" width="100%" height="100%" label="Feedback" />
 		<pages:AccountPage id="pageAccount" width="100%" height="100%" label="Account" />
+		<pages:FinancialPage id="pageFinance" width="100%" height="100%" label="Finance" />
 	</mx:ViewStack>
 	<s:BorderContainer includeIn="Main" x="2" y="3" width="695" height="90"
 					   backgroundColor="#B5DAE3" borderWeight="2" cornerRadius="3"

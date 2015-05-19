@@ -23,7 +23,7 @@
 			import mx.validators.ValidationResult;
 			import mx.validators.Validator;
 			
-			import skip.*;
+			import components.skips.*;
 			
 			import spark.events.IndexChangeEvent;
 			
@@ -73,7 +73,7 @@
 				}
 			}
 			
-			protected function addNumberValidator(question:QuestionClass, min:Number = Number.NaN, max:Number = Number.NaN, isInt:Boolean = false):NumberValidator
+			/*protected function addNumberValidator(question:QuestionClass, min:Number = Number.NaN, max:Number = Number.NaN, isInt:Boolean = false):NumberValidator
 			{
 				var nv:NumberValidator = new NumberValidator();
 				nv.required = true;
@@ -217,7 +217,7 @@
 					}
 				}
 				return results;
-			}
+			}*/
 		]]>
 	</fx:Script>
 	<fx:Declarations>

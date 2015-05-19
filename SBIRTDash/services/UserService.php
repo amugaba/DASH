@@ -105,7 +105,7 @@ class UserService
     /**
      * Sign EULA
      * 
-     * @param int userid
+     * @param int $userid
      */
     public function signEULA($userid)
     {

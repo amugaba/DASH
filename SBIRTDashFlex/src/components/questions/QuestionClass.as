@@ -1,5 +1,7 @@
-package questions
+package components.questions
 {
+	import components.skips.SkipPattern;
+	
 	import flash.display.InteractiveObject;
 	
 	import flashx.textLayout.elements.LinkElement;
@@ -17,22 +19,25 @@ package questions
 
 	public class QuestionClass extends BetterFormItem
 	{
+		public var codeName:String;
 		public var skipQuestions:Array = new Array();
 		public var skipAnswers:Array = new Array();
-		public var skipPatterns:Array = new Array();
-		public var validator:Validator = null;
+		public var skipPatterns:Vector.<SkipPattern> = new Vector.<SkipPattern>();
+		public var validators:Vector.<Validator> = new Vector.<Validator>();
 		public var inline:Boolean = false;
 		public var isSkipped:Boolean = false;
+		public var answerType:Class = int;
 		public var baseLabel:String;
 		public var bindTargets:ArrayList = new ArrayList();
 		public var replaceStrings:ArrayList = new ArrayList();
-		public var helpText:String;
+		protected var helpText:String;
 		
-		public function QuestionClass(questionLabel:String = "")
+		public function QuestionClass(codeName:String, questionLabel:String = "")
 		{
-			super(helpPopup);
+			super();
 			baseLabel = questionLabel;
 			this.label = questionLabel;
+			this.codeName = codeName;
 			this.multiline = true;
 		}
 		
@@ -46,6 +51,11 @@ package questions
 			//to be overidden
 		}
 		
+		public function get validator():Validator
+		{
+			return validators[0];
+		}
+		
 		public function restoreDefault():void
 		{
 			//to be overridden
@@ -56,20 +66,10 @@ package questions
 			return null;
 		}
 		
-		public function doSkip():void
+		public function refreshSkips():void
 		{
-			for each (var q:QuestionClass in skipQuestions)
-			{
-				q.restoreDefault();
-				q.disable();
-			}
-		}
-		public function undoSkip():void
-		{
-			for each (var q:QuestionClass in skipQuestions)
-			{
-				q.enable();
-			}
+			for each(var s:SkipPattern in skipPatterns)
+			s.skipHandler(null);
 		}
 		
 		public function enable():void
@@ -79,6 +79,12 @@ package questions
 		public function disable():void
 		{
 			isSkipped = true;	
+		}
+		
+		public function addHelpText(txt:String):void
+		{
+			helpText = txt;
+			enableLinking(helpPopup);
 		}
 		
 		public function bindFunction(func:Function):void

@@ -44,7 +44,7 @@
 				if(reportDropDown.selectedIndex > -1)
 				{
 					global.activeReport = reportDropDown.selectedItem;
-					global.pageReporting.prepare();
+					global.pageReporting.initPage();
 					global.pageReporting.populate(global.activeReport);
 					global.goToPage(global.pageReporting);
 				}
@@ -62,7 +62,7 @@
 			
 			protected function newReportButton_clickHandler(event:MouseEvent):void
 			{
-				global.pageReporting.prepare();
+				global.pageReporting.initPage();
 				global.goToPage(global.pageReporting);
 			}
 			
@@ -70,6 +70,12 @@
 			{
 				global.pageAccount.prepare();
 				global.goToPage(global.pageAccount);
+			}
+			
+			protected function costButton_clickHandler(event:MouseEvent):void
+			{
+				global.pageFinance.initPage();
+				global.goToPage(global.pageFinance);
 			}
 			
 		]]>
@@ -110,6 +116,8 @@
 			</s:Group>
 			<s:Button id="generateFeedbackButton" y="144" width="120" height="36" label="Generate Report!" horizontalCenter="0"
 					  click="generateFeedbackButton_clickHandler(event)"/>
+			<s:Button id="costButton" x="20" y="198" label="Go to Financial Page"
+					  click="costButton_clickHandler(event)"/>
 		</s:Group>
 	</s:Group>
 	<!--

@@ -3,121 +3,6 @@
   <annotation name="ActionScriptGeneration">
     <item name="FullyQualifyReferences">true</item>
   </annotation>
-  <service name="DataReportService">
-    <annotation name="ActionScriptGeneration">
-      <item name="Source">DataReportService</item>
-      <item name="ServiceType">RemoteObject</item>
-      <item name="Package">services.datareportservice</item>
-      <item name="Endpoint">http://localhost//DASH/SBIRTDash/public/gateway.php</item>
-      <item name="Destination">DataReportService</item>
-    </annotation>
-    <annotation name="ServiceTypeGroup">
-      <item name="ServiceBackendType">com.zend.php.flashbuilder.php</item>
-    </annotation>
-    <annotation name="ServiceConfig">
-      <item name="PHP_RELATIVE_LOCATION">DASH/SBIRTDash/services/DataReportService.php</item>
-      <item name="PHP_SERVER_ROOT">C:/wamp/www</item>
-      <item name="PHP_WORKSPACE_LOCATION">/SBIRTDash/services/DataReportService.php</item>
-      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
-      <item name="PHP_SERVICES_FOLDER">C:/wamp/www/DASH/SBIRTDash/public/bin-debug/services</item>
-      <item name="PHP_LOCATION">C:/wamp/www/DASH/SBIRTDash/services/DataReportService.php</item>
-      <item name="LINKED_FILE">DataReportService.php</item>
-      <item name="PHP_SERVER_ROOT_URL">http://localhost/</item>
-      <item name="ABSOLUTE_ENDPOINT">http://localhost//DASH/SBIRTDash/public/gateway.php</item>
-      <item name="PHP_CLASS_NAME">DataReportService</item>
-    </annotation>
-    <function name="createDataReport" return-type="DataReportVO">
-      <annotation name="analyze group">
-        <item name="analyzed">true</item>
-      </annotation>
-      <annotation name="original signature">
-        <item name="returnType">opaque</item>
-      </annotation>
-      <parameter name="item" type="DataReportVO"/>
-    </function>
-    <function name="updateDataReport" return-type="DataReportVO">
-      <annotation name="analyze group">
-        <item name="analyzed">true</item>
-      </annotation>
-      <annotation name="original signature">
-        <item name="returnType">opaque</item>
-      </annotation>
-      <parameter name="item" type="DataReportVO"/>
-    </function>
-    <function name="getDataReports" return-type="DataReportVO[]">
-      <annotation name="analyze group">
-        <item name="analyzed">true</item>
-      </annotation>
-      <annotation name="ValidProperties">
-        <item name="propertySpecifier">autoid,userid,month,year,uniquePatients,patientsEligible,prescreens,validPrescreens,alcoholPrescreens,drugPrescreens,bothPrescreens,screens,isNotScreening,possibleScreens,screensOfPossible,educationScores,biScores,btScores,rtScores,bis,bts,rts,otherComments</item>
-      </annotation>
-      <annotation name="original signature">
-        <item name="returnType">opaque</item>
-      </annotation>
-      <parameter name="userid" type="integer"/>
-    </function>
-    <function name="reportExists" return-type="boolean">
-      <annotation name="analyze group">
-        <item name="analyzed">true</item>
-      </annotation>
-      <annotation name="original signature">
-        <item name="inputParamNames">userid,month,year</item>
-        <item name="inputParams">integer,integer,integer</item>
-        <item name="returnType">opaque</item>
-      </annotation>
-      <parameter name="userid" type="integer"/>
-      <parameter name="month" type="integer"/>
-      <parameter name="year" type="integer"/>
-    </function>
-  </service>
-  <entity name="DataReportVO">
-    <annotation name="EntityProperties">
-      <item name="EntityOriginalName">DataReportVO</item>
-      <item name="location">C:/wamp/www/DASH/SBIRTDash/services/DataReportVO.php</item>
-    </annotation>
-    <annotation name="ServerProperties">
-      <item name="RemoteClass">DataReportVO</item>
-      <item name="IncludeRemoteClass">nonempty</item>
-    </annotation>
-    <annotation name="createDataReport">
-      <item name="propertySpecifier">autoid,userid,month,year,uniquePatients,patientsEligible,prescreens,validPrescreens,alcoholPrescreens,drugPrescreens,bothPrescreens,screens,isNotScreening,possibleScreens,screensOfPossible,educationScores,biScores,btScores,rtScores,bis,bts,rts,otherComments</item>
-    </annotation>
-    <annotation name="updateDataReport">
-      <item name="propertySpecifier">autoid,userid,month,year,uniquePatients,patientsEligible,prescreens,validPrescreens,alcoholPrescreens,drugPrescreens,bothPrescreens,screens,isNotScreening,possibleScreens,screensOfPossible,educationScores,biScores,btScores,rtScores,bis,bts,rts,otherComments</item>
-    </annotation>
-    <annotation name="service Group">
-      <item name="service">DataReportService</item>
-    </annotation>
-    <annotation name="ActionScriptGeneration">
-      <item name="Package">valueObjects</item>
-    </annotation>
-    <annotation name="getDataReports">
-      <item name="propertySpecifier">autoid,userid,month,year,uniquePatients,patientsEligible,prescreens,validPrescreens,alcoholPrescreens,drugPrescreens,bothPrescreens,screens,isNotScreening,possibleScreens,screensOfPossible,educationScores,biScores,btScores,rtScores,bis,bts,rts,otherComments</item>
-    </annotation>
-    <property name="autoid" type="integer" required="true"/>
-    <property name="userid" type="integer" required="true"/>
-    <property name="month" type="integer" required="true"/>
-    <property name="year" type="integer" required="true"/>
-    <property name="uniquePatients" type="integer" required="true"/>
-    <property name="patientsEligible" type="integer" required="true"/>
-    <property name="prescreens" type="integer" required="true"/>
-    <property name="validPrescreens" type="integer" required="true"/>
-    <property name="alcoholPrescreens" type="integer" required="true"/>
-    <property name="drugPrescreens" type="integer" required="true"/>
-    <property name="bothPrescreens" type="integer" required="true"/>
-    <property name="screens" type="integer" required="true"/>
-    <property name="isNotScreening" type="integer" required="true"/>
-    <property name="possibleScreens" type="integer" required="true"/>
-    <property name="screensOfPossible" type="integer" required="true"/>
-    <property name="educationScores" type="integer" required="true"/>
-    <property name="biScores" type="integer" required="true"/>
-    <property name="btScores" type="integer" required="true"/>
-    <property name="rtScores" type="integer" required="true"/>
-    <property name="bis" type="integer" required="true"/>
-    <property name="bts" type="integer" required="true"/>
-    <property name="rts" type="integer" required="true"/>
-    <property name="otherComments" type="string" required="true"/>
-  </entity>
   <service name="UserService">
     <annotation name="ActionScriptGeneration">
       <item name="Source">UserService</item>
@@ -207,5 +92,118 @@
     <property name="password" type="string" required="true"/>
     <property name="email" type="string" required="true"/>
     <property name="eulaSigned" type="integer" required="true"/>
+  </entity>
+  <service name="DataReportService">
+    <annotation name="ActionScriptGeneration">
+      <item name="Source">DataReportService</item>
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services.datareportservice</item>
+      <item name="Endpoint">http://localhost//DASH/SBIRTDash/public/gateway.php</item>
+      <item name="Destination">DataReportService</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">com.zend.php.flashbuilder.php</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="PHP_RELATIVE_LOCATION">DASH/SBIRTDash/services/DataReportService.php</item>
+      <item name="PHP_SERVER_ROOT">C:/wamp/www</item>
+      <item name="PHP_WORKSPACE_LOCATION">/SBIRTDash/services/DataReportService.php</item>
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="PHP_SERVICES_FOLDER">C:/wamp/www/DASH/SBIRTDash/public/bin-debug/services</item>
+      <item name="PHP_LOCATION">C:/wamp/www/DASH/SBIRTDash/services/DataReportService.php</item>
+      <item name="LINKED_FILE">DataReportService.php</item>
+      <item name="PHP_SERVER_ROOT_URL">http://localhost/</item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost//DASH/SBIRTDash/public/gateway.php</item>
+      <item name="PHP_CLASS_NAME">DataReportService</item>
+    </annotation>
+    <function name="createDataReport" return-type="DataReportVO">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">opaque</item>
+      </annotation>
+      <parameter name="item" type="DataReportVO"/>
+    </function>
+    <function name="updateDataReport" return-type="DataReportVO">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">opaque</item>
+      </annotation>
+      <parameter name="item" type="DataReportVO"/>
+    </function>
+    <function name="getDataReports" return-type="DataReportVO[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="ValidProperties">
+        <item name="propertySpecifier">autoid,userid,month,year,uniquePatients,patientsEligible,prescreens,validPrescreens,alcoholPrescreens,drugPrescreens,bothPrescreens,screens,isNotScreening,possibleScreens,screensOfPossible,educationScores,biScores,btScores,rtScores,bis,bts,rts,otherComments</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">opaque</item>
+      </annotation>
+      <parameter name="userid" type="integer"/>
+    </function>
+    <function name="reportExists" return-type="boolean">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">opaque</item>
+      </annotation>
+      <parameter name="userid" type="opaque"/>
+      <parameter name="month" type="opaque"/>
+      <parameter name="year" type="opaque"/>
+    </function>
+  </service>
+  <entity name="DataReportVO">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">DataReportVO</item>
+      <item name="location">C:/wamp/www/DASH/SBIRTDash/services/DataReportVO.php</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">DataReportVO</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="createDataReport">
+      <item name="propertySpecifier">autoid,userid,month,year,uniquePatients,patientsEligible,prescreens,validPrescreens,alcoholPrescreens,drugPrescreens,bothPrescreens,screens,isNotScreening,possibleScreens,screensOfPossible,educationScores,biScores,btScores,rtScores,bis,bts,rts,otherComments</item>
+    </annotation>
+    <annotation name="updateDataReport">
+      <item name="propertySpecifier">autoid,userid,month,year,uniquePatients,patientsEligible,prescreens,validPrescreens,alcoholPrescreens,drugPrescreens,bothPrescreens,screens,isNotScreening,possibleScreens,screensOfPossible,educationScores,biScores,btScores,rtScores,bis,bts,rts,otherComments</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">DataReportService</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <annotation name="getDataReports">
+      <item name="propertySpecifier">autoid,userid,month,year,uniquePatients,patientsEligible,prescreens,validPrescreens,alcoholPrescreens,drugPrescreens,bothPrescreens,screens,isNotScreening,possibleScreens,screensOfPossible,educationScores,biScores,btScores,rtScores,bis,bts,rts,otherComments</item>
+    </annotation>
+    <property name="autoid" type="integer" required="true"/>
+    <property name="userid" type="integer" required="true"/>
+    <property name="month" type="integer" required="true"/>
+    <property name="year" type="integer" required="true"/>
+    <property name="uniquePatients" type="integer" required="true"/>
+    <property name="patientsEligible" type="integer" required="true"/>
+    <property name="prescreens" type="integer" required="true"/>
+    <property name="validPrescreens" type="integer" required="true"/>
+    <property name="alcoholPrescreens" type="integer" required="true"/>
+    <property name="drugPrescreens" type="integer" required="true"/>
+    <property name="bothPrescreens" type="integer" required="true"/>
+    <property name="screens" type="integer" required="true"/>
+    <property name="isNotScreening" type="integer" required="true"/>
+    <property name="possibleScreens" type="integer" required="true"/>
+    <property name="screensOfPossible" type="integer" required="true"/>
+    <property name="educationScores" type="integer" required="true"/>
+    <property name="biScores" type="integer" required="true"/>
+    <property name="btScores" type="integer" required="true"/>
+    <property name="rtScores" type="integer" required="true"/>
+    <property name="bis" type="integer" required="true"/>
+    <property name="bts" type="integer" required="true"/>
+    <property name="rts" type="integer" required="true"/>
+    <property name="otherComments" type="string" required="true"/>
   </entity>
 </model>

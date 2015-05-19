@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Group containing a Position text, Salary text, and Delete button.
+The elements are arranged vertically.
+Position and Salary have validators.
+getPosition and getSalary return the appropriate values.
+Delete button destroys the item and removes it from the parent container.
+-->
+<questions:QuestionForm xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" xmlns:questions="components.questions.*"
+		 creationComplete="creationCompleteHandler(event)" labelWidth="50" paddingTop="0" paddingBottom="0">
+	<fx:Script>
+		<![CDATA[
+			import components.questions.QuestionForm;
+			import components.questions.QuestionList;
+			import components.questions.QuestionText;
+			import components.validators.Valid;
+			
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			private var qPosition:QuestionText = new QuestionText("salaryPosition","Position","");
+			private var qSalary:QuestionText = new QuestionText("salaryAmount","Salary","");
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				addQuestion(qPosition);
+				addQuestion(qSalary);
+				group.addElement(qPosition);
+				group.addElement(qSalary);
+				group.addElementAt(removeButton, group.numElements-1);
+				
+				Valid.addRequiredValidator(qPosition);
+				Valid.addNumberValidator(qSalary);
+			}
+			
+			protected function remove_clickHandler(event:MouseEvent):void
+			{
+				(parent as Group).removeElement(this);
+			}
+			
+			public function get position():String
+			{
+				return qPosition.answer;
+			}
+			
+			public function get salary():Number
+			{
+				return parseFloat(qSalary.answer);
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Group id="group">
+		<s:layout>
+			<s:HorizontalLayout gap="25" paddingTop="0" paddingBottom="0"/>
+		</s:layout>
+		<s:Button id="removeButton" label="Remove Position" click="remove_clickHandler(event)"/>
+	</s:Group>
+</questions:QuestionForm>

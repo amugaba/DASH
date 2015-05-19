@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<questions:QuestionPage xmlns:fx="http://ns.adobe.com/mxml/2009"
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009"
 						xmlns:s="library://ns.adobe.com/flex/spark"
 						xmlns:mx="library://ns.adobe.com/flex/mx"
-						xmlns:questions="questions.*"
+						xmlns:questions="components.questions.*"
 						xmlns:datareportservice="services.datareportservice.*"
 						backgroundColor="#F2F9F1"  chromeColor="#82BE6D"
 						contentBackgroundColor="#D8EFD3">
 	<fx:Script>
 		<![CDATA[
+			import components.questions.*;
+			import components.skips.*;
+			import components.validators.Valid;
+			
 			import flashx.textLayout.conversion.TextConverter;
 			import flashx.textLayout.edit.IEditManager;
 			import flashx.textLayout.elements.FlowElement;
@@ -24,10 +28,6 @@
 			import mx.rpc.events.ResultEvent;
 			import mx.validators.ValidationResult;
 			
-			import questions.*;
-			
-			import skip.*;
-			
 			import spark.components.Button;
 			import spark.components.FormItem;
 			import spark.components.NavigatorContent;
@@ -38,112 +38,101 @@
 			import valueObjects.DataReportVO;
 			
 			protected var global:SBIRTDashFlex = FlexGlobals.topLevelApplication as SBIRTDashFlex;
+			private var created:Boolean = false;
+			private var QUESTION_INDENT:int = 20;
 			
 			public var updatingData:Boolean = false;
 			private var year1:int = new Date().getFullYear();
 			private var year2:int = year1 - 1;
 			
-			private var month:QuestionList = new QuestionList("For what month are you reporting data?",global.monthList,-1);
-			private var year:QuestionList = new QuestionList("For what year?", new ArrayList([year1, year2]),0);
-			private var uniquePatients:QuestionTextRefusable = new QuestionTextRefusable("During <b><u>____</b></u>, how many <a>unique patients</a> aged 18 or older had a primary care visit?","");
+			private var month:QuestionList = new QuestionList("month","For what month are you reporting data?",global.monthList,-1);
+			private var year:QuestionList = new QuestionList("year","For what year?", new ArrayList([year1, year2]),0);
+			private var uniquePatients:QuestionTextRefusable = new QuestionTextRefusable("uniquePatients","During <b><u>____</b></u>, how many <a>unique patients</a> aged 18 or older had a primary care visit?","");
 			
-			private var uniquePatientsLabel:QuestionClass = new QuestionClass("<b>Of those <u>____</u> unique patients...</b><br>");
-			private var patientsEligible:QuestionTextRefusable = new QuestionTextRefusable("How many patients <a>had not yet been prescreened in the last year?</a>","");
-			private var prescreensEligible:QuestionTextRefusable = new QuestionTextRefusable("How many did you prescreen that had NOT received a prescreen in the last year?","");
-			private var prescreensIneligible:QuestionTextRefusable = new QuestionTextRefusable("How many did you prescreen that had already received a prescreen in the last year?","");
+			private var uniquePatientsLabel:QuestionClass = new QuestionClass("","<b>Of those <u>____</u> unique patients...</b><br>");
+			private var patientsEligible:QuestionTextRefusable = new QuestionTextRefusable("patientsEligible","How many patients <a>had not yet been prescreened in the last year?</a>","");
+			private var prescreensEligible:QuestionTextRefusable = new QuestionTextRefusable("prescreens","How many did you prescreen that had NOT received a prescreen in the last year?","");
+			private var prescreensIneligible:QuestionTextRefusable = new QuestionTextRefusable("validPrescreens","How many did you prescreen that had already received a prescreen in the last year?","");
 			
-			private var prescreensLabel:QuestionClass = new QuestionClass("<b>Of those <u>____</u> total patients prescreened...</b><br>");
-			private var alcoholPrescreens:QuestionTextRefusable = new QuestionTextRefusable("How many were positive for alcohol but negative for drugs?","");
-			private var drugPrescreens:QuestionTextRefusable = new QuestionTextRefusable("How many were positive for drugs but negative for alcohol?","");
-			private var bothPrescreens:QuestionTextRefusable = new QuestionTextRefusable("How many were positive for both alcohol and drugs?","");
+			private var prescreensLabel:QuestionClass = new QuestionClass("","<b>Of those <u>____</u> total patients prescreened...</b><br>");
+			private var alcoholPrescreens:QuestionTextRefusable = new QuestionTextRefusable("alcoholPrescreens","How many were positive for alcohol but negative for drugs?","");
+			private var drugPrescreens:QuestionTextRefusable = new QuestionTextRefusable("drugPrescreens","How many were positive for drugs but negative for alcohol?","");
+			private var bothPrescreens:QuestionTextRefusable = new QuestionTextRefusable("bothPrescreens","How many were positive for both alcohol and drugs?","");
 			
-			private var screensAll:QuestionTextRefusable = new QuestionTextRefusable("Of those <b><u>____</b></u> positive patients, how many received a full screening?","");
-			private var isNotScreening:QuestionList = new QuestionList("Does your site prescreen some patients in buildings, units, or other areas where it is not yet possible " +
+			private var screensAll:QuestionTextRefusable = new QuestionTextRefusable("screens","Of those <b><u>____</b></u> positive patients, how many received a full screening?","");
+			private var isNotScreening:QuestionList = new QuestionList("isNotScreening","Does your site prescreen some patients in buildings, units, or other areas where it is not yet possible " +
 				"for those patients to receive a full screening?", new ArrayList(["No","Yes"]),0);
 			
 			//If not screening some patients
-			private var possibleScreens:QuestionTextRefusable = new QuestionTextRefusable("Of the <b><u>____</b></u> total positive prescreens, how many occurred in an area of your clinic where it is <a>possible to receive a full screening</a>?","");
-			private var screensOfPossible:QuestionTextRefusable = new QuestionTextRefusable("Of those <b><u>____</b></u> positive patients that were in a clinic area that does full screenings, how many received a full screening?","");			
+			private var possibleScreens:QuestionTextRefusable = new QuestionTextRefusable("possibleScreens","Of the <b><u>____</b></u> total positive prescreens, how many occurred in an area of your clinic where it is <a>possible to receive a full screening</a>?","");
+			private var screensOfPossible:QuestionTextRefusable = new QuestionTextRefusable("screensOfPossible","Of those <b><u>____</b></u> positive patients that were in a clinic area that does full screenings, how many received a full screening?","");			
 			
-			private var screeningsLabel:QuestionClass = new QuestionClass("<b><br>Of those <u>____</u> full screenings...</b><br>");
-			private var educationScore:QuestionTextRefusable = new QuestionTextRefusable("How many scored ‘Education’?","");
-			private var biScore:QuestionTextRefusable = new QuestionTextRefusable("How many scored ‘Brief Intervention’?","");
-			private var btScore:QuestionTextRefusable = new QuestionTextRefusable("How many scored ‘Brief Treatment’?","");
-			private var rtScore:QuestionTextRefusable = new QuestionTextRefusable("How many scored ‘Referral to Treatment’?","");
+			private var screeningsLabel:QuestionClass = new QuestionClass("","<b><br>Of those <u>____</u> full screenings...</b><br>");
+			private var educationScore:QuestionTextRefusable = new QuestionTextRefusable("educationScores","How many scored ‘Education’?","");
+			private var biScore:QuestionTextRefusable = new QuestionTextRefusable("biScores","How many scored ‘Brief Intervention’?","");
+			private var btScore:QuestionTextRefusable = new QuestionTextRefusable("btScores","How many scored ‘Brief Treatment’?","");
+			private var rtScore:QuestionTextRefusable = new QuestionTextRefusable("rtScores","How many scored ‘Referral to Treatment’?","");
 			
-			private var servicesLabel:QuestionClass = new QuestionClass("<b><a>Services</a></b>");
-			private var biServices:QuestionTextRefusable = new QuestionTextRefusable("How many Brief Interventions were performed?","");
-			private var btServices:QuestionTextRefusable = new QuestionTextRefusable("How many Brief Treatments were performed?","");
-			private var rtServices:QuestionTextRefusable = new QuestionTextRefusable("How many Referrals to Treatment were performed?","");
+			private var servicesLabel:QuestionClass = new QuestionClass("","<b><a>Services</a></b>");
+			private var biServices:QuestionTextRefusable = new QuestionTextRefusable("bis","How many Brief Interventions were performed?","");
+			private var btServices:QuestionTextRefusable = new QuestionTextRefusable("bts","How many Brief Treatments were performed?","");
+			private var rtServices:QuestionTextRefusable = new QuestionTextRefusable("rts","How many Referrals to Treatment were performed?","");
 			
-			//private var organizationChanges:QuestionTextArea = new QuestionTextArea("<b>Describe any organizational changes relevant to SBIRT:</b>","");
-			//private var successBarrier:QuestionTextArea = new QuestionTextArea("<b>List any other successes or barriers that occurred:</b>","");
-			//private var sustainability:QuestionTextArea = new QuestionTextArea("<b>Describe any progress towards sustainability:</b>","");
 			private var otherComments:QuestionTextArea = new QuestionTextArea("<b>Other comments:</b>","");
 			
-			public function prepare():void
+			public function initPage():void
 			{
-				if(constructed)
+				if(created)
 				{
 					resetPage();
 					return;
 				}
-				constructed = true;
+				else
+					created = true;
 				
-				var i:FormItem = new FormItem();
-				i.label = "All fields are required. If you are unable to answer a question, use the drop-down and select \"Missing Data\"";
-				reportingForm.addElement(i);
+				reportingForm.createText("All fields are required. If you are unable to answer a question, use the drop-down and select \"Missing Data\"","h1");
 				
 				//Add questions
-				reportingForm.addElement(month);
-				reportingForm.addElement(year);
-				reportingForm.addElement(uniquePatients);
-				uniquePatients.helpText = "If a patient came for multiple visits, only count that patient once.";
-				addHRule(reportingForm);
+				addQuestionOther(month, reportingForm);
+				addQuestionOther(year, reportingForm);
+				addQuestionNumber(uniquePatients, reportingForm);
+				uniquePatients.addHelpText("If a patient came for multiple visits, only count that patient once.");
+				reportingForm.addDivider();
 				
-				reportingForm.addElement(uniquePatientsLabel);
-				uniquePatientsLabel.text.setStyle("paddingLeft",15);
-				reportingForm.addElement(patientsEligible);
-				patientsEligible.helpText = "This is the number of patients who were due for their annual SBIRT screening.";
-				reportingForm.addElement(prescreensEligible);
-				reportingForm.addElement(prescreensIneligible);
-				addHRule(reportingForm);
+				reportingForm.addQuestion(uniquePatientsLabel);
+				addQuestionNumber(patientsEligible, reportingForm);
+				patientsEligible.addHelpText("This is the number of patients who were due for their annual SBIRT screening.");
+				addQuestionNumber(prescreensEligible, reportingForm);
+				addQuestionNumber(prescreensIneligible, reportingForm);
+				reportingForm.addDivider();
 				
 				reportingForm.addElement(prescreensLabel);
-				prescreensLabel.text.setStyle("paddingLeft",15);
-				reportingForm.addElement(alcoholPrescreens);
-				reportingForm.addElement(drugPrescreens);
-				reportingForm.addElement(bothPrescreens);
-				addHRule(reportingForm);
+				addQuestionNumber(alcoholPrescreens, reportingForm);
+				addQuestionNumber(drugPrescreens, reportingForm);
+				addQuestionNumber(bothPrescreens, reportingForm);
+				reportingForm.addDivider();
 				
-				i = new FormItem();
-				i.label = "Screenings";
-				reportingForm.addElement(i);
-				reportingForm.addElement(screensAll);
-				reportingForm.addElement(isNotScreening);
-				reportingForm.addElement(possibleScreens);
-				reportingForm.addElement(screensOfPossible);
+				reportingForm.createText("Screenings","h1");
+				addQuestionNumber(screensAll, reportingForm);
+				addQuestionOther(isNotScreening, reportingForm);
+				addQuestionNumber(possibleScreens, reportingForm);
+				addQuestionNumber(screensOfPossible, reportingForm);
 				
 				reportingForm2.addElement(screeningsLabel);
-				screeningsLabel.text.setStyle("paddingLeft",15);
-				reportingForm2.addElement(educationScore);
-				reportingForm2.addElement(biScore);
-				reportingForm2.addElement(btScore);
-				reportingForm2.addElement(rtScore);
-				addHRule(reportingForm2);
+				addQuestionNumber(educationScore, reportingForm2);
+				addQuestionNumber(biScore, reportingForm2);
+				addQuestionNumber(btScore, reportingForm2);
+				addQuestionNumber(rtScore, reportingForm2);
+				reportingForm2.addDivider();
 				
 				reportingForm2.addElement(servicesLabel);
-				servicesLabel.text.setStyle("paddingLeft",15);
-				servicesLabel.helpText = "The ‘services performed’ numbers may differ from the above ‘screening scores’ numbers. \n\nThis is because the behavioral health specialist may provide a higher level intervention than the screening score indicates based on clinical judgment. There also may be situations where a service cannot be performed due to time or other constraints.";
-				reportingForm2.addElement(biServices);
-				reportingForm2.addElement(btServices);
-				reportingForm2.addElement(rtServices);
-				addHRule(reportingForm2);
+				servicesLabel.addHelpText("The ‘services performed’ numbers may differ from the above ‘screening scores’ numbers. \n\nThis is because the behavioral health specialist may provide a higher level intervention than the screening score indicates based on clinical judgment. There also may be situations where a service cannot be performed due to time or other constraints.");
+				addQuestionNumber(biServices, reportingForm2);
+				addQuestionNumber(btServices, reportingForm2);
+				addQuestionNumber(rtServices, reportingForm2);
+				reportingForm2.addDivider();
 				
-				//reportingForm3.addElement(organizationChanges);
-				//reportingForm3.addElement(successBarrier);
-				//reportingForm3.addElement(sustainability);
-				reportingForm2.addElement(otherComments);
+				reportingForm2.addQuestion(otherComments);
 				
 				//Bind question answers
 				month.bindToQuestionLabel(uniquePatients,"____");
@@ -154,7 +143,7 @@
 				screensAll.bindToQuestionLabel(possibleScreens,"____");
 				possibleScreens.bindToQuestionLabel(screensOfPossible,"____");
 				
-				addSkipDropDown(isNotScreening,["No"],[possibleScreens,screensOfPossible]);
+				reportingForm.addSkipDropDown(isNotScreening,["No"],[possibleScreens,screensOfPossible]);
 
 				prescreensEligible.bindFunction(replacePrescreensLabel);
 				prescreensIneligible.bindFunction(replacePrescreensLabel);
@@ -163,49 +152,22 @@
 				drugPrescreens.bindFunction(replaceScreeningsLabel);
 				bothPrescreens.bindFunction(replaceScreeningsLabel);
 				
-				//Adjust horizontal position
-				var indent:int = 50;
-				month.text.setStyle("paddingLeft",indent);
-				year.text.setStyle("paddingLeft",indent);
-				uniquePatients.text.setStyle("paddingLeft",indent);
-				patientsEligible.text.setStyle("paddingLeft",indent);
-				prescreensEligible.text.setStyle("paddingLeft",indent);
-				prescreensIneligible.text.setStyle("paddingLeft",indent);
-				alcoholPrescreens.text.setStyle("paddingLeft",indent);
-				drugPrescreens.text.setStyle("paddingLeft",indent);
-				bothPrescreens.text.setStyle("paddingLeft",indent);
-				screensAll.text.setStyle("paddingLeft",indent);
-				isNotScreening.text.setStyle("paddingLeft",indent);
-				possibleScreens.text.setStyle("paddingLeft",indent);
-				screensOfPossible.text.setStyle("paddingLeft",indent);
-				educationScore.text.setStyle("paddingLeft",indent);
-				biScore.text.setStyle("paddingLeft",indent);
-				btScore.text.setStyle("paddingLeft",indent);
-				rtScore.text.setStyle("paddingLeft",indent);
-				biServices.text.setStyle("paddingLeft",indent);
-				btServices.text.setStyle("paddingLeft",indent);
-				rtServices.text.setStyle("paddingLeft",indent);
-				otherComments.text.setStyle("paddingLeft",indent);
-				
 				//Add Validators
-				addNumberValidator(month,0);
-				addNumberValidator(uniquePatients,0,Number.NaN,true);
-				addNumberValidator(patientsEligible,0,Number.NaN,true);
-				addNumberValidator(prescreensEligible,0,Number.NaN,true);
-				addNumberValidator(prescreensIneligible,0,Number.NaN,true);
-				addNumberValidator(alcoholPrescreens,0,Number.NaN,true);
-				addNumberValidator(drugPrescreens,0,Number.NaN,true);
-				addNumberValidator(bothPrescreens,0,Number.NaN,true);
-				addNumberValidator(screensAll,0,Number.NaN,true);
-				addNumberValidator(possibleScreens,0,Number.NaN,true);
-				addNumberValidator(screensOfPossible,0,Number.NaN,true);
-				addNumberValidator(educationScore,0,Number.NaN,true);
-				addNumberValidator(biScore,0,Number.NaN,true);
-				addNumberValidator(btScore,0,Number.NaN,true);
-				addNumberValidator(rtScore,0,Number.NaN,true);
-				addNumberValidator(biServices,0,Number.NaN,true);
-				addNumberValidator(btServices,0,Number.NaN,true);
-				addNumberValidator(rtServices,0,Number.NaN,true);
+				Valid.addNumberValidator(month,0);
+			}
+			
+			protected function addQuestionNumber(q:QuestionClass, form:QuestionForm):void
+			{
+				form.addQuestion(q);
+				q.text.setStyle("paddingLeft",QUESTION_INDENT);
+				Valid.addNumberValidator(q,0,Number.NaN,true);
+			}
+			
+			protected function addQuestionOther(q:QuestionClass, form:QuestionForm):void
+			{
+				form.addQuestion(q);
+				q.text.setStyle("paddingLeft",QUESTION_INDENT);
+				Valid.addRequiredValidator(q);
 			}
 			
 			public function replacePrescreensLabel(val:String):void
@@ -256,22 +218,14 @@
 				month.input.enabled = true;
 				year.input.enabled = true;
 				submitButton.label = "Submit Data!";
-				for each(var q:Object in reportingForm.getChildren())
-				{
-					if(q is QuestionClass)
-						(q as QuestionClass).restoreDefault();
-				}
-				for each(q in reportingForm2.getChildren())
-				{
-					if(q is QuestionClass)
-						(q as QuestionClass).restoreDefault();
-				}
+				reportingForm.reset();
+				reportingForm2.reset();
 			}
 			
 			protected function submitButton_clickHandler(event:MouseEvent):void
 			{
-				var results:Array = validateForm(reportingForm);
-				var results2:Array = validateForm(reportingForm2);
+				var results:ArrayList = reportingForm.validateForm();
+				var results2:ArrayList = reportingForm2.validateForm();
 				if(results.length > 0 || results2.length > 0)
 				{
 					Alert.show("Please complete all fields with valid answers.","Validation Errors");
@@ -281,11 +235,11 @@
 				//if not updating form, the report date has to be unique and in the past
 				if(!updatingData)
 				{
-					var reportDate:Date = new Date(parseInt(year.answer), month.answerIndex-1, 1);
+					var reportDate:Date = new Date(parseInt(year.answer), month.getAnswerIndex()-1, 1);
 					if(reportDate > new Date())
 						Alert.show("The report's date cannot be in the future.", "Validation Errors");
 					else					
-						reportExistsResult.token = dataReportService.reportExists(global.activeUser.autoid, month.answerIndex, parseInt(year.answer));
+						reportExistsResult.token = dataReportService.reportExists(global.activeUser.autoid, month.getAnswerIndex()+1, parseInt(year.answer));
 				}
 				else
 					parseForm();
@@ -303,7 +257,7 @@
 			{
 				var report:DataReportVO = new DataReportVO();
 				report.userid = global.activeUser.autoid;
-				report.month = month.answerIndex;
+				report.month = month.getAnswerIndex() + 1;
 				report.year = parseInt(year.answer);
 				
 				if(updatingData)
@@ -317,7 +271,7 @@
 				report.drugPrescreens = parseInt(drugPrescreens.answer);
 				report.bothPrescreens = parseInt(bothPrescreens.answer);
 				report.screens = parseInt(screensAll.answer);
-				report.isNotScreening = isNotScreening.answerIndex;
+				report.isNotScreening = isNotScreening.getAnswerIndex();
 				report.possibleScreens = parseInt(possibleScreens.answer);
 				report.screensOfPossible = parseInt(screensOfPossible.answer);
 				report.educationScores = parseInt(educationScore.answer);
@@ -341,8 +295,8 @@
 				submitButton.label = "Update Data!";
 				month.input.enabled = false;
 				year.input.enabled = false;
-				month.answerIndex = report.month;
-				year.answerIndex = year1 - report.year + 1;
+				month.setAnswerIndex(report.month-1);
+				year.setAnswerIndex(year1 - report.year + 1);
 				uniquePatients.answer = report.uniquePatients.toString(); 
 				patientsEligible.answer = report.patientsEligible.toString();
 				prescreensEligible.answer = report.validPrescreens.toString();
@@ -351,7 +305,7 @@
 				drugPrescreens.answer = report.drugPrescreens.toString();
 				bothPrescreens.answer = report.bothPrescreens.toString();
 				screensAll.answer = report.screens.toString();
-				isNotScreening.answerIndex = report.isNotScreening;
+				isNotScreening.setAnswerIndex(report.isNotScreening);
 				possibleScreens.answer = report.possibleScreens.toString();
 				screensOfPossible.answer = report.screensOfPossible.toString();
 				educationScore.answer = report.educationScores.toString();
@@ -368,15 +322,12 @@
 			{
 				var report:DataReportVO = createDataReportResult.lastResult;
 				if(report != null)
+				{
 					Alert.show("Report submitted successfully!");
-			}
-			
-			protected function addHRule(form:Form):void
-			{
-				var rule:HRule = new HRule();
-				rule.width = reportingForm.width;
-				rule.height = 10;
-				form.addElement(rule);
+					global.activeReport = report;
+					updatingData = true;
+					submitButton.label = "Update Data!";
+				}
 			}
 			
 			protected function updateDataReportResult_resultHandler(event:ResultEvent):void
@@ -397,18 +348,18 @@
 		<s:CallResponder id="updateDataReportResult" result="updateDataReportResult_resultHandler(event)"/>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<mx:TabNavigator x="7" y="24" width="685" height="650" paddingLeft="-15" paddingTop="-5" id="tabNavigator">
+	<mx:TabNavigator id="tabNavigator" x="7" y="24" width="685" height="650" paddingTop="0">
 		<s:NavigatorContent width="100%" height="100%" label="Page 1">
-			<mx:Form id="reportingForm" width="100%" height="100%" labelWidth="450">
-			</mx:Form>
+			<questions:QuestionForm id="reportingForm" width="100%" height="100%" labelWidth="450">
+			</questions:QuestionForm>
 		</s:NavigatorContent>
 		<s:NavigatorContent width="100%" height="100%" label="Page 2">
-			<mx:Form id="reportingForm2" width="100%" height="100%" labelWidth="450">
-			</mx:Form>
-			<s:Button id="submitButton" x="312" y="472" height="42" label="Save"
+			<questions:QuestionForm id="reportingForm2" width="100%" height="100%" labelWidth="450">
+			</questions:QuestionForm>
+			<s:Button id="submitButton" x="312" y="495" height="42" label="Save"
 					  click="submitButton_clickHandler(event)"/>
 		</s:NavigatorContent>
 	</mx:TabNavigator>
 	<s:Label x="246" y="16" fontSize="22" fontWeight="normal" text="SBIRT Data Reporting"/>
 	
-</questions:QuestionPage>
+</s:NavigatorContent>

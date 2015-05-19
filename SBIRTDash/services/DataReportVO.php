@@ -39,7 +39,6 @@ class DataReportVO
 		$this->alcoholPrescreens = 0;
 		$this->drugPrescreens = 0;
 		$this->bothPrescreens = 0;
-		$this->aodPrescreens = 0;
 		$this->screens = 0;
 		$this->isNotScreening = 0;
 		$this->possibleScreens = 0;

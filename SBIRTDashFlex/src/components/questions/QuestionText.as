@@ -1,4 +1,4 @@
-package questions
+package components.questions
 {
 	import flash.display.InteractiveObject;
 	
@@ -7,6 +7,7 @@ package questions
 	import mx.collections.ArrayList;
 	import mx.core.UIComponent;
 	import mx.events.ValidationResultEvent;
+	import mx.validators.Validator;
 	
 	import spark.components.DropDownList;
 	import spark.components.TextInput;
@@ -16,9 +17,9 @@ package questions
 		public var input:TextInput;
 		public var defaultValue:String;
 		
-		public function QuestionText(label:String,defaultValue:String,editable:Boolean=true)
+		public function QuestionText(codeName:String,label:String,defaultValue:String,editable:Boolean=true)
 		{
-			super(label);
+			super(codeName,label);
 			input = new TextInput();
 			this.addElement(input);
 			this.defaultValue = defaultValue;
@@ -60,11 +61,8 @@ package questions
 				enabled = false;
 			else
 				input.enabled = false;	
-			if(validator != null)
-			{
-				var evt:ValidationResultEvent = new ValidationResultEvent(ValidationResultEvent.VALID);
-				validator.dispatchEvent(evt);
-			}
+			for each(var val:Validator in validators)
+				val.dispatchEvent(new ValidationResultEvent(ValidationResultEvent.VALID));
 		}
 		
 		public override function bindFunction(func:Function):void

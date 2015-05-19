@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Form xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%"
+		 labelWidth="260">
+	<fx:Script>
+		<![CDATA[
+			import components.questions.QuestionClass;
+			import components.questions.QuestionList;
+			import components.questions.QuestionText;
+			import components.questions.QuestionTextRefusable;
+			import components.skips.SkipMultipleHandler;
+			import components.skips.SkipPattern;
+			import components.skips.SkipPatternMultiple;
+			import components.skips.SkipPatternRange;
+			import components.validators.DateAgeValidator;
+			import components.validators.DropDownValidator;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.controls.HRule;
+			import mx.controls.Text;
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.validators.NumberValidator;
+			import mx.validators.ValidationResult;
+			import mx.validators.Validator;
+			
+			import spark.components.NavigatorContent;
+			import spark.events.IndexChangeEvent;
+			
+			protected var global:SBIRTDashFlex = FlexGlobals.topLevelApplication as SBIRTDashFlex;
+			public var questions:Vector.<QuestionClass> = new Vector.<QuestionClass> ();
+			public var created:Boolean = false;
+			
+			public function addQuestion(q:QuestionClass, width:int = -1):void
+			{
+				questions.push(q);
+				addElement(q);
+				if(width != -1)
+					q.inputControl.width = width;
+			}
+			
+			public function removeQuestion(q:QuestionClass):void
+			{
+				var index:int = questions.indexOf(q);
+				if(index != -1)
+					questions.splice(index,1);
+				removeElement(q);
+			}
+			
+			public function removeQuestionAt(index:int):void
+			{
+				questions.splice(index,1);
+				removeElementAt(index);
+			}
+			
+			public function createForm():void
+			{
+				
+			}
+			
+			public function initForm():void
+			{
+				if(!created)
+				{
+					createForm();
+					created = true;
+				}
+				else
+					reset();
+			}
+			
+			public function reset():void
+			{
+				for each(var q:QuestionClass in questions)
+					q.restoreDefault();
+					
+				doAllSkips();
+				removeAllErrors();
+			}
+			
+			public function doAllSkips():void
+			{
+				for each(var q:QuestionClass in questions)
+				{
+					q.refreshSkips();
+				}
+			}
+			
+			public function removeAllErrors():void
+			{
+				for each(var q:QuestionClass in questions)
+				{
+					for each(var val:Validator in q.validators)
+						val.dispatchEvent(new ValidationResultEvent(ValidationResultEvent.VALID));
+				}
+			}
+			
+			public function addDivider():void
+			{
+				var h:HRule = new HRule();
+				h.height = 5;
+				h.percentWidth = 100;
+				addElement(h);
+			}
+			
+			public function addSkipDropDown(sourceQuestion:QuestionClass, skipAnswers:Array, skipQuestions:Array, inverse:Boolean = false):void
+			{
+				var skip:SkipPattern = new SkipPattern(sourceQuestion,skipQuestions,skipAnswers,[IndexChangeEvent.CHANGE],inverse);
+				sourceQuestion.skipPatterns.push(skip);
+			}
+			
+			public function addSkipDropDownMultiple(handler:SkipMultipleHandler, sourceQuestion:QuestionClass, skipAnswers:Array):void
+			{
+				var skip:SkipPatternMultiple = new SkipPatternMultiple(handler,sourceQuestion,skipAnswers,[IndexChangeEvent.CHANGE]);
+				sourceQuestion.skipPatterns.push(skip);
+			}
+			public function addSkipTextNumberMultiple(handler:SkipMultipleHandler, sourceQuestion:QuestionClass, skipAnswers:Array):void
+			{
+				var skip:SkipPatternMultiple = new SkipPatternMultiple(handler,sourceQuestion,skipAnswers,[FlexEvent.VALUE_COMMIT,FocusEvent.MOUSE_FOCUS_CHANGE]);
+				sourceQuestion.skipPatterns.push(skip);
+			}
+			public function createSkipMultipleHandler(skipQuestions:Array):SkipMultipleHandler
+			{
+				return new SkipMultipleHandler(skipQuestions);
+			}
+			public function addSkipTextNumber(sourceQuestion:QuestionClass, skipQuestions:Array, skipAnswers:Array):void
+			{
+				//(getQuestion(sourceQuestion) as QuestionTextNumber).addSkip(qArray,min,max,invert);
+				var skip:SkipPattern = new SkipPattern(sourceQuestion,skipQuestions,skipAnswers,[FlexEvent.VALUE_COMMIT,FocusEvent.MOUSE_FOCUS_CHANGE]);
+				sourceQuestion.skipPatterns.push(skip);
+			}
+			public function addSkipTextRange(sourceQuestion:QuestionClass, skipQuestions:Array, min:int=0,max:int=0,invert:Boolean=false):void
+			{
+				//(getQuestion(sourceQuestion) as QuestionTextNumber).addSkip(qArray,min,max,invert);
+				var skip:SkipPattern = new SkipPatternRange(sourceQuestion,skipQuestions,min,max,invert,[FlexEvent.VALUE_COMMIT,FocusEvent.MOUSE_FOCUS_CHANGE]);
+				sourceQuestion.skipPatterns.push(skip);
+			}
+			
+			public function createText(text:String,style:String, width:int=-1):void
+			{
+				var t:Text = new Text();
+				t.text = text;
+				if(width != -1)
+					t.width = width-10;
+				t.styleName = style;
+				addElement(t);
+			}
+			
+			public function saveData(data:Array):Array
+			{
+				if(data == null)
+					data = new Array();
+				
+				for each(var q:QuestionClass in questions)
+				{
+					if(q.isSkipped)
+					{
+						//question is being skipped, put null for N/A
+						continue;
+						
+					}
+					else if(q is QuestionText)
+					{
+						if(q.answerType == int && q.answer.length > 0)
+							data[q.codeName] = Number(q.answer);
+						else if(q.answerType == String)
+							data[q.codeName] = q.answer;
+					}
+					else if(q is QuestionList)
+					{
+						data[q.codeName] = (q as QuestionList).getAnswerIndex();
+					}
+				}
+				return data;
+			}
+			
+			public function loadData(data:Array):void
+			{
+				for each(var q:QuestionClass in questions)
+				{					
+					if(data[q.codeName] == null)
+					{
+						q.disable(); //skipped
+					}
+					else if(q is QuestionText)
+					{
+						q.answer = data[q.codeName].toString();
+					}
+					else if(q is QuestionList)
+					{
+						if(data[q.codeName] is String)
+							data[q.codeName] = parseInt(data[q.codeName]);
+						(q as QuestionList).input.selectedIndex = data[q.codeName];
+					}
+				}
+			}
+			
+			public function validateForm():ArrayList
+			{
+				var results:ArrayList = new ArrayList();
+				var ev:ValidationResultEvent;
+				for each(var q:QuestionClass in questions)
+				{
+					for each(var val:Validator in q.validators)
+					{
+						if(val == null || !val.enabled)
+							continue;
+						
+						if(!q.isSkipped && q.inputControl.enabled)
+						{
+							ev = val.validate();
+							if(ev.results != null && ev.results.length > 0)
+							{
+								//Only store the first error per question, otherwise the message is overly long
+								results.addItem(formatErrorMessage(q, ev.results[0] as ValidationResult));
+								break;//move on to next question
+							}
+						}
+						else
+						{
+							var evt:ValidationResultEvent = new ValidationResultEvent(ValidationResultEvent.VALID);
+							val.dispatchEvent(evt);
+						}
+					}
+				}
+				return results;
+			}
+			
+			protected function formatErrorMessage(q:QuestionClass, res:ValidationResult):String
+			{
+				return q.codeName + " - " + res.errorMessage;
+			}
+		]]>
+	</fx:Script>
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";
+		.h1{
+			fontWeight: bold;
+		}
+		.ital{
+			fontWeight: normal;
+			fontStyle: italic;
+		}
+	</fx:Style>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+</mx:Form>

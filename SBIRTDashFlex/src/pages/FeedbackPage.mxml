@@ -2,7 +2,7 @@
 <questions:QuestionPage xmlns:fx="http://ns.adobe.com/mxml/2009"
 						xmlns:s="library://ns.adobe.com/flex/spark"
 						xmlns:mx="library://ns.adobe.com/flex/mx"
-						xmlns:questions="questions.*"
+						xmlns:questions="components.questions.*"
 						xmlns:datareportservice="services.datareportservice.*" xmlns:feedback="feedback.*">
 	<fx:Script>
 		<![CDATA[
@@ -24,8 +24,8 @@
 			import mx.events.FlexEvent;
 			import mx.rpc.events.ResultEvent;
 			
-			import questions.BetterFormItem;
-			import questions.QuestionClass;
+			import components.questions.BetterFormItem;
+			import components.questions.QuestionClass;
 			
 			import valueObjects.DataReportVO;
 			

@@ -1,5 +1,13 @@
-package questions
+package components.questions
 {
+	/**
+	 * Version 2.0
+	 * Text input is HTML rendered as RichEditableText.
+	 * By default, no linking in the text is enabled.
+	 * If linkFunction is assigned a value, then that linking will be enabled
+	 * and will execute that value/function.
+	 * 
+	 * */
 	import flashx.textLayout.conversion.TextConverter;
 	import flashx.textLayout.elements.FlowElement;
 	import flashx.textLayout.elements.FlowGroupElement;
@@ -20,12 +28,11 @@ package questions
 		public var text:RichEditableText;
 		public var selectable:Boolean = false;
 		public var multiline:Boolean = false;
-		public var hasLink:Boolean = true;
+		public var linkEnabled:Boolean = false;
 		public var linkFunction:Function = null;
 		
-		public function BetterFormItem(func:Function) {
+		public function BetterFormItem() {
 			super();
-			linkFunction = func;
 		}
 		
 		override protected function createChildren():void {
@@ -35,18 +42,22 @@ package questions
 				itemLabel.visible = false;
 				text = new RichEditableText();
 				text.editable = false;
-				
+				text.tabEnabled = false;
+				text.tabFocusEnabled = false;
 				text.setStyle("textAlign", "left");
+				text.setStyle("paddingTop",4);
 				rawChildren.addChild(text);
 			} else {
 				itemLabel.selectable = selectable;
+				itemLabel.tabEnabled = false;
+				itemLabel.tabFocusEnabled = false;
 			}
 		}
 		override protected function commitProperties():void {
 			super.commitProperties();
 			if (multiline) {
 				text.textFlow = TextConverter.importToFlow(itemLabel.text, TextConverter.TEXT_FIELD_HTML_FORMAT);
-				if(hasLink)
+				if(linkEnabled)
 					addLinkClickHandler(linkFunction);
 			}
 			
@@ -70,11 +81,7 @@ package questions
 		
 		public function addLinkClickHandler(linkClickedHandler:Function):void {
 			var link:LinkElement = findLinkElement(text.textFlow);
-			if (link != null) {
-				link.addEventListener(FlowElementMouseEvent.CLICK, linkClickedHandler, false, 0, true);
-			} else {
-				hasLink = false;
-			}
+			link.addEventListener(FlowElementMouseEvent.CLICK, linkClickedHandler, false, 0, true);
 		}
 		
 		private static function findLinkElement(group:FlowGroupElement):LinkElement {
@@ -98,6 +105,12 @@ package questions
 				}
 			}
 			return null;
+		}
+		
+		public function enableLinking(funcToRun:Function):void
+		{
+			linkEnabled = true;
+			linkFunction = funcToRun;
 		}
 	}
 }

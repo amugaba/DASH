@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" xmlns:questions="components.questions.*">
+	<fx:Script>
+		<![CDATA[
+			import components.questions.QuestionForm;
+			import components.questions.QuestionList;
+			import components.questions.QuestionText;
+			import components.validators.Valid;
+			
+			import mx.collections.ArrayList;
+			import mx.controls.Alert;
+			import mx.validators.NumberValidator;
+			import mx.validators.ValidationResult;
+			
+			public var positionList:ArrayList;
+			[Bindable] public var label:String;
+			
+			public function addWorkloadQuestion(event:MouseEvent):void
+			{
+				var position:QuestionList = new QuestionList("workloadPosition","Position",positionList,-1);
+				var percent:QuestionText = new QuestionText("workloadPercent","%","");
+				percent.input.width = 50;
+				
+				Valid.addNumberValidator(position,0);
+				(position.validator as NumberValidator).lowerThanMinError = "This field is required.";
+				Valid.addNumberValidator(percent,0, 100);
+				
+				positionForm.addQuestion(position);
+				percentForm.addQuestion(percent);
+				
+				var button:Button = new Button();
+				button.label = "Remove Position";
+				button.addEventListener(MouseEvent.CLICK, remove_clickHandler);
+				buttonForm.addElement(button);
+			}
+			
+			protected function remove_clickHandler(event:MouseEvent):void
+			{
+				if(buttonForm.numElements == 1)
+					Alert.show("You cannot remove all positions. You must specify at least one.");
+				else
+				{
+					var index:int = buttonForm.getElementIndex(event.target as Button);
+					positionForm.removeQuestionAt(index);
+					percentForm.removeQuestionAt(index);
+					buttonForm.removeElementAt(index);
+				}
+			}
+			
+			//validate all questions in this group and return the result
+			public function validGroup():ArrayList
+			{
+				var results:ArrayList = positionForm.validateForm();
+				results.addAll(percentForm.validateForm());
+				
+				if(results.length == 0)
+				{
+					//check that the percentages add up to 100%
+					var total:Number = 0;
+					for(var i:int = 0; i < percentForm.numElements; i++)
+					{
+						var q:QuestionText = percentForm.getElementAt(i) as QuestionText;
+						var val:Number = parseFloat(q.answer);
+						if(!isNaN(val))
+							total += val;
+					}
+					if(val != 100)
+					{
+						results.addItem("workloadPercent - Percentage values must add up to 100%.");
+						for(i = 0; i < percentForm.numElements; i++)
+						{
+							q = percentForm.getElementAt(i) as QuestionText;
+							q.input.errorString = "Percentage values must add up to 100%.";
+						}
+					}
+				}
+				
+				return results;
+			}
+		]]>
+	</fx:Script>
+	<s:layout>
+		<s:VerticalLayout paddingTop="0"/>
+	</s:layout>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Group>
+		<s:layout>
+			<s:HorizontalLayout/>
+		</s:layout>
+		<s:Label text="{label}" fontWeight="bold" paddingTop="4" width="300"/>
+		<s:Button label="Add Position" click="addWorkloadQuestion(event)"/>
+	</s:Group>
+	
+	<s:Group>
+		<questions:QuestionForm id="positionForm" width="220" height="100%" labelWidth="50" paddingTop="2"/>
+		<questions:QuestionForm id="percentForm" x="200" width="120" height="100%" labelWidth="10" paddingTop="2"/>
+		<questions:QuestionForm id="buttonForm" x="290" height="100%" paddingTop="2"/>
+	</s:Group>
+</s:Group>

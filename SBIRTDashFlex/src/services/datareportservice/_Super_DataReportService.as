@@ -128,7 +128,7 @@ internal class _Super_DataReportService extends com.adobe.fiber.services.wrapper
       *
       * @return an mx.rpc.AsyncToken whose result property will be populated with the result of the operation when the server response is received.
       */
-    public function reportExists(userid:int, month:int, year:int) : mx.rpc.AsyncToken
+    public function reportExists(userid:Object, month:Object, year:Object) : mx.rpc.AsyncToken
     {
         var _internal_operation:mx.rpc.AbstractOperation = _serviceControl.getOperation("reportExists");
 		var _internal_token:mx.rpc.AsyncToken = _internal_operation.send(userid,month,year) ;

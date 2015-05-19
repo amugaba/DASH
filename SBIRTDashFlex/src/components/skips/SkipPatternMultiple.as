@@ -1,7 +1,7 @@
-package skip
+package components.skips
 {
-	import questions.*;
-	
+	import components.questions.QuestionClass;
+
 	public class SkipPatternMultiple extends SkipPattern
 	{
 		public var handler:SkipMultipleHandler;

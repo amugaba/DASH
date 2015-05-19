@@ -1,4 +1,4 @@
-package questions
+package components.questions
 {
 	import flash.display.InteractiveObject;
 	
@@ -15,9 +15,9 @@ package questions
 		public var input:DropDownList;
 		public var defaultValue:int;
 
-		public function QuestionList(label:String,choices:ArrayList,defaultValue:int,editable:Boolean=true)
+		public function QuestionList(codeName:String,label:String,choices:ArrayList,defaultValue:int,editable:Boolean=true)
 		{
-			super(label);
+			super(codeName,label);
 			input = new DropDownList();
 			this.addElement(input);
 			input.dataProvider = choices;
@@ -36,15 +36,14 @@ package questions
 				input.selectedIndex = input.dataProvider.getItemIndex(value);
 		}
 		
-		public function get answerIndex():int
+		public function getAnswerIndex():int
 		{
-			return input.selectedIndex + 1;
+			return input.selectedIndex;
 		}
 		
-		public function set answerIndex(value:int):void
+		public function setAnswerIndex(val:int):void
 		{
-			if(value > 0 && value <= input.dataProvider.length)
-				input.selectedIndex = value - 1;
+			input.selectedIndex = val;
 		}
 		
 		public override function restoreDefault():void

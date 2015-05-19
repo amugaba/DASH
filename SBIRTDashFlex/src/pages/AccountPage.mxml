@@ -2,24 +2,24 @@
 <questions:QuestionPage xmlns:fx="http://ns.adobe.com/mxml/2009" 
 						xmlns:s="library://ns.adobe.com/flex/spark" 
 						xmlns:mx="library://ns.adobe.com/flex/mx" 
-						xmlns:questions="questions.*">
+						xmlns:questions="components.questions.*">
 	<fx:Script>
 		<![CDATA[
 			import mx.core.FlexGlobals;
 			
-			import questions.QuestionClass;
-			import questions.QuestionText;
+			import components.questions.QuestionClass;
+			import components.questions.QuestionText;
 			
 			import spark.components.FormItem;
 			
 			protected var global:SBIRTDashFlex = FlexGlobals.topLevelApplication as SBIRTDashFlex;
 			
 			//private var uniquePatientsLabel:QuestionClass = new QuestionClass("<b>Account Info</b>");
-			private var firstName:QuestionText = new QuestionText("First Name","");
-			private var lastName:QuestionText = new QuestionText("Last Name","");
-			private var orgName:QuestionText = new QuestionText("Organization","");
-			private var emailAddress:QuestionText = new QuestionText("Email Address","");
-			private var phoneNumber:QuestionText = new QuestionText("Phone Number","");
+			private var firstName:QuestionText = new QuestionText("firstName","First Name","");
+			private var lastName:QuestionText = new QuestionText("lastName","Last Name","");
+			private var orgName:QuestionText = new QuestionText("organization","Organization","");
+			private var emailAddress:QuestionText = new QuestionText("email","Email Address","");
+			private var phoneNumber:QuestionText = new QuestionText("phone","Phone Number","");
 			
 
 			public function prepare():void

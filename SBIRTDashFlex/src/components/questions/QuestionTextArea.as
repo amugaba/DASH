@@ -1,4 +1,4 @@
-package questions
+package components.questions
 {
 	import mx.core.UIComponent;
 	import mx.events.ValidationResultEvent;
@@ -13,7 +13,7 @@ package questions
 		
 		public function QuestionTextArea(label:String,defaultValue:String,editable:Boolean=true)
 		{
-			super(label);
+			super("",label);
 			var group:Group = new Group();
 			addElement(group);
 			input = new TextArea();
@@ -22,7 +22,7 @@ package questions
 			input.text = defaultValue;
 			this.enabled = editable;
 			input.width = 500;
-			input.height = 70;
+			input.height = 150;
 			input.x = -400;
 			input.y = 20;
 		}
