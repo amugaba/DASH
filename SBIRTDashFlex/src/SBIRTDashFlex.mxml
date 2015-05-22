@@ -4,7 +4,7 @@
 			   xmlns:pages="pages.*"
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
 			   width="700" height="850" currentState="Login"
-			   backgroundColor.Login="#F3EBD7"
+			   backgroundColor="#E2E6E8" 
 			   width.Main="700" height.Main="850">
 	<fx:Script>
 		<![CDATA[
@@ -19,13 +19,15 @@
 			
 			import spark.components.NavigatorContent;
 			
+			import valueObjects.CostReportVO;
 			import valueObjects.DataReportVO;
 			import valueObjects.UserVO;	
 			
 			public static var DEBUG_MODE:int = 2;//0 = release, 1 = remote debug, 2 = local debug
 			
 			[Bindable] public var activeUser:UserVO = new UserVO();
-			public var activeReport:DataReportVO = null;
+			public var activeDataReport:DataReportVO = null;
+			public var activeCostReport:CostReportVO = null;
 			[Bindable] public var reportList:ArrayCollection = new ArrayCollection();
 			public var monthList:ArrayList = new ArrayList(["January","February","March","April","May","June","July","August","September","October","November","December"]);
 
@@ -59,6 +61,10 @@
 				{
 					pageReporting.tabNavigator.selectedIndex = 0;
 				}
+				if(page == pageFinance)
+				{
+					pageFinance.tabNavigator.selectedIndex = 0;
+				}
 				
 			}	
 			
@@ -85,30 +91,35 @@
 	</fx:Declarations>
 	<pages:LoginPage id="pageLogin" width="100%" height="100%" label="Login" includeIn="Login"/>
 	
-	<mx:ViewStack id="pageViewstack" includeIn="Main" x="0" y="93" width="100%" height="100%"  creationPolicy="all">
+	<mx:ViewStack id="pageViewstack" includeIn="Main" x="0" y="91" width="100%" height="100%"
+				  backgroundColor="#E2E6E8" creationPolicy="all">
 		<pages:HomePage id="pageHome" width="100%" height="100%" label="Home" />
 		<pages:ReportingPage id="pageReporting" width="100%" height="100%" label="Reporting"/> 
 		<pages:FeedbackPage id="pageFeedback" width="100%" height="100%" label="Feedback" />
 		<pages:AccountPage id="pageAccount" width="100%" height="100%" label="Account" />
 		<pages:FinancialPage id="pageFinance" width="100%" height="100%" label="Finance" />
 	</mx:ViewStack>
-	<s:BorderContainer includeIn="Main" x="2" y="3" width="695" height="90"
-					   backgroundColor="#B5DAE3" borderWeight="2" cornerRadius="3"
-					   dropShadowVisible="false">
+	<s:Image x="0" y="0" source="assets/img/DashBanner.jpg" includeIn="Main"/>
+	<s:Group includeIn="Main">
 		<s:layout>
 			<s:BasicLayout/>
 		</s:layout>
 		<s:Button id="homeButton" x="12" y="12" height="52" label="Home"
 				  click="homeButton_clickHandler(event)"/>
-		<s:Button id="logoutButton" x="606" y="12" height="52" label="Logout" click="logoutButton_clickHandler(event)"/>
-		<s:Label id="organizationLabel" y="56" fontSize="20" text="{activeUser.name}"  width="100%" textAlign="center"/>
-		<s:Image x="235" y="3" source="assets/img/SbirtDash5.png"/>
+		<s:Button id="logoutButton" x="606" y="12" height="52" label="Logout"
+				  click="logoutButton_clickHandler(event)"
+				  x.Main="618" y.Main="12"/>
+		<s:Label id="organizationLabel" y="56" width="100%" fontSize="20" text="{activeUser.name}"
+				 textAlign="center"
+				 x.Main="0" y.Main="61"/>
+		<s:Image x="235" y="3" source="assets/img/SbirtDash5.png"
+				 x.Main="235" y.Main="10"/>
 		<!--
 		<s:Label id="totalPrescreensLabel" x="138" y="41" fontSize="14" text="Total Prescreens: 9999"/>
 		<s:Label id="totalServicesLabel" x="138" y="63" fontSize="14" text="Total Services: 9999"/>
 		<s:Label id="reportDueLabel" x="372" y="43" fontSize="14" text="Next Report Due: #####"/>
 		-->
-	</s:BorderContainer>
+	</s:Group>
 	<!--<mx:ToggleButtonBar id="pageButtonBar" includeIn="Main" x="12" y="10" direction="vertical"
 						dataProvider="{pageViewstack}" creationComplete="mainState_enterStateHandler(event)"/>
 	-->

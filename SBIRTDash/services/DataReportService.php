@@ -137,6 +137,39 @@ class DataReportService
         return $reports;
     }
     
+/**
+     * Get all data reports for a user
+     * 
+     * @param int $autoid
+     * @return DataReportVO
+     */
+    public function getDataReportByID($autoid)
+    {
+    	$stmt = $this->connection->prepare("SELECT autoid, userid, month, year, uniquePatients, patientsEligible, prescreens, validPrescreens, alcoholPrescreens, drugPrescreens,
+			bothPrescreens, screens, isNotScreening, possibleScreens, screensOfPossible, educationScores, biScores, btScores,
+			rtScores, bis, bts, rts, otherComments FROM $this->tablename WHERE autoid=?");
+    	$this->throwExceptionOnError();
+
+        $stmt->bind_param('i',$autoid);
+        $this->throwExceptionOnError();
+
+        $stmt->execute();
+        $this->throwExceptionOnError();
+        
+    	$item = new DataReportVO();
+        $stmt->bind_result($item->autoid, $item->userid, $item->month, $item->year, $item->uniquePatients, $item->patientsEligible,
+			$item->prescreens, $item->validPrescreens, $item->alcoholPrescreens, $item->drugPrescreens, $item->bothPrescreens,
+			$item->screens, $item->isNotScreening, $item->possibleScreens, $item->screensOfPossible,
+			$item->educationScores,	$item->biScores, $item->btScores, $item->rtScores, $item->bis, $item->bts, $item->rts,
+			$item->otherComments);
+		
+        $stmt->fetch();
+        $stmt->free_result();
+        $this->connection->close();
+        
+        return $item;
+    }
+    
     /**
      * Check whether a report exists with the given user, month, and year
      * 

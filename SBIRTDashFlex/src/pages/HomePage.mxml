@@ -6,7 +6,8 @@
 					xmlns:gpraservice="services.gpraservice.*"
 					xmlns:styles="com.adobe.fiber.styles.*"
 					xmlns:clientservice="services.clientservice.*"
-					xmlns:datareportservice="services.datareportservice.*">
+					xmlns:datareportservice="services.datareportservice.*"
+					xmlns:costreportservice="services.costreportservice.*">
 	<fx:Script>
 		<![CDATA[
 			import mx.collections.ArrayCollection;
@@ -43,9 +44,9 @@
 			{
 				if(reportDropDown.selectedIndex > -1)
 				{
-					global.activeReport = reportDropDown.selectedItem;
+					global.activeDataReport = reportDropDown.selectedItem;
 					global.pageReporting.initPage();
-					global.pageReporting.populate(global.activeReport);
+					global.pageReporting.populate(global.activeDataReport);
 					global.goToPage(global.pageReporting);
 				}
 			}
@@ -54,8 +55,8 @@
 			{
 				if(reportDropDownFeedback.selectedIndex > -1)
 				{
-					global.activeReport = reportDropDownFeedback.selectedItem;
-					global.pageFeedback.populate(global.activeReport);
+					global.activeDataReport = reportDropDownFeedback.selectedItem;
+					global.pageFeedback.populate(global.activeDataReport);
 					global.goToPage(global.pageFeedback);
 				}
 			}
@@ -78,6 +79,19 @@
 				global.goToPage(global.pageFinance);
 			}
 			
+			protected function loadCostButton_clickHandler(event:MouseEvent):void
+			{
+				getCostReportByIDResult.token = costReportService.getCostReportByID(36);
+			}
+			
+			protected function getCostReportByIDResult_resultHandler(event:ResultEvent):void
+			{
+				global.activeCostReport = getCostReportByIDResult.lastResult;
+				global.pageFinance.initPage();
+				global.pageFinance.populate(global.activeCostReport);
+				global.goToPage(global.pageFinance);
+			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
@@ -85,10 +99,14 @@
 		<datareportservice:DataReportService id="dataReportService"
 											 fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)"
 											 showBusyCursor="true"/>
+		<s:CallResponder id="getCostReportByIDResult" result="getCostReportByIDResult_resultHandler(event)"/>
+		<costreportservice:CostReportService id="costReportService"
+											 fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)"
+											 showBusyCursor="true"/>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:Group y="2" width="600" height="250" horizontalCenter="0">
-		<s:Image source="assets/img/reportingTab.png"/>
+	<s:Group y="5" width="600" height="250" horizontalCenter="0">
+		<s:Image source="assets/img/dataTab.png"/>
 		<s:Group x="237" y="0" width="363" height="100%">
 			<s:Label y="27" fontSize="18" text="Monthly Data" width="100%" textAlign="center"/>
 			<s:RichText y="66" height="32" width="100%" textAlign="center"
@@ -104,8 +122,26 @@
 					  click="loadReportButton_clickHandler(event)"/>
 		</s:Group>
 	</s:Group>
-	<s:Group y="252" width="600" height="250" horizontalCenter="0">
-		<s:Image source="assets/img/mainPageTab2.png"/>
+	<s:Group y="255" width="600" height="250" horizontalCenter="0">
+		<s:Image source="assets/img/costTab.png"/>
+		<s:Group x="237" y="0" width="363" height="100%">
+			<s:Label y="27" fontSize="18" text="Cost Analysis" width="100%" textAlign="center"/>
+			<s:RichText y="66" height="32" width="226" textAlign="center" horizontalCenter="0"
+						text="View statistics on your monthly data and generate PDF reports."/>
+			<s:Group y="116" horizontalCenter="0">
+				<s:Label y="5" text="Select Month:"/>
+				<s:DropDownList id="costDropDown" x="80" dataProvider="{global.reportList}" labelFunction="reportLabelFunction"></s:DropDownList>
+			</s:Group>
+			<s:Button id="newCostButton" y="144" width="120" height="36" label="New Cost Data!" horizontalCenter="0"
+					  click="generateFeedbackButton_clickHandler(event)"/>
+			<s:Button id="costButton" x="20" y="198" label="Go to Financial Page"
+					  click="costButton_clickHandler(event)"/>
+			<s:Button id="loadCostButton" x="20" y="222" label="Load Cost Report"
+					  click="loadCostButton_clickHandler(event)"/>
+		</s:Group>
+	</s:Group>
+	<s:Group y="505" width="600" height="250" horizontalCenter="0">
+		<s:Image source="assets/img/feedbackTab.png"/>
 		<s:Group x="237" y="0" width="363" height="100%">
 			<s:Label y="27" fontSize="18" text="Feedback Reports" width="100%" textAlign="center"/>
 			<s:RichText y="66" height="32" width="226" textAlign="center" horizontalCenter="0"
@@ -116,8 +152,6 @@
 			</s:Group>
 			<s:Button id="generateFeedbackButton" y="144" width="120" height="36" label="Generate Report!" horizontalCenter="0"
 					  click="generateFeedbackButton_clickHandler(event)"/>
-			<s:Button id="costButton" x="20" y="198" label="Go to Financial Page"
-					  click="costButton_clickHandler(event)"/>
 		</s:Group>
 	</s:Group>
 	<!--

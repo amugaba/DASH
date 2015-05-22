@@ -157,6 +157,15 @@
       <parameter name="month" type="opaque"/>
       <parameter name="year" type="opaque"/>
     </function>
+    <function name="getDataReportByID" return-type="DataReportVO">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">opaque</item>
+      </annotation>
+      <parameter name="autoid" type="integer"/>
+    </function>
   </service>
   <entity name="DataReportVO">
     <annotation name="EntityProperties">
@@ -205,5 +214,116 @@
     <property name="bts" type="integer" required="true"/>
     <property name="rts" type="integer" required="true"/>
     <property name="otherComments" type="string" required="true"/>
+  </entity>
+  <service name="CostReportService">
+    <annotation name="ActionScriptGeneration">
+      <item name="Source">CostReportService</item>
+      <item name="ServiceType">RemoteObject</item>
+      <item name="Package">services.costreportservice</item>
+      <item name="Endpoint">http://localhost//DASH/SBIRTDash/public/gateway.php</item>
+      <item name="Destination">CostReportService</item>
+    </annotation>
+    <annotation name="ServiceTypeGroup">
+      <item name="ServiceBackendType">com.zend.php.flashbuilder.php</item>
+    </annotation>
+    <annotation name="ServiceConfig">
+      <item name="PHP_RELATIVE_LOCATION">DASH/SBIRTDash/services/CostReportService.php</item>
+      <item name="PHP_SERVER_ROOT">C:/wamp/www</item>
+      <item name="PHP_WORKSPACE_LOCATION">/SBIRTDash/services/CostReportService.php</item>
+      <item name="DEFAULT_ENTITY_PACKAGE">valueObjects</item>
+      <item name="PHP_SERVICES_FOLDER">C:/wamp/www/DASH/SBIRTDash/public/bin-debug/services</item>
+      <item name="PHP_LOCATION">C:/wamp/www/DASH/SBIRTDash/services/CostReportService.php</item>
+      <item name="LINKED_FILE">CostReportService.php</item>
+      <item name="PHP_SERVER_ROOT_URL">http://localhost/</item>
+      <item name="ABSOLUTE_ENDPOINT">http://localhost//DASH/SBIRTDash/public/gateway.php</item>
+      <item name="PHP_CLASS_NAME">CostReportService</item>
+    </annotation>
+    <function name="createCostReport" return-type="CostReportVO">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="ValidProperties">
+        <item name="propertySpecifier">autoid,userid,dataReportID,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">CostReportVO</item>
+      </annotation>
+      <parameter name="item" type="CostReportVO"/>
+    </function>
+    <function name="getCostReportByID" return-type="CostReportVO">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">opaque</item>
+      </annotation>
+      <parameter name="autoid" type="opaque"/>
+    </function>
+  </service>
+  <entity name="CostReportVO">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">CostReportVO</item>
+      <item name="location">C:/wamp/www/DASH/SBIRTDash/services/CostReportVO.php</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">CostReportVO</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="createCostReport">
+      <item name="propertySpecifier">autoid,userid,dataReportID,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">CostReportService</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+    <annotation name="getCostReportByID">
+      <item name="propertySpecifier">autoid,userid,dataReportID,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
+    </annotation>
+    <property name="autoid" type="integer"/>
+    <property name="userid" type="integer"/>
+    <property name="dataReportID" type="integer"/>
+    <property name="salaries" type="opaque[]"/>
+    <property name="prescreenTime" type="integer"/>
+    <property name="screenTime" type="integer"/>
+    <property name="educationTime" type="integer"/>
+    <property name="biTime" type="integer"/>
+    <property name="rtTime" type="integer"/>
+    <property name="adminTime" type="integer"/>
+    <property name="trainingTime" type="integer"/>
+    <property name="supportTime" type="integer"/>
+    <property name="otherTime" type="integer"/>
+    <property name="otherTimeSpec" type="string"/>
+    <property name="workloadPrescreen" type="opaque[]"/>
+    <property name="workloadScreen" type="opaque[]"/>
+    <property name="workloadEducation" type="opaque[]"/>
+    <property name="workloadBI" type="opaque[]"/>
+    <property name="workloadRT" type="opaque[]"/>
+    <property name="workloadAdmin" type="opaque[]"/>
+    <property name="workloadTraining" type="opaque[]"/>
+    <property name="workloadSupport" type="opaque[]"/>
+    <property name="workloadOther" type="opaque[]"/>
+    <property name="tech" type="integer"/>
+    <property name="supplies" type="integer"/>
+    <property name="otherCost" type="integer"/>
+    <property name="otherCostSpec" type="string"/>
+    <property name="facilityCost" type="integer"/>
+    <property name="facilityPercent" type="integer"/>
+    <property name="prescreenTotal" type="integer"/>
+    <property name="screenTotal" type="integer"/>
+    <property name="educationTotal" type="integer"/>
+    <property name="biTotal" type="integer"/>
+    <property name="rtTotal" type="integer"/>
+    <property name="adminTotal" type="integer"/>
+    <property name="trainingTotal" type="integer"/>
+    <property name="supportTotal" type="integer"/>
+    <property name="otherTotal" type="integer"/>
+    <property name="serviceTotal" type="integer"/>
+    <property name="nonserviceTotal" type="integer"/>
+    <property name="expenseTotal" type="integer"/>
+    <property name="grandTotal" type="integer"/>
+    <property name="perPatientCost" type="integer"/>
+    <property name="comments" type="string"/>
   </entity>
 </model>

@@ -5,48 +5,136 @@ Position and Salary have validators.
 getPosition and getSalary return the appropriate values.
 Delete button destroys the item and removes it from the parent container.
 -->
-<questions:QuestionForm xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" xmlns:questions="components.questions.*"
-		 creationComplete="creationCompleteHandler(event)" labelWidth="50" paddingTop="0" paddingBottom="0">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" xmlns:questions="components.questions.*">
+	<s:layout>
+		<s:VerticalLayout gap="5"/>
+	</s:layout>
 	<fx:Script>
 		<![CDATA[
+			import components.questions.QuestionClass;
 			import components.questions.QuestionForm;
 			import components.questions.QuestionList;
 			import components.questions.QuestionText;
 			import components.validators.Valid;
 			
+			import mx.collections.ArrayCollection;
 			import mx.collections.ArrayList;
+			import mx.controls.Alert;
 			import mx.events.FlexEvent;
 			
-			private var qPosition:QuestionText = new QuestionText("salaryPosition","Position","");
-			private var qSalary:QuestionText = new QuestionText("salaryAmount","Salary","");
+			import spark.components.Button;
 			
-			protected function creationCompleteHandler(event:FlexEvent):void
+			public function addAnotherPosition(event:MouseEvent):void
 			{
-				addQuestion(qPosition);
-				addQuestion(qSalary);
-				group.addElement(qPosition);
-				group.addElement(qSalary);
-				group.addElementAt(removeButton, group.numElements-1);
+				var qPosition:QuestionText = new QuestionText("salaryPosition","Position","");
+				var qSalary:QuestionText = new QuestionText("salaryAmount","Salary","");
 				
 				Valid.addRequiredValidator(qPosition);
 				Valid.addNumberValidator(qSalary);
+				
+				positionForm.addQuestion(qPosition);
+				salaryForm.addQuestion(qSalary);
+				
+				var button:Button = new Button();
+				button.label = "Remove Position";
+				button.addEventListener(MouseEvent.CLICK, remove_clickHandler);
+				buttonForm.addElement(button);
 			}
 			
 			protected function remove_clickHandler(event:MouseEvent):void
 			{
-				(parent as Group).removeElement(this);
+				if(buttonForm.numElements == 1)
+					Alert.show("You cannot remove all positions. You must specify at least one.");
+				else
+				{
+					var index:int = buttonForm.getElementIndex(event.target as Button);
+					positionForm.removeQuestionAt(index);
+					salaryForm.removeQuestionAt(index);
+					buttonForm.removeElementAt(index);
+				}
 			}
 			
-			public function get position():String
+			//validate all questions in this group and return the result
+			public function validateGroup():ArrayList
 			{
-				return qPosition.answer;
+				var results:ArrayList = positionForm.validateForm();
+				results.addAll(salaryForm.validateForm());
+				
+				if(results.length == 0)
+				{
+					//check that all position names are unique
+					for(var i:int = 0; i < positionForm.numElements; i++)
+					{
+						var q1:QuestionText = positionForm.getElementAt(i) as QuestionText;
+						q1.input.errorString = "";
+						
+						//compare this name to all subsequent names
+						for(var j:int = i+1; j < positionForm.numElements; j++)
+						{
+							var q2:QuestionText = positionForm.getElementAt(j) as QuestionText;
+							if(q2.answer == q1.answer)
+							{
+								results.addItem("salaries - All positions must have unique names.");
+								q1.input.errorString = "All positions must have unique names.";
+							}
+						}
+					}
+				}
+				
+				return results;
 			}
 			
-			public function get salary():Number
+			public function getSalariesMap():Object
 			{
-				return parseFloat(qSalary.answer);
+				var salaryDict:Object = new Object();
+				for(var i:int = 0; i < positionForm.questions.length; i++)
+				{
+					var qPos:QuestionClass = positionForm.questions[i];
+					var qSal:QuestionClass = salaryForm.questions[i];
+					salaryDict[qPos.answer] = parseFloat(qSal.answer);
+				}
+				return salaryDict;
+			}
+			
+			public function getPositions():ArrayList
+			{
+				var positions:ArrayList = new ArrayList();
+				for(var i:int = 0; i < positionForm.questions.length; i++)
+				{
+					positions.addItem(positionForm.questions[i].answer);
+				}
+				return positions;
+			}
+			
+			public function populateSalaries(keypairs:ArrayCollection):void
+			{
+				clearQuestions();
+				for(var position:String in keypairs.source)
+				{
+					var salary:Number = keypairs.source[position];
+					addAnotherPosition(null);
+					positionForm.questions[positionForm.questions.length-1].answer = position;
+					salaryForm.questions[salaryForm.questions.length-1].answer = salary.toString();
+				}
+			}
+			
+			public function clearQuestions():void
+			{
+				while(positionForm.questions.length > 0)
+				{
+					var i:int = positionForm.questions.length - 1;
+					positionForm.removeQuestionAt(i);
+					salaryForm.removeQuestionAt(i);
+					buttonForm.removeElementAt(i);
+				}
+			}
+			
+			public function reset():void
+			{
+				clearQuestions();
+				addAnotherPosition(null);
 			}
 			
 		]]>
@@ -54,10 +142,14 @@ Delete button destroys the item and removes it from the parent container.
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:Group id="group">
-		<s:layout>
-			<s:HorizontalLayout gap="25" paddingTop="0" paddingBottom="0"/>
-		</s:layout>
-		<s:Button id="removeButton" label="Remove Position" click="remove_clickHandler(event)"/>
+	<s:Group>
+		
+	
+		<questions:QuestionForm id="positionForm" width="250" height="100%" labelWidth="47" paddingTop="2"/>
+		<questions:QuestionForm id="salaryForm" x="210" width="220" height="100%" labelWidth="35" paddingTop="2"/>
+		<questions:QuestionForm id="buttonForm" x="410" height="100%" paddingTop="2"/>
 	</s:Group>
-</questions:QuestionForm>
+	<s:Group>
+		<s:Button id="addPositionButton" x="167" label="Add Another Position" click="addAnotherPosition(event)"/>
+	</s:Group>
+</s:Group>

@@ -261,7 +261,7 @@
 				report.year = parseInt(year.answer);
 				
 				if(updatingData)
-					report = global.activeReport;
+					report = global.activeDataReport;
 				
 				report.uniquePatients = parseInt(uniquePatients.answer);
 				report.patientsEligible = parseInt(patientsEligible.answer);
@@ -324,9 +324,11 @@
 				if(report != null)
 				{
 					Alert.show("Report submitted successfully!");
-					global.activeReport = report;
+					global.activeDataReport = report;
 					updatingData = true;
 					submitButton.label = "Update Data!";
+					month.input.enabled = false;
+					year.input.enabled = false;
 				}
 			}
 			

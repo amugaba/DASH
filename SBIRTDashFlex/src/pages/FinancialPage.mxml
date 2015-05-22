@@ -5,6 +5,8 @@
 						xmlns:questions="components.questions.*"
 						xmlns:pages="pages.*"
 						xmlns:datareportservice="services.datareportservice.*"
+						xmlns:components="components.*"
+						xmlns:costreportservice="services.costreportservice.*"
 						width="100%" height="100%">
 	<fx:Script>
 		<![CDATA[
@@ -22,7 +24,9 @@
 			import mx.core.FlexGlobals;
 			import mx.events.IndexChangedEvent;
 			import mx.rpc.events.ResultEvent;
+			import mx.validators.NumberValidator;
 			
+			import valueObjects.CostReportVO;
 			import valueObjects.DataReportVO;
 			
 			protected var global:SBIRTDashFlex = FlexGlobals.topLevelApplication as SBIRTDashFlex;
@@ -38,9 +42,7 @@
 			private var yn:ArrayList = new ArrayList(["Yes","No"]);
 			[Bindable] private var positionList:ArrayList = new ArrayList();
 			
-			//private var month:QuestionList = new QuestionList("month","For what month are you reporting cost?",global.monthList,-1);
-			//private var year:QuestionList = new QuestionList("year","For what year?", new ArrayList([year1, year2]),0);
-			private var dataReportQuestion:QuestionList = new QuestionList("dataReport","For what period are you reporting costs? (This list contains months for which you have already submitted SBIRT data.)", new ArrayList(),0);
+			private var dataReportQuestion:QuestionList = new QuestionList("dataReport","For what period are you reporting costs? (This list contains months for which you have already submitted SBIRT data.)", new ArrayList(),-1);
 			
 			private var prescreenEstimate:QuestionText = new QuestionText("prescreenEstimate","Prescreening","");
 			private var screenEstimate:QuestionText = new QuestionText("screenEstimate","<a>Full Screening</a>","");
@@ -50,7 +52,7 @@
 			
 			private var administrationTime:QuestionText = new QuestionText("administrationTime","Project administration (e.g. meetings, planning, creating reports)","");
 			private var trainingTime:QuestionText = new QuestionText("trainingTime","Training (including travel time to training location)","");
-			private var supportTime:QuestionText = new QuestionText("supportTime","Staff activities (e.g. preparing handouts, daily huddle about SBIRT)","");
+			private var supportTime:QuestionText = new QuestionText("supportTime","Support activities (e.g. preparing handouts, daily huddle about SBIRT)","");
 			private var otherTime:QuestionText = new QuestionText("otherTime","Other","");
 			private var otherTimeSpec:QuestionText = new QuestionText("otherTimeSpecify"," ---- If 'Other' is non-zero, please describe activities:","");
 			
@@ -61,6 +63,23 @@
 			
 			private var facilityTotal:QuestionText = new QuestionText("facilityCost","What is the total monthly cost of your facility (e.g. rent, utilities, and other building expenses)?","");
 			private var facilityPercent:QuestionText = new QuestionText("facilityPercent","What percentage (%) of your clinic’s total time is spent on SBIRT? (This value will likely be between 1% and 5%.)","");
+			
+			//Summary Calculations
+			private var prescreenFinalCost:Number;
+			private var screenFinalCost:Number;
+			private var educationFinalCost:Number;
+			private var interventionFinalCost:Number;
+			private var referralFinalCost:Number;
+			private var adminTotalCost:Number;
+			private var trainingTotalCost:Number;
+			private var supportTotalCost:Number;
+			private var otherTotalCost:Number;
+			private var totalServiceCost:Number;
+			private var totalNonServiceCost:Number;
+			private var expensesCost:Number;
+			private var totalCost:Number;
+			private var totalCostPerPatient:Number;
+			private var salaryDict:Object;
 			
 			public function initPage():void
 			{
@@ -83,15 +102,16 @@
 				}
 				
 				//Page 1 - Maybe there should be an explanation about using the help links
-				//addQuestionOther(month, salaryForm);
-				//addQuestionOther(year, salaryForm);
-				addQuestionOther(dataReportQuestion, salaryForm);
+				salaryForm.addQuestion(dataReportQuestion);
+				dataReportQuestion.text.setStyle("paddingLeft",QUESTION_INDENT);
+				Valid.addNumberValidator(dataReportQuestion,0);
+				(dataReportQuestion.validator as NumberValidator).lowerThanMinError = "This field is required.";
 				salaryForm.addDivider();
 				
 				salaryForm.createText("1. Average Staff Salaries","h1",675);
 				salaryForm.createText("Please name each type of employee involved with SBIRT and provide that position’s average annual salary (include any benefits and other compensation you pay). For example, Medical Assistant - $30,000. You will use these positions later when estimating the cost of services. Common positions include administrator, medical assistant, front desk, physician, nurse practitioner, and/or behavioral health specialist, but your clinic may include different roles.","ital",675);
-				salaryForm.addElementAt(salaryGroup,salaryForm.numElements);
-				addSalaryQuestion();
+				salaryForm.addElementAt(salaryQuestion,salaryForm.numElements);
+				salaryQuestion.addAnotherPosition(null);
 				salaryForm.addDivider();
 				
 				//Page 2
@@ -161,11 +181,6 @@
 				Valid.addNumberValidator(facilityPercent,0,100);
 			}
 			
-			protected function addSalaryQuestion():void
-			{
-				salaryGroup.addElementAt(new SalaryQuestion(), salaryGroup.numElements-1);
-			}
-			
 			protected function addQuestionNumber(q:QuestionClass, form:QuestionForm, width:int=-1):void
 			{
 				form.addQuestion(q,width);
@@ -200,13 +215,21 @@
 				tabNavigator.selectedIndex = 0; 
 				updatingData = false;
 				submitButton.label = "Submit Data!";
+				dataReportQuestion.enabled = true;
 				salaryForm.reset();
+				salaryQuestion.reset();
+				positionList = new ArrayList();
 				timeForm.reset();
-			}
-			
-			protected function addPositionButton_clickHandler(event:MouseEvent):void
-			{
-				addSalaryQuestion();
+				workloadPrescreen.reset();
+				workloadScreen.reset();
+				workloadEducation.reset();
+				workloadIntervention.reset();
+				workloadReferral.reset();
+				workloadAdmin.reset();
+				workloadTraining.reset();
+				workloadSupport.reset();
+				workloadOther.reset();
+				expenseForm.reset();
 			}
 			
 			protected function tabNavigator_changeHandler(event:IndexChangedEvent):void
@@ -215,10 +238,13 @@
 				{
 					updatePositions();
 				}
-				else if(event.newIndex == CALC_INDEX) //or maybe this should be when moving to calculation page
+				if(event.newIndex == CALC_INDEX) //or maybe this should be when moving to calculation page
 				{
-					if(validateCost().length == 0)
+					var results:ArrayList = validateCost(); 
+					if(results.length == 0)
 						calculateSummary();
+					else
+						Alert.show("Cost was not calculated because the following questions had errors. Please complete them correctly and then return to this tab.\n\n" + results.source.join("\n"), "Cost Not Calculated");
 				}
 				
 			}
@@ -229,66 +255,98 @@
 				dataReport = dataReportQuestion.input.selectedItem;
 				sumNumPrescreen.text = dataReport.prescreens.toString();//need to get this before testing
 				sumNumScreen.text = dataReport.screens.toString();
+				sumNumEducation.text = dataReport.educationScores.toString();
 				sumNumIntervention.text = (dataReport.bis + dataReport.bts).toString();
 				sumNumReferral.text = dataReport.rts.toString();
 				
 				//draw times from time page
 				sumTimePrescreen.text = prescreenEstimate.answer;
 				sumTimeScreen.text = screenEstimate.answer;
+				sumTimeEducation.text = educationEstimate.answer;
 				sumTimeIntervention.text = interventionEstimate.answer;
 				sumTimeReferral.text = referralEstimate.answer;
 				
 				//calculate total time
 				var prescreenTimeCalc:Number = dataReport.prescreens * parseFloat(prescreenEstimate.answer);
 				var screenTimeCalc:Number = dataReport.screens * parseFloat(screenEstimate.answer);
+				var educationTimeCalc:Number = dataReport.educationScores * parseFloat(educationEstimate.answer);
 				var interventionTimeCalc:Number = (dataReport.bis + dataReport.bts) * parseFloat(interventionEstimate.answer);
 				var referralTimeCalc:Number = dataReport.rts * parseFloat(referralEstimate.answer);
 				
 				//calculate cost rate from salary and workload
-				//make dictionary of position costs
-				var salaryDict:Object = new Object();
-				for(var i:int = 0; i < salaryGroup.numElements; i++)
-				{
-					var elem:Object = salaryGroup.getElementAt(i)
-					if(elem is SalaryQuestion)
-					{
-						var qf:SalaryQuestion = elem as SalaryQuestion;
-						salaryDict[qf.position] = qf.salary;
-					}
-				}
+				salaryDict = salaryQuestion.getSalariesMap();
 				
 				var prescreenRate:Number = getSalaryPerMinute(workloadPrescreen.positionForm, workloadPrescreen.percentForm, salaryDict);
-				sumCostPrescreen.text = prescreenRate.toString();
+				sumCostPrescreen.text = roundCost(prescreenRate);
 				var screenRate:Number = getSalaryPerMinute(workloadScreen.positionForm, workloadScreen.percentForm, salaryDict);
-				sumCostScreen.text = screenRate.toString();
+				sumCostScreen.text = roundCost(screenRate);
+				var educationRate:Number = getSalaryPerMinute(workloadEducation.positionForm, workloadEducation.percentForm, salaryDict);
+				sumCostEducation.text = roundCost(educationRate);
 				var interventionRate:Number = getSalaryPerMinute(workloadIntervention.positionForm, workloadIntervention.percentForm, salaryDict);
-				sumCostIntervention.text = interventionRate.toString();
+				sumCostIntervention.text = roundCost(interventionRate);
 				var referralRate:Number = getSalaryPerMinute(workloadReferral.positionForm, workloadReferral.percentForm, salaryDict);
-				sumCostReferral.text = referralRate.toString();
+				sumCostReferral.text = roundCost(referralRate);
 				
 				//calculate total cost
-				var prescreenFinalCost:Number = prescreenRate * prescreenTimeCalc;
-				var screenFinalCost:Number = screenRate * screenTimeCalc;
-				var interventionFinalCost:Number = interventionRate * interventionTimeCalc;
-				var referralFinalCost:Number = referralRate * referralTimeCalc;
-				sumTotalCostPrescreen.text = prescreenFinalCost.toString();
-				sumTotalCostScreen.text = screenFinalCost.toString();
-				sumTotalCostIntervention.text = interventionFinalCost.toString();
-				sumTotalCostReferral.text = referralFinalCost.toString();
+				prescreenFinalCost = prescreenRate * prescreenTimeCalc;
+				screenFinalCost = screenRate * screenTimeCalc;
+				educationFinalCost = educationRate * educationTimeCalc;
+				interventionFinalCost = interventionRate * interventionTimeCalc;
+				referralFinalCost = referralRate * referralTimeCalc;
+				sumTotalCostPrescreen.text = roundCost(prescreenFinalCost);
+				sumTotalCostScreen.text = roundCost(screenFinalCost);
+				sumTotalCostEducation.text = roundCost(educationFinalCost);
+				sumTotalCostIntervention.text = roundCost(interventionFinalCost);
+				sumTotalCostReferral.text = roundCost(referralFinalCost);
 				
 				//sum costs
-				var totalServiceCost:Number = prescreenFinalCost + screenFinalCost + interventionFinalCost + referralFinalCost;
-				sumServices.text = totalServiceCost.toString();
+				totalServiceCost = prescreenFinalCost + screenFinalCost + educationFinalCost + interventionFinalCost + referralFinalCost;
+				sumServices.text = roundCost(totalServiceCost);
 				
-				//OH SHIT, need workload percentages for non-service time activities too
-				//split it up in Service Time page, Service Workload page, NonService Time page, and NonService Workload page
-				var totalNonServiceCost:Number = parseFloat(techCost.answer) + parseFloat(suppliesCost.answer) + parseFloat(otherCost.answer) + parseFloat(facilityTotal.answer) * parseFloat(facilityPercent.answer)/100.0;
-				sumNonService.text = totalNonServiceCost.toString();
+				//Non-service activities
+				//draw times from time page
+				sumAdminHours.text = administrationTime.answer;
+				sumTrainingHours.text = trainingTime.answer;
+				sumSupportHours.text = supportTime.answer;
+				sumOtherHours.text = otherTime.answer;
 				
-				var totalCost:Number = totalServiceCost + totalNonServiceCost;
-				sumGrandTotal.text = totalCost.toString();
-				var totalCostPerPatient:Number = totalCost / dataReport.prescreens;
-				sumPatientPrescreened.text = totalCostPerPatient.toString();
+				//caculate rate from salary and workload
+				var adminRate:Number = getSalaryPerMinute(workloadAdmin.positionForm, workloadAdmin.percentForm, salaryDict) * 60;
+				sumAdminCost.text = roundCost(adminRate);
+				var trainingRate:Number = getSalaryPerMinute(workloadTraining.positionForm, workloadTraining.percentForm, salaryDict) * 60;
+				sumTrainingCost.text = roundCost(trainingRate);
+				var supportRate:Number = getSalaryPerMinute(workloadSupport.positionForm, workloadSupport.percentForm, salaryDict) * 60;
+				sumSupportCost.text = roundCost(supportRate);
+				var otherRate:Number = getSalaryPerMinute(workloadOther.positionForm, workloadOther.percentForm, salaryDict) * 60;
+				sumOtherCost.text = roundCost(otherRate);
+				
+				//calculate total cost
+				adminTotalCost = adminRate * parseFloat(administrationTime.answer);
+				trainingTotalCost = trainingRate * parseFloat(trainingTime.answer);
+				supportTotalCost = supportRate * parseFloat(supportTime.answer);
+				otherTotalCost = otherRate * parseFloat(otherTime.answer);
+				sumAdminTotalCost.text = roundCost(adminTotalCost);
+				sumTrainingTotalCost.text = roundCost(trainingTotalCost);
+				sumSupportTotalCost.text = roundCost(supportTotalCost);
+				sumOtherTotalCost.text = roundCost(otherTotalCost);
+				
+				//sum costs
+				totalNonServiceCost = adminTotalCost + trainingTotalCost + supportTotalCost + otherTotalCost;
+				sumNonService.text = roundCost(totalNonServiceCost);
+				
+				//Expenses cost
+				expensesCost = parseFloat(techCost.answer) + parseFloat(suppliesCost.answer) + parseFloat(otherCost.answer) + parseFloat(facilityTotal.answer) * parseFloat(facilityPercent.answer)/100.0;
+				sumExpenses.text = roundCost(expensesCost);
+				
+				totalCost = totalServiceCost + totalNonServiceCost + expensesCost;
+				sumGrandTotal.text = roundCost(totalCost);
+				totalCostPerPatient = totalCost / dataReport.prescreens;
+				sumPatientPrescreened.text = roundCost(totalCostPerPatient);
+			}
+			
+			protected function roundCost(val:Number):String
+			{
+				return (Math.round(val*100)/100).toString();
 			}
 			
 			protected function getSalaryPerMinute(positionForm:QuestionForm, percentForm:QuestionForm, salaryDict:Object):Number
@@ -296,8 +354,8 @@
 				var yearlySalary:Number = 0;
 				for(var i:int = 0; i < positionForm.numElements; i++)
 				{
-					var position:String = (positionForm.getElementAt(i) as QuestionList).answer;
-					var percent:Number = parseFloat((percentForm.getElementAt(i) as QuestionText).answer) / 100.0;
+					var position:String = positionForm.questions[i].answer;
+					var percent:Number = parseFloat(percentForm.questions[i].answer) / 100.0;
 					yearlySalary += (salaryDict[position] as Number) * percent;
 				}
 				
@@ -308,30 +366,32 @@
 			protected function validateCost():ArrayList
 			{
 				//Validate all active pages
-				var results:ArrayList = new ArrayList();
+				var results:ArrayList = salaryForm.validateForm();
 				
 				//salary questions
-				for(var i:int = 0; i < salaryGroup.numElements; i++)
-				{
-					var elem:Object = salaryGroup.getElementAt(i)
-					if(elem is SalaryQuestion)
-					{
-						results.addAll((elem as SalaryQuestion).validateForm());
-					}
-				}
+				results.addAll(salaryQuestion.validateGroup());
 				
 				//time
-				results.addAll(timeForm.validateForm());
+				if(timeForm.validateForm().length > 0)
+					results.addItem("Time - Record a number for all time estimates.");
 				
 				//workload
-				results.addAll(workloadPrescreen.validGroup());
-				results.addAll(workloadScreen.validGroup());
-				results.addAll(workloadEducation.validGroup());
-				results.addAll(workloadIntervention.validGroup());
-				results.addAll(workloadReferral.validGroup());
+				var workErrors:int = 0;
+				workErrors += workloadPrescreen.validGroup().length;
+				workErrors += workloadScreen.validGroup().length;
+				workErrors += workloadEducation.validGroup().length;
+				workErrors += workloadIntervention.validGroup().length;
+				workErrors += workloadReferral.validGroup().length;
+				workErrors += workloadAdmin.validGroup().length;
+				workErrors += workloadTraining.validGroup().length;
+				workErrors += workloadSupport.validGroup().length;
+				workErrors += workloadOther.validGroup().length;
+				if(workErrors > 0)
+					results.addItem("Workload - Specify at least one position for each activity and record a % for each position.\n\tPercent values must add up to 100%.");
 				
 				//expense
-				results.addAll(expenseForm.validateForm());
+				if(expenseForm.validateForm().length > 0)
+					results.addItem("Expense - Record a number for all expenses.");
 				
 				return results;
 			}
@@ -339,32 +399,26 @@
 			protected function updatePositions():void
 			{
 				//If the salaries form is correct, update positionList
-				var tempList:ArrayList = new ArrayList();
-				for(var i:int = 0; i < salaryGroup.numElements; i++)
+				if(salaryQuestion.validateGroup().length == 0)
 				{
-					var elem:Object = salaryGroup.getElementAt(i)
-					if(elem is SalaryQuestion)
+					//get all positions
+					var tempList:ArrayList = salaryQuestion.getPositions();
+				
+					//Remove from positionList, any element in it that is not in tempList
+					//Then add any element in tempList that is not in positionList
+					var deleteList:ArrayList = new ArrayList();
+					for each(var s:String in positionList.source)
 					{
-						var qf:SalaryQuestion = elem as SalaryQuestion;
-						if(qf.validateForm().length == 0)
-							tempList.addItem(qf.position);
+						if(tempList.getItemIndex(s) == -1)
+							deleteList.addItem(s);
 					}
+					for each(s in deleteList.source)
+						positionList.removeItem(s);
+					
+					for each(s in tempList.source)
+						if(positionList.getItemIndex(s) == -1)
+							positionList.addItem(s);
 				}
-				
-				//Remove from positionList, any element in it that is not in tempList
-				//Then add any element in tempList that is not in positionList
-				var deleteList:ArrayList = new ArrayList();
-				for each(var s:String in positionList.source)
-				{
-					if(tempList.getItemIndex(s) == -1)
-						deleteList.addItem(s);
-				}
-				for each(s in deleteList.source)
-				positionList.removeItem(s);
-				
-				for each(s in tempList.source)
-				if(positionList.getItemIndex(s) == -1)
-					positionList.addItem(s);
 			}
 			
 			protected function submitButton_clickHandler(event:MouseEvent):void
@@ -372,10 +426,11 @@
 				var results:ArrayList = validateCost();
 				if(results.length > 0)
 				{
-					Alert.show(results.source.join("\n"), "DCI NOT SAVED: Correct the errors below"); 
+					Alert.show(results.source.join("\n"), "COST NOT SAVED: Correct the errors below"); 
 				}
 				else
 				{
+					createCostReport();
 				}
 			}
 			
@@ -391,11 +446,157 @@
 				return global.monthList.getItemAt(report.month-1) + " " + report.year;
 			}
 			
+			
+			protected function createCostReport():void
+			{
+				var report:CostReportVO = new CostReportVO();
+				report.userid = global.activeUser.autoid;
+				report.dataReportID = (dataReportQuestion.input.selectedItem as DataReportVO).autoid;
+				
+				//Salaries
+				report.salaries = salaryDict;
+				
+				//Times
+				report.prescreenTime = parseFloat(prescreenEstimate.answer);
+				report.screenTime = parseFloat(screenEstimate.answer);
+				report.educationTime = parseFloat(educationEstimate.answer);
+				report.biTime = parseFloat(interventionEstimate.answer);
+				report.rtTime = parseFloat(referralEstimate.answer);
+				report.adminTime = parseFloat(administrationTime.answer);
+				report.trainingTime = parseFloat(trainingTime.answer);
+				report.supportTime = parseFloat(supportTime.answer);
+				report.otherTime = parseFloat(otherTime.answer);
+				report.otherTimeSpec = otherTimeSpec.answer;
+				
+				//Workloads
+				report.workloadPrescreen = workloadPrescreen.getWorkloadsMap();
+				report.workloadScreen = workloadScreen.getWorkloadsMap();
+				report.workloadEducation = workloadEducation.getWorkloadsMap();
+				report.workloadBI = workloadIntervention.getWorkloadsMap();
+				report.workloadRT = workloadReferral.getWorkloadsMap();
+				report.workloadAdmin = workloadAdmin.getWorkloadsMap();
+				report.workloadTraining = workloadTraining.getWorkloadsMap();
+				report.workloadSupport = workloadSupport.getWorkloadsMap();
+				report.workloadOther = workloadOther.getWorkloadsMap();
+				
+				//Expenses
+				report.tech = parseFloat(techCost.answer);
+				report.supplies = parseFloat(suppliesCost.answer);
+				report.otherCost = parseFloat(otherCost.answer);
+				report.otherCostSpec = otherCostSpec.answer;
+				report.facilityCost = parseFloat(facilityTotal.answer);
+				report.facilityPercent = parseFloat(facilityPercent.answer);
+				
+				//Computed costs
+				report.prescreenTotal = prescreenFinalCost;
+				report.screenTotal = screenFinalCost;
+				report.educationTotal = educationFinalCost;
+				report.biTotal = interventionFinalCost;
+				report.rtTotal = referralFinalCost;
+				report.adminTotal = adminTotalCost;
+				report.trainingTotal = trainingTotalCost;
+				report.supportTotal = supportTotalCost;
+				report.otherTotal = otherTotalCost;
+				report.serviceTotal = totalServiceCost;
+				report.nonserviceTotal = totalNonServiceCost;
+				report.expenseTotal = expensesCost;
+				report.grandTotal = totalCost;
+				report.perPatientCost = totalCostPerPatient;
+				
+				report.comments = sumComments.text;
+				
+				if(updatingData)
+				{
+					report.autoid = global.activeCostReport.autoid;
+					global.activeCostReport = report;
+					//update service
+				}
+				else
+					createCostReportResult.token = costReportService.createCostReport(report);
+			}
+			
+			protected function createCostReportResult_resultHandler(event:ResultEvent):void
+			{
+				Alert.show("Cost report saved!");
+				global.activeCostReport = createCostReportResult.lastResult;
+				updatingData = true;
+				submitButton.label = "Update Data!";
+				dataReportQuestion.enabled = false;
+			}
+			
+			public function populate(report:CostReportVO):void
+			{
+				updatingData = true;
+				submitButton.label = "Update Data!";
+				dataReportQuestion.enabled = false;
+				global.activeCostReport = report;
+				
+				//getDataReports then set current report
+				getDataReportsPopulatingResult.token = dataReportService.getDataReports(global.activeUser.autoid);
+				
+				//salaries
+				salaryQuestion.populateSalaries(report.salaries);
+				positionList = salaryQuestion.getPositions();
+				
+				//times
+				prescreenEstimate.answer = report.prescreenTime.toString();
+				screenEstimate.answer = report.screenTime.toString();
+				educationEstimate.answer = report.educationTime.toString();
+				interventionEstimate.answer = report.biTime.toString();
+				referralEstimate.answer = report.rtTime.toString();
+				administrationTime.answer = report.adminTime.toString();
+				trainingTime.answer = report.trainingTime.toString();
+				supportTime.answer = report.supportTime.toString();
+				otherTime.answer = report.otherTime.toString();
+				otherTimeSpec.answer = report.otherTimeSpec;
+				
+				//workloads
+				workloadPrescreen.populateWorkloads(report.workloadPrescreen);
+				workloadScreen.populateWorkloads(report.workloadScreen);
+				workloadEducation.populateWorkloads(report.workloadEducation);
+				workloadIntervention.populateWorkloads(report.workloadBI);
+				workloadReferral.populateWorkloads(report.workloadRT);
+				workloadAdmin.populateWorkloads(report.workloadAdmin);
+				workloadTraining.populateWorkloads(report.workloadTraining);
+				workloadSupport.populateWorkloads(report.workloadSupport);
+				workloadOther.populateWorkloads(report.workloadOther);
+				
+				//Expenses
+				techCost.answer = report.tech.toString();
+				suppliesCost.answer = report.supplies.toString();
+				otherCost.answer = report.otherCost.toString();
+				otherCostSpec.answer = report.otherCostSpec.toString();
+				facilityTotal.answer = report.facilityCost.toString();
+				facilityPercent.answer = report.facilityPercent.toString();
+				
+				//calculations should be done when flipping to the last page. No point in loading them
+				sumComments.text = report.comments;
+			}
+			
+			protected function getDataReportsPopulatingResult_resultHandler(event:ResultEvent):void
+			{
+				dataReportQuestion.input.dataProvider = getDataReportsResult.lastResult;
+				dataReportQuestion.input.labelFunction = reportLabelFunction;
+				if(updatingData)
+				{
+					for(var i:int = 0; i < dataReportQuestion.input.dataProvider.length; i++)
+					{
+						if((dataReportQuestion.input.dataProvider[i] as DataReportVO).autoid == global.activeCostReport.dataReportID)
+							dataReportQuestion.setAnswerIndex(i);
+					}
+				}
+			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
 		<s:CallResponder id="getDataReportsResult" result="getDataReportsResult_resultHandler(event)"/>
+		<s:CallResponder id="getDataReportsPopulatingResult" result="getDataReportsPopulatingResult_resultHandler(event)"/>
 		<datareportservice:DataReportService id="dataReportService"
+											 fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)"
+											 showBusyCursor="true"/>
+		<s:CallResponder id="createCostReportResult" result="createCostReportResult_resultHandler(event)"/>
+		<costreportservice:CostReportService id="costReportService"
 											 fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)"
 											 showBusyCursor="true"/>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
@@ -403,15 +604,7 @@
 	<mx:TabNavigator id="tabNavigator" x="7" y="29" width="685" height="650" paddingTop="0" change="tabNavigator_changeHandler(event)">
 		<s:NavigatorContent width="100%" height="100%" label="Salary">
 			<questions:QuestionForm id="salaryForm" width="100%" height="100%" labelWidth="450">
-				<s:Group id="salaryGroup" width="100%"> <!-- this will be added to the financialForm at the correct position later-->
-					<s:layout>
-						<s:VerticalLayout gap="10"/>
-					</s:layout>
-					<s:Group>
-						<s:Button id="addPositionButton" x="167" label="Add Another Position"
-								  click="addPositionButton_clickHandler(event)"/>
-					</s:Group>
-				</s:Group>
+				<pages:SalaryQuestion id="salaryQuestion"/>
 			</questions:QuestionForm>
 		</s:NavigatorContent>
 		
@@ -419,10 +612,13 @@
 			<questions:QuestionForm id="timeForm" width="100%" height="100%" labelWidth="450">
 			</questions:QuestionForm>
 		</s:NavigatorContent>
-		
 		<s:NavigatorContent width="100%" height="100%" label="Workload">
 			<s:Scroller width="100%" height="100%">
 				<s:Group>
+					<s:layout>
+						<components:FastScrollLayout scrollSpeed="10"/>
+					</s:layout>
+					
 					<questions:QuestionForm id="workloadForm" width="100%" height="100%" labelWidth="450">
 						<pages:WorkloadQuestion id="workloadPrescreen" label="Prescreening" positionList="{positionList}"/>
 						<pages:WorkloadQuestion id="workloadScreen" label="Full Screening" positionList="{positionList}"/>
@@ -431,7 +627,7 @@
 						<pages:WorkloadQuestion id="workloadReferral" label="Referral to Treatment" positionList="{positionList}"/>
 						<pages:WorkloadQuestion id="workloadAdmin" label="Project Administration" positionList="{positionList}"/>
 						<pages:WorkloadQuestion id="workloadTraining" label="Training" positionList="{positionList}"/>
-						<pages:WorkloadQuestion id="workloadSupport" label="Staff Activities" positionList="{positionList}"/>
+						<pages:WorkloadQuestion id="workloadSupport" label="Support Activities" positionList="{positionList}"/>
 						<pages:WorkloadQuestion id="workloadOther" label="Other" positionList="{positionList}"/>
 					</questions:QuestionForm>
 				</s:Group>
@@ -445,14 +641,12 @@
 		
 		<s:NavigatorContent width="100%" height="100%" label="Calculation">
 			<questions:QuestionForm id="calculationForm" width="100%" height="100%" labelWidth="450">
-				<s:Label text="The following calculations show the cost of each service." fontWeight="bold"/>
-				<s:Label text="Cost = (Number of Services) x (Minutes per Service) x (Salary Cost per Minute)" fontWeight="bold"/>
-				<mx:HRule width="655" height="5"/>
+				<s:Label text="For service activities, Cost = (Number of Services) x (Minutes per Service) x (Salary Cost per Minute)" fontWeight="bold"/>
 				<s:Group fontWeight="bold">
 					<s:layout>
 						<s:HorizontalLayout paddingTop="4"/>
 					</s:layout>
-					<s:Label text="" width="127"/>
+					<s:Label text="" width="130"/>
 					<s:Label text="# of Services"  width="100"/>
 					<s:Label text="Min/Service" width="100"/>
 					<s:Label text="Cost/Minute" width="108"/>
@@ -463,26 +657,39 @@
 						<s:HorizontalLayout/>
 					</s:layout>
 					<s:Label width="127" paddingTop="4" text="Prescreen = " textAlign="right"/>
-					<s:TextInput id="sumNumPrescreen" width="88"/>
+					<s:TextInput id="sumNumPrescreen" width="88" editable="false"/>
 					<s:Label text="x" paddingTop="4"/>
-					<s:TextInput id="sumTimePrescreen" width="88"/>
+					<s:TextInput id="sumTimePrescreen" width="88" editable="false"/>
 					<s:Label text="x" paddingTop="4"/>
-					<s:TextInput id="sumCostPrescreen" width="88"/>
+					<s:TextInput id="sumCostPrescreen" width="88" editable="false"/>
 					<s:Label text="= $" paddingTop="4"/>
-					<s:TextInput id="sumTotalCostPrescreen" width="88"/>
+					<s:TextInput id="sumTotalCostPrescreen" width="88" editable="false"/>
 				</s:Group>
 				<s:Group>
 					<s:layout>
 						<s:HorizontalLayout/>
 					</s:layout>
 					<s:Label width="127" paddingTop="4" text="Full Screen = " textAlign="right"/>
-					<s:TextInput id="sumNumScreen" width="88"/>
+					<s:TextInput id="sumNumScreen" width="88" editable="false"/>
 					<s:Label text="x" paddingTop="4"/>
-					<s:TextInput id="sumTimeScreen" width="88"/>
+					<s:TextInput id="sumTimeScreen" width="88" editable="false"/>
 					<s:Label text="x" paddingTop="4"/>
-					<s:TextInput id="sumCostScreen" width="88"/>
+					<s:TextInput id="sumCostScreen" width="88" editable="false"/>
 					<s:Label text="= $" paddingTop="4"/>
-					<s:TextInput id="sumTotalCostScreen" width="88"/>
+					<s:TextInput id="sumTotalCostScreen" width="88" editable="false"/>
+				</s:Group>
+				<s:Group>
+					<s:layout>
+						<s:HorizontalLayout/>
+					</s:layout>
+					<s:Label width="127" paddingTop="4" text="Education = " textAlign="right"/>
+					<s:TextInput id="sumNumEducation" width="88" editable="false"/>
+					<s:Label text="x" paddingTop="4"/>
+					<s:TextInput id="sumTimeEducation" width="88" editable="false"/>
+					<s:Label text="x" paddingTop="4"/>
+					<s:TextInput id="sumCostEducation" width="88" editable="false"/>
+					<s:Label text="= $" paddingTop="4"/>
+					<s:TextInput id="sumTotalCostEducation" width="88" editable="false"/>
 				</s:Group>
 				<s:Group>
 					<s:layout>
@@ -490,13 +697,13 @@
 					</s:layout>
 					<s:Label width="127" paddingTop="4" text="Brief Intervention = "
 							 textAlign="right"/>
-					<s:TextInput id="sumNumIntervention" width="88"/>
+					<s:TextInput id="sumNumIntervention" width="88" editable="false"/>
 					<s:Label text="x" paddingTop="4"/>
-					<s:TextInput id="sumTimeIntervention" width="88"/>
+					<s:TextInput id="sumTimeIntervention" width="88" editable="false"/>
 					<s:Label text="x" paddingTop="4"/>
-					<s:TextInput id="sumCostIntervention" width="88"/>
+					<s:TextInput id="sumCostIntervention" width="88" editable="false"/>
 					<s:Label text="= $" paddingTop="4"/>
-					<s:TextInput id="sumTotalCostIntervention" width="88"/>
+					<s:TextInput id="sumTotalCostIntervention" width="88" editable="false"/>
 				</s:Group>
 				<s:Group>
 					<s:layout>
@@ -504,55 +711,102 @@
 					</s:layout>
 					<s:Label width="127" paddingTop="4" text="Referral to Treatment = "
 							 textAlign="right"/>
-					<s:TextInput id="sumNumReferral" width="88"/>
+					<s:TextInput id="sumNumReferral" width="88" editable="false"/>
 					<s:Label text="x" paddingTop="4"/>
-					<s:TextInput id="sumTimeReferral" width="88"/>
+					<s:TextInput id="sumTimeReferral" width="88" editable="false"/>
 					<s:Label text="x" paddingTop="4"/>
-					<s:TextInput id="sumCostReferral" width="88"/>
+					<s:TextInput id="sumCostReferral" width="88" editable="false"/>
 					<s:Label text="= $" paddingTop="4"/>
-					<s:TextInput id="sumTotalCostReferral" width="88"/>
+					<s:TextInput id="sumTotalCostReferral" width="88" editable="false"/>
+				</s:Group>
+				
+				<mx:HRule width="655" height="5"/>
+				<s:Label text="For non-service activities, Cost = (Hours Spent) x (Salary Cost per Hour)" fontWeight="bold"/>
+				
+				<s:Group fontWeight="bold">
+					<s:layout>
+						<s:HorizontalLayout paddingTop="4"/>
+					</s:layout>
+					<s:Label text="" width="130"/>
+					<s:Label text="Hours Spent"  width="100"/>
+					<s:Label text="Cost/Hour" width="108"/>
+					<s:Label text="Total Cost" width="100"/>
+				</s:Group>
+				<s:Group>
+					<s:layout>
+						<s:HorizontalLayout/>
+					</s:layout>
+					<s:Label width="127" paddingTop="4" text="Administration = " textAlign="right"/>
+					<s:TextInput id="sumAdminHours" width="88" editable="false"/>
+					<s:Label text="x" paddingTop="4"/>
+					<s:TextInput id="sumAdminCost" width="88" editable="false"/>
+					<s:Label text="= $" paddingTop="4"/>
+					<s:TextInput id="sumAdminTotalCost" width="88" editable="false"/>
+				</s:Group>
+				<s:Group>
+					<s:layout>
+						<s:HorizontalLayout/>
+					</s:layout>
+					<s:Label width="127" paddingTop="4" text="Training = " textAlign="right"/>
+					<s:TextInput id="sumTrainingHours" width="88" editable="false"/>
+					<s:Label text="x" paddingTop="4"/>
+					<s:TextInput id="sumTrainingCost" width="88" editable="false"/>
+					<s:Label text="= $" paddingTop="4"/>
+					<s:TextInput id="sumTrainingTotalCost" width="88" editable="false"/>
+				</s:Group>
+				<s:Group>
+					<s:layout>
+						<s:HorizontalLayout/>
+					</s:layout>
+					<s:Label width="127" paddingTop="4" text="Support Activities = " textAlign="right"/>
+					<s:TextInput id="sumSupportHours" width="88" editable="false"/>
+					<s:Label text="x" paddingTop="4"/>
+					<s:TextInput id="sumSupportCost" width="88" editable="false"/>
+					<s:Label text="= $" paddingTop="4"/>
+					<s:TextInput id="sumSupportTotalCost" width="88" editable="false"/>
+				</s:Group>
+				<s:Group>
+					<s:layout>
+						<s:HorizontalLayout/>
+					</s:layout>
+					<s:Label width="127" paddingTop="4" text="Other = " textAlign="right"/>
+					<s:TextInput id="sumOtherHours" width="88" editable="false"/>
+					<s:Label text="x" paddingTop="4"/>
+					<s:TextInput id="sumOtherCost" width="88" editable="false"/>
+					<s:Label text="= $" paddingTop="4"/>
+					<s:TextInput id="sumOtherTotalCost" width="88" editable="false"/>
 				</s:Group>
 				<mx:HRule width="655" height="5"/>
 				
-				<s:Label text="The total cost of SBIRT this month = (Total Services Cost) + (Total Non-Service Cost)." fontWeight="bold"/>
+				<s:Label text="The total cost of SBIRT this month = (Services Cost) + (Non-Service Cost) + (Expenses)." fontWeight="bold"/>
 				<s:Group>
 					<s:layout>
 						<s:HorizontalLayout/>
 					</s:layout>
-					<s:Label width="150" paddingTop="4" text="Total Services Cost = $"
-							 textAlign="right"/>
-					<s:TextInput id="sumServices" width="100"/>
+					<s:Label width="127" paddingTop="4" text="Total Cost = " textAlign="right"/>
+					<s:TextInput id="sumServices" width="88" editable="false"/>
+					<s:Label text="+" paddingTop="4"/>
+					<s:TextInput id="sumNonService" width="88" editable="false"/>
+					<s:Label text="+" paddingTop="4"/>
+					<s:TextInput id="sumExpenses" width="88" editable="false"/>
+					<s:Label text="= $" paddingTop="4"/>
+					<s:TextInput id="sumGrandTotal" width="88" editable="false"/>
 				</s:Group>
-				<s:Group>
-					<s:layout>
-						<s:HorizontalLayout/>
-					</s:layout>
-					<s:Label width="150" paddingTop="4" text="Total Non-Service Cost = $"
-							 textAlign="right"/>
-					<s:TextInput id="sumNonService" width="100"/>
-				</s:Group>
-				<s:Group>
-					<s:layout>
-						<s:HorizontalLayout/>
-					</s:layout>
-					<s:Label width="150" paddingTop="4" text="Total Cost = $"
-							 textAlign="right"/>
-					<s:TextInput id="sumGrandTotal" width="100"/>
-				</s:Group>
+
 				<s:Label text="The total cost per patient served by SBIRT = (Total Cost) / (Number of Prescreens)." fontWeight="bold"/>
 				<s:Group>
 					<s:layout>
 						<s:HorizontalLayout/>
 					</s:layout>
-					<s:Label width="150" paddingTop="4" text="Cost per Patient Served = $"
+					<s:Label width="127" paddingTop="4" text="Cost per Patient = $"
 							 textAlign="right"/>
-					<s:TextInput id="sumPatientPrescreened" width="100"/>
+					<s:TextInput id="sumPatientPrescreened" width="88" editable="false"/>
 				</s:Group>
 				<mx:HRule width="655" height="5"/>
 				<s:Label text="Please describe comments or questions you have regarding SBIRT costs:" fontWeight="bold"/>
 				<s:TextArea id="sumComments" width="640" height="97"/>
 			</questions:QuestionForm>
-			<s:Button id="submitButton" y="500" height="31" label="Save Report"
+			<s:Button id="submitButton" y="592" height="31" label="Save Report"
 					  click="submitButton_clickHandler(event)" horizontalCenter="0"/>
 		</s:NavigatorContent>
 	</mx:TabNavigator>

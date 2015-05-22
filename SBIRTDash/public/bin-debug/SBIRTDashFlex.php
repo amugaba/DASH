@@ -23,7 +23,7 @@
         <style type="text/css" media="screen"> 
             html, body  { height:100%; }
             body { margin:0; padding:0; overflow:auto; text-align:center; 
-                   background-color: #ffffff; }   
+                   background-color: #e2e6e8; }   
             object:focus { outline:none; }
             #flashContent { display:none; }
         </style>

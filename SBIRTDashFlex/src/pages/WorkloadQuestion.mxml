@@ -4,11 +4,13 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" xmlns:questions="components.questions.*">
 	<fx:Script>
 		<![CDATA[
+			import components.questions.QuestionClass;
 			import components.questions.QuestionForm;
 			import components.questions.QuestionList;
 			import components.questions.QuestionText;
 			import components.validators.Valid;
 			
+			import mx.collections.ArrayCollection;
 			import mx.collections.ArrayList;
 			import mx.controls.Alert;
 			import mx.validators.NumberValidator;
@@ -66,7 +68,7 @@
 						if(!isNaN(val))
 							total += val;
 					}
-					if(val != 100)
+					if(total != 100)
 					{
 						results.addItem("workloadPercent - Percentage values must add up to 100%.");
 						for(i = 0; i < percentForm.numElements; i++)
@@ -75,9 +77,63 @@
 							q.input.errorString = "Percentage values must add up to 100%.";
 						}
 					}
+					else
+					{
+						for(i = 0; i < percentForm.numElements; i++)
+						{
+							q = percentForm.getElementAt(i) as QuestionText;
+							q.input.errorString = "";
+						}
+					}
 				}
 				
 				return results;
+			}
+			
+			public function getWorkloadsMap():Object
+			{
+				var dict:Object = new Object();
+				for(var i:int = 0; i < positionForm.questions.length; i++)
+				{
+					var qPos:QuestionClass = positionForm.questions[i];
+					var qPer:QuestionClass = percentForm.questions[i];
+					dict[qPos.answer] = parseFloat(qPer.answer);
+				}
+				return dict;
+			}
+			
+			public function populateWorkloads(keypairs:ArrayCollection):void
+			{
+				clearQuestions();
+				for(var position:String in keypairs.source)
+				{
+					var percent:Number = keypairs.source[position];
+					addWorkloadQuestion(null);
+					positionForm.questions[positionForm.questions.length-1].answer = position;
+					percentForm.questions[percentForm.questions.length-1].answer = roundValue(percent);
+				}
+			}
+			
+			public function clearQuestions():void
+			{
+				while(positionForm.questions.length > 0)
+				{
+					var i:int = positionForm.questions.length - 1;
+					positionForm.removeQuestionAt(i);
+					percentForm.removeQuestionAt(i);
+					buttonForm.removeElementAt(i);
+				}
+			}
+			
+			protected function roundValue(val:Number):String
+			{
+				return (Math.round(val*100)/100).toString();
+			}
+			
+			public function reset():void
+			{
+				clearQuestions();
+				addWorkloadQuestion(null);
 			}
 		]]>
 	</fx:Script>
