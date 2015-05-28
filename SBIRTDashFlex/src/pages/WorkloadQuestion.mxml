@@ -102,12 +102,12 @@
 				return dict;
 			}
 			
-			public function populateWorkloads(keypairs:ArrayCollection):void
+			public function populateWorkloads(keypairs:Object):void
 			{
 				clearQuestions();
-				for(var position:String in keypairs.source)
+				for(var position:String in keypairs)
 				{
-					var percent:Number = keypairs.source[position];
+					var percent:Number = keypairs[position];
 					addWorkloadQuestion(null);
 					positionForm.questions[positionForm.questions.length-1].answer = position;
 					percentForm.questions[percentForm.questions.length-1].answer = roundValue(percent);

@@ -28,6 +28,11 @@
 			<location>C:/wamp/www/DASH/SBIRTDash/public/bin-debug</location>
 		</link>
 		<link>
+			<name>bin-release</name>
+			<type>2</type>
+			<location>C:/wamp/www/SBIRTDashFlex</location>
+		</link>
+		<link>
 			<name>services/CostReportService.php</name>
 			<type>1</type>
 			<location>C:/wamp/www/DASH/SBIRTDash/services/CostReportService.php</location>

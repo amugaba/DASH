@@ -27,6 +27,7 @@ internal class _Super_CostReportService extends com.adobe.fiber.services.wrapper
         _serviceControl = new mx.rpc.remoting.RemoteObject();
 
         // initialize RemoteClass alias for all entities returned by functions of this service
+        valueObjects.CostReportVO._initRemoteClassAlias();
 
         var operations:Object = new Object();
         var operation:mx.rpc.remoting.Operation;
@@ -37,6 +38,12 @@ internal class _Super_CostReportService extends com.adobe.fiber.services.wrapper
         operation = new mx.rpc.remoting.Operation(null, "getCostReportByID");
          operation.resultType = valueObjects.CostReportVO;
         operations["getCostReportByID"] = operation;
+        operation = new mx.rpc.remoting.Operation(null, "getCostReportsByUser");
+         operation.resultElementType = valueObjects.CostReportVO;
+        operations["getCostReportsByUser"] = operation;
+        operation = new mx.rpc.remoting.Operation(null, "updateCostReport");
+         operation.resultType = valueObjects.CostReportVO;
+        operations["updateCostReport"] = operation;
 
         _serviceControl.operations = operations;
         _serviceControl.convertResultHandler = com.adobe.serializers.utility.TypeUtility.convertResultHandler;
@@ -85,10 +92,46 @@ internal class _Super_CostReportService extends com.adobe.fiber.services.wrapper
       *
       * @return an mx.rpc.AsyncToken whose result property will be populated with the result of the operation when the server response is received.
       */
-    public function getCostReportByID(autoid:Object) : mx.rpc.AsyncToken
+    public function getCostReportByID(autoid:int) : mx.rpc.AsyncToken
     {
         var _internal_operation:mx.rpc.AbstractOperation = _serviceControl.getOperation("getCostReportByID");
 		var _internal_token:mx.rpc.AsyncToken = _internal_operation.send(autoid) ;
+        return _internal_token;
+    }
+     
+    /**
+      * This method is a generated wrapper used to call the 'getCostReportsByUser' operation. It returns an mx.rpc.AsyncToken whose 
+      * result property will be populated with the result of the operation when the server response is received. 
+      * To use this result from MXML code, define a CallResponder component and assign its token property to this method's return value. 
+      * You can then bind to CallResponder.lastResult or listen for the CallResponder.result or fault events.
+      *
+      * @see mx.rpc.AsyncToken
+      * @see mx.rpc.CallResponder 
+      *
+      * @return an mx.rpc.AsyncToken whose result property will be populated with the result of the operation when the server response is received.
+      */
+    public function getCostReportsByUser(userid:int) : mx.rpc.AsyncToken
+    {
+        var _internal_operation:mx.rpc.AbstractOperation = _serviceControl.getOperation("getCostReportsByUser");
+		var _internal_token:mx.rpc.AsyncToken = _internal_operation.send(userid) ;
+        return _internal_token;
+    }
+     
+    /**
+      * This method is a generated wrapper used to call the 'updateCostReport' operation. It returns an mx.rpc.AsyncToken whose 
+      * result property will be populated with the result of the operation when the server response is received. 
+      * To use this result from MXML code, define a CallResponder component and assign its token property to this method's return value. 
+      * You can then bind to CallResponder.lastResult or listen for the CallResponder.result or fault events.
+      *
+      * @see mx.rpc.AsyncToken
+      * @see mx.rpc.CallResponder 
+      *
+      * @return an mx.rpc.AsyncToken whose result property will be populated with the result of the operation when the server response is received.
+      */
+    public function updateCostReport(item:valueObjects.CostReportVO) : mx.rpc.AsyncToken
+    {
+        var _internal_operation:mx.rpc.AbstractOperation = _serviceControl.getOperation("updateCostReport");
+		var _internal_token:mx.rpc.AsyncToken = _internal_operation.send(item) ;
         return _internal_token;
     }
      

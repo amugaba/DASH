@@ -1,33 +1,19 @@
 <?php
 include_once 'DataReportVO.php';
-
+include_once 'ConnectionManager.php';
 
 class DataReportService
 
 {
-/*
-    public $username = "sbirt";
-    public $password = "ry94v8co";
-    public $server = "127.0.0.1";
-    public $databasename = "sbirt_dash";
-*/
-
-    public $username = "root";
-    public $password = "asdf2423";
-    public $server = "localhost";
-    public $databasename = "sbirt_dash";
-
-    
-    public $port = "3306";
     var $tablename = "data_reports";
     public $connection;
 
     public function __construct ()
     {
+		$cm = new ConnectionManager();
 
-        $this->connection = mysqli_connect($this->server, $this->username,
-
-        $this->password, $this->databasename, $this->port);
+        $this->connection = mysqli_connect($cm->server, $cm->username,
+        $cm->password, $cm->databasename, $cm->port);
 
         $this->throwExceptionOnError($this->connection);
     }
@@ -135,6 +121,71 @@ class DataReportService
         $stmt->free_result();
         $this->connection->close();
         return $reports;
+    }
+    
+    /**
+     * Get each data report for a user that do not have a cost report assoicated with it
+     * 
+     * @param int $userid
+     * @return DataReportVO[]
+     */
+    public function getDataReportsWithoutCost($userid)
+    {
+    	$stmt = $this->connection->prepare("SELECT autoid, userid, month, year, uniquePatients, patientsEligible, prescreens, validPrescreens, alcoholPrescreens, drugPrescreens,
+			bothPrescreens, screens, isNotScreening, possibleScreens, screensOfPossible, educationScores, biScores, btScores,
+			rtScores, bis, bts, rts, otherComments FROM $this->tablename WHERE userid=?");
+    	$this->throwExceptionOnError();
+
+        $stmt->bind_param('i',$userid);
+        $this->throwExceptionOnError();
+
+        $stmt->execute();
+        $this->throwExceptionOnError();
+        
+        $reports = array();
+    	$item = new DataReportVO();
+        $stmt->bind_result($item->autoid, $item->userid, $item->month, $item->year, $item->uniquePatients, $item->patientsEligible,
+			$item->prescreens, $item->validPrescreens, $item->alcoholPrescreens, $item->drugPrescreens, $item->bothPrescreens,
+			$item->screens, $item->isNotScreening, $item->possibleScreens, $item->screensOfPossible,
+			$item->educationScores,	$item->biScores, $item->btScores, $item->rtScores, $item->bis, $item->bts, $item->rts,
+			$item->otherComments);
+		
+        while($stmt->fetch())
+        {
+	        array_push($reports, $item);
+	        $item = new DataReportVO();
+	        $stmt->bind_result($item->autoid, $item->userid, $item->month, $item->year, $item->uniquePatients, $item->patientsEligible,
+			$item->prescreens, $item->validPrescreens, $item->alcoholPrescreens, $item->drugPrescreens, $item->bothPrescreens,
+			$item->screens, $item->isNotScreening, $item->possibleScreens, $item->screensOfPossible,
+			$item->educationScores,	$item->biScores, $item->btScores, $item->rtScores, $item->bis, $item->bts, $item->rts,
+			$item->otherComments);
+	    }
+        
+        $stmt->free_result();
+        
+        //exclude all reports that have a cost associated with it
+        $finalReports = array();
+        $reportExists = false;
+        foreach($reports as $item)
+        {
+        	$stmt = $this->connection->prepare("SELECT EXISTS(SELECT 1 FROM cost_reports WHERE dataReportID=?)");
+	    	$this->throwExceptionOnError();
+	
+	        $stmt->bind_param('i',$item->autoid);
+	        $this->throwExceptionOnError();
+	
+	        $stmt->execute();
+	        $this->throwExceptionOnError();
+	    	
+	        $stmt->bind_result($reportExists);
+	        $stmt->fetch();
+	        $stmt->free_result();
+	        
+	        if(!$reportExists)
+	        	array_push($finalReports, $item);
+        }
+        $this->connection->close();
+        return $finalReports;
     }
     
 /**

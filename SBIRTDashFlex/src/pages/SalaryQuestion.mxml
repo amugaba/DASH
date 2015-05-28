@@ -108,12 +108,12 @@ Delete button destroys the item and removes it from the parent container.
 				return positions;
 			}
 			
-			public function populateSalaries(keypairs:ArrayCollection):void
+			public function populateSalaries(keypairs:Object):void
 			{
 				clearQuestions();
-				for(var position:String in keypairs.source)
+				for(var position:String in keypairs)
 				{
-					var salary:Number = keypairs.source[position];
+					var salary:Number = keypairs[position];
 					addAnotherPosition(null);
 					positionForm.questions[positionForm.questions.length-1].answer = position;
 					salaryForm.questions[salaryForm.questions.length-1].answer = salary.toString();

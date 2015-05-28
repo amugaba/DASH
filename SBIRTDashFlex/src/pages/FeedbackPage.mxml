@@ -3,7 +3,8 @@
 						xmlns:s="library://ns.adobe.com/flex/spark"
 						xmlns:mx="library://ns.adobe.com/flex/mx"
 						xmlns:questions="components.questions.*"
-						xmlns:datareportservice="services.datareportservice.*" xmlns:feedback="feedback.*">
+						xmlns:datareportservice="services.datareportservice.*" xmlns:feedback="feedback.*"
+						chromeColor="#69A4C9" contentBackgroundColor="#C9DEEB">
 	<fx:Script>
 		<![CDATA[
 			import feedback.DataConcern;

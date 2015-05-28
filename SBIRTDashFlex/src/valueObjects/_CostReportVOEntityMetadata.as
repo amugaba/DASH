@@ -9,7 +9,6 @@ import com.adobe.fiber.styles.Style;
 import com.adobe.fiber.valueobjects.AbstractEntityMetadata;
 import com.adobe.fiber.valueobjects.AvailablePropertyIterator;
 import com.adobe.fiber.valueobjects.IPropertyIterator;
-import mx.collections.ArrayCollection;
 import com.adobe.fiber.core.model_internal;
 import com.adobe.fiber.valueobjects.IModelType;
 import mx.events.PropertyChangeEvent;
@@ -21,16 +20,16 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
 {
     private static var emptyArray:Array = new Array();
 
-    model_internal static var allProperties:Array = new Array("autoid", "userid", "dataReportID", "salaries", "prescreenTime", "screenTime", "educationTime", "biTime", "rtTime", "adminTime", "trainingTime", "supportTime", "otherTime", "otherTimeSpec", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther", "tech", "supplies", "otherCost", "otherCostSpec", "facilityCost", "facilityPercent", "prescreenTotal", "screenTotal", "educationTotal", "biTotal", "rtTotal", "adminTotal", "trainingTotal", "supportTotal", "otherTotal", "serviceTotal", "nonserviceTotal", "expenseTotal", "grandTotal", "perPatientCost", "comments");
+    model_internal static var allProperties:Array = new Array("autoid", "userid", "dataReportID", "month", "year", "salaries", "prescreenTime", "screenTime", "educationTime", "biTime", "rtTime", "adminTime", "trainingTime", "supportTime", "otherTime", "otherTimeSpec", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther", "tech", "supplies", "otherCost", "otherCostSpec", "facilityCost", "facilityPercent", "prescreenTotal", "screenTotal", "educationTotal", "biTotal", "rtTotal", "adminTotal", "trainingTotal", "supportTotal", "otherTotal", "serviceTotal", "nonserviceTotal", "expenseTotal", "grandTotal", "perPatientCost", "comments");
     model_internal static var allAssociationProperties:Array = new Array();
     model_internal static var allRequiredProperties:Array = new Array();
-    model_internal static var allAlwaysAvailableProperties:Array = new Array("autoid", "userid", "dataReportID", "salaries", "prescreenTime", "screenTime", "educationTime", "biTime", "rtTime", "adminTime", "trainingTime", "supportTime", "otherTime", "otherTimeSpec", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther", "tech", "supplies", "otherCost", "otherCostSpec", "facilityCost", "facilityPercent", "prescreenTotal", "screenTotal", "educationTotal", "biTotal", "rtTotal", "adminTotal", "trainingTotal", "supportTotal", "otherTotal", "serviceTotal", "nonserviceTotal", "expenseTotal", "grandTotal", "perPatientCost", "comments");
+    model_internal static var allAlwaysAvailableProperties:Array = new Array("autoid", "userid", "dataReportID", "month", "year", "salaries", "prescreenTime", "screenTime", "educationTime", "biTime", "rtTime", "adminTime", "trainingTime", "supportTime", "otherTime", "otherTimeSpec", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther", "tech", "supplies", "otherCost", "otherCostSpec", "facilityCost", "facilityPercent", "prescreenTotal", "screenTotal", "educationTotal", "biTotal", "rtTotal", "adminTotal", "trainingTotal", "supportTotal", "otherTotal", "serviceTotal", "nonserviceTotal", "expenseTotal", "grandTotal", "perPatientCost", "comments");
     model_internal static var guardedProperties:Array = new Array();
-    model_internal static var dataProperties:Array = new Array("autoid", "userid", "dataReportID", "salaries", "prescreenTime", "screenTime", "educationTime", "biTime", "rtTime", "adminTime", "trainingTime", "supportTime", "otherTime", "otherTimeSpec", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther", "tech", "supplies", "otherCost", "otherCostSpec", "facilityCost", "facilityPercent", "prescreenTotal", "screenTotal", "educationTotal", "biTotal", "rtTotal", "adminTotal", "trainingTotal", "supportTotal", "otherTotal", "serviceTotal", "nonserviceTotal", "expenseTotal", "grandTotal", "perPatientCost", "comments");
+    model_internal static var dataProperties:Array = new Array("autoid", "userid", "dataReportID", "month", "year", "salaries", "prescreenTime", "screenTime", "educationTime", "biTime", "rtTime", "adminTime", "trainingTime", "supportTime", "otherTime", "otherTimeSpec", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther", "tech", "supplies", "otherCost", "otherCostSpec", "facilityCost", "facilityPercent", "prescreenTotal", "screenTotal", "educationTotal", "biTotal", "rtTotal", "adminTotal", "trainingTotal", "supportTotal", "otherTotal", "serviceTotal", "nonserviceTotal", "expenseTotal", "grandTotal", "perPatientCost", "comments");
     model_internal static var sourceProperties:Array = emptyArray
-    model_internal static var nonDerivedProperties:Array = new Array("autoid", "userid", "dataReportID", "salaries", "prescreenTime", "screenTime", "educationTime", "biTime", "rtTime", "adminTime", "trainingTime", "supportTime", "otherTime", "otherTimeSpec", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther", "tech", "supplies", "otherCost", "otherCostSpec", "facilityCost", "facilityPercent", "prescreenTotal", "screenTotal", "educationTotal", "biTotal", "rtTotal", "adminTotal", "trainingTotal", "supportTotal", "otherTotal", "serviceTotal", "nonserviceTotal", "expenseTotal", "grandTotal", "perPatientCost", "comments");
+    model_internal static var nonDerivedProperties:Array = new Array("autoid", "userid", "dataReportID", "month", "year", "salaries", "prescreenTime", "screenTime", "educationTime", "biTime", "rtTime", "adminTime", "trainingTime", "supportTime", "otherTime", "otherTimeSpec", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther", "tech", "supplies", "otherCost", "otherCostSpec", "facilityCost", "facilityPercent", "prescreenTotal", "screenTotal", "educationTotal", "biTotal", "rtTotal", "adminTotal", "trainingTotal", "supportTotal", "otherTotal", "serviceTotal", "nonserviceTotal", "expenseTotal", "grandTotal", "perPatientCost", "comments");
     model_internal static var derivedProperties:Array = new Array();
-    model_internal static var collectionProperties:Array = new Array("salaries", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther");
+    model_internal static var collectionProperties:Array = new Array();
     model_internal static var collectionBaseMap:Object;
     model_internal static var entityName:String = "CostReportVO";
     model_internal static var dependentsOnMap:Object;
@@ -51,6 +50,8 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
             model_internal::dependentsOnMap["autoid"] = new Array();
             model_internal::dependentsOnMap["userid"] = new Array();
             model_internal::dependentsOnMap["dataReportID"] = new Array();
+            model_internal::dependentsOnMap["month"] = new Array();
+            model_internal::dependentsOnMap["year"] = new Array();
             model_internal::dependentsOnMap["salaries"] = new Array();
             model_internal::dependentsOnMap["prescreenTime"] = new Array();
             model_internal::dependentsOnMap["screenTime"] = new Array();
@@ -95,16 +96,6 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
 
             // collection base map
             model_internal::collectionBaseMap = new Object();
-            model_internal::collectionBaseMap["salaries"] = "Object";
-            model_internal::collectionBaseMap["workloadPrescreen"] = "Object";
-            model_internal::collectionBaseMap["workloadScreen"] = "Object";
-            model_internal::collectionBaseMap["workloadEducation"] = "Object";
-            model_internal::collectionBaseMap["workloadBI"] = "Object";
-            model_internal::collectionBaseMap["workloadRT"] = "Object";
-            model_internal::collectionBaseMap["workloadAdmin"] = "Object";
-            model_internal::collectionBaseMap["workloadTraining"] = "Object";
-            model_internal::collectionBaseMap["workloadSupport"] = "Object";
-            model_internal::collectionBaseMap["workloadOther"] = "Object";
         }
 
         // Property type Map
@@ -112,7 +103,9 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
         model_internal::propertyTypeMap["autoid"] = "int";
         model_internal::propertyTypeMap["userid"] = "int";
         model_internal::propertyTypeMap["dataReportID"] = "int";
-        model_internal::propertyTypeMap["salaries"] = "ArrayCollection";
+        model_internal::propertyTypeMap["month"] = "int";
+        model_internal::propertyTypeMap["year"] = "int";
+        model_internal::propertyTypeMap["salaries"] = "Object";
         model_internal::propertyTypeMap["prescreenTime"] = "int";
         model_internal::propertyTypeMap["screenTime"] = "int";
         model_internal::propertyTypeMap["educationTime"] = "int";
@@ -123,15 +116,15 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
         model_internal::propertyTypeMap["supportTime"] = "int";
         model_internal::propertyTypeMap["otherTime"] = "int";
         model_internal::propertyTypeMap["otherTimeSpec"] = "String";
-        model_internal::propertyTypeMap["workloadPrescreen"] = "ArrayCollection";
-        model_internal::propertyTypeMap["workloadScreen"] = "ArrayCollection";
-        model_internal::propertyTypeMap["workloadEducation"] = "ArrayCollection";
-        model_internal::propertyTypeMap["workloadBI"] = "ArrayCollection";
-        model_internal::propertyTypeMap["workloadRT"] = "ArrayCollection";
-        model_internal::propertyTypeMap["workloadAdmin"] = "ArrayCollection";
-        model_internal::propertyTypeMap["workloadTraining"] = "ArrayCollection";
-        model_internal::propertyTypeMap["workloadSupport"] = "ArrayCollection";
-        model_internal::propertyTypeMap["workloadOther"] = "ArrayCollection";
+        model_internal::propertyTypeMap["workloadPrescreen"] = "Object";
+        model_internal::propertyTypeMap["workloadScreen"] = "Object";
+        model_internal::propertyTypeMap["workloadEducation"] = "Object";
+        model_internal::propertyTypeMap["workloadBI"] = "Object";
+        model_internal::propertyTypeMap["workloadRT"] = "Object";
+        model_internal::propertyTypeMap["workloadAdmin"] = "Object";
+        model_internal::propertyTypeMap["workloadTraining"] = "Object";
+        model_internal::propertyTypeMap["workloadSupport"] = "Object";
+        model_internal::propertyTypeMap["workloadOther"] = "Object";
         model_internal::propertyTypeMap["tech"] = "int";
         model_internal::propertyTypeMap["supplies"] = "int";
         model_internal::propertyTypeMap["otherCost"] = "int";
@@ -395,6 +388,18 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
 
     [Bindable(event="propertyChange")]
     public function get isDataReportIDAvailable():Boolean
+    {
+        return true;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get isMonthAvailable():Boolean
+    {
+        return true;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get isYearAvailable():Boolean
     {
         return true;
     }
@@ -669,6 +674,18 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
 
     [Bindable(event="propertyChange")]   
     public function get dataReportIDStyle():com.adobe.fiber.styles.Style
+    {
+        return model_internal::_nullStyle;
+    }
+
+    [Bindable(event="propertyChange")]   
+    public function get monthStyle():com.adobe.fiber.styles.Style
+    {
+        return model_internal::_nullStyle;
+    }
+
+    [Bindable(event="propertyChange")]   
+    public function get yearStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }

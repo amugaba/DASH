@@ -17,6 +17,8 @@ public class CostReportService extends _Super_CostReportService
     {
         super.preInitializeService();
         // Initialization customization goes here
+		if(SBIRTDashFlex.DEBUG_MODE == 0)
+			serviceControl.endpoint = SBIRTDashFlex.ENDPOINT_RELEASE;
     }
                
 }

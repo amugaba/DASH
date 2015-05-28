@@ -15,6 +15,8 @@ class CostReportVO
 	public $autoid;
 	public $userid;
 	public $dataReportID;
+	public $month;
+	public $year;
 	
 	public $salaries;
 	
@@ -74,11 +76,12 @@ class CostReportVO
 		$this->autoid = 0;
 		$this->userid = 0;
 		$this->dataReportID = 0;
+		$this->month = 0;
+		$this->year = 0;
+		$this->salaries = null;
 		
-		$this->salaries = array();
-		
-		$this->prescreenTime = 1.1;
-		$this->screenTime = 0.5;
+		$this->prescreenTime = 0;
+		$this->screenTime = 0;
 		$this->educationTime = 0;
 		$this->biTime = 0;
 		$this->rtTime = 0;
@@ -88,15 +91,15 @@ class CostReportVO
 		$this->otherTime = 0;
 		$this->otherTimeSpec = "";
 		
-		$this->workloadPrescreen = array();
-		$this->workloadScreen = array();
-		$this->workloadEducation = array();
-		$this->workloadBI = array();
-		$this->workloadRT = array();
-		$this->workloadAdmin = array();
-		$this->workloadTraining = array();
-		$this->workloadSupport = array();
-		$this->workloadOther = array();
+		$this->workloadPrescreen = null;
+		$this->workloadScreen = null;
+		$this->workloadEducation = null;
+		$this->workloadBI = null;
+		$this->workloadRT = null;
+		$this->workloadAdmin = null;
+		$this->workloadTraining = null;
+		$this->workloadSupport = null;
+		$this->workloadOther = null;
 		
 		$this->tech = 0;
 		$this->supplies = 0;

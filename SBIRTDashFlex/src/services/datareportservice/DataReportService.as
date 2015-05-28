@@ -18,7 +18,7 @@ public class DataReportService extends _Super_DataReportService
         super.preInitializeService();
         // Initialization customization goes here
 		if(SBIRTDashFlex.DEBUG_MODE == 0)
-			serviceControl.endpoint = "https://www.drugs.indiana.edu/SBIRT/DASH/gateway.php";
+			serviceControl.endpoint = SBIRTDashFlex.ENDPOINT_RELEASE;
     }
                
 }

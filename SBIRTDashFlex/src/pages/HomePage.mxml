@@ -19,6 +19,7 @@
 			import mx.utils.ArrayUtil;
 			import mx.validators.NumberValidator;
 			
+			import valueObjects.CostReportVO;
 			import valueObjects.DataReportVO;
 			
 			[Bindable] private var global:SBIRTDashFlex = FlexGlobals.topLevelApplication as SBIRTDashFlex;
@@ -27,6 +28,7 @@
 			{
 				//load report list
 				getDataReportsResult.token = dataReportService.getDataReports(global.activeUser.autoid);
+				getCostReportsByUserResult.token = costReportService.getCostReportsByUser(global.activeUser.autoid);
 			}
 			
 			protected function getDataReportsResult_resultHandler(event:ResultEvent):void
@@ -34,9 +36,20 @@
 				global.reportList = getDataReportsResult.lastResult;
 			}
 			
+			protected function getCostReportsByUserResult_resultHandler(event:ResultEvent):void
+			{
+				global.costList = getCostReportsByUserResult.lastResult;
+			}
+			
 			private function reportLabelFunction(item:Object):String 
 			{
 				var report:DataReportVO = item as DataReportVO;
+				return global.monthList.getItemAt(report.month-1) + " " + report.year;
+			}
+			
+			private function costLabelFunction(item:Object):String 
+			{
+				var report:CostReportVO = item as CostReportVO;
 				return global.monthList.getItemAt(report.month-1) + " " + report.year;
 			}
 			
@@ -48,6 +61,17 @@
 					global.pageReporting.initPage();
 					global.pageReporting.populate(global.activeDataReport);
 					global.goToPage(global.pageReporting);
+				}
+			}
+			
+			protected function loadCostButton_clickHandler(event:MouseEvent):void
+			{
+				if(costDropDown.selectedIndex > -1)
+				{
+					global.activeCostReport = costDropDown.selectedItem;
+					global.pageFinance.initPage();
+					global.pageFinance.populate(global.activeCostReport);
+					global.goToPage(global.pageFinance);
 				}
 			}
 			
@@ -67,29 +91,16 @@
 				global.goToPage(global.pageReporting);
 			}
 			
+			protected function newCostButton_clickHandler(event:MouseEvent):void
+			{
+				global.pageFinance.initPage();
+				global.goToPage(global.pageFinance);
+			}
+			
 			protected function profileButton_clickHandler(event:MouseEvent):void
 			{
 				global.pageAccount.prepare();
 				global.goToPage(global.pageAccount);
-			}
-			
-			protected function costButton_clickHandler(event:MouseEvent):void
-			{
-				global.pageFinance.initPage();
-				global.goToPage(global.pageFinance);
-			}
-			
-			protected function loadCostButton_clickHandler(event:MouseEvent):void
-			{
-				getCostReportByIDResult.token = costReportService.getCostReportByID(36);
-			}
-			
-			protected function getCostReportByIDResult_resultHandler(event:ResultEvent):void
-			{
-				global.activeCostReport = getCostReportByIDResult.lastResult;
-				global.pageFinance.initPage();
-				global.pageFinance.populate(global.activeCostReport);
-				global.goToPage(global.pageFinance);
 			}
 			
 		]]>
@@ -99,10 +110,10 @@
 		<datareportservice:DataReportService id="dataReportService"
 											 fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)"
 											 showBusyCursor="true"/>
-		<s:CallResponder id="getCostReportByIDResult" result="getCostReportByIDResult_resultHandler(event)"/>
 		<costreportservice:CostReportService id="costReportService"
 											 fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)"
 											 showBusyCursor="true"/>
+		<s:CallResponder id="getCostReportsByUserResult" result="getCostReportsByUserResult_resultHandler(event)"/>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	<s:Group y="5" width="600" height="250" horizontalCenter="0">
@@ -126,17 +137,17 @@
 		<s:Image source="assets/img/costTab.png"/>
 		<s:Group x="237" y="0" width="363" height="100%">
 			<s:Label y="27" fontSize="18" text="Cost Analysis" width="100%" textAlign="center"/>
-			<s:RichText y="66" height="32" width="226" textAlign="center" horizontalCenter="0"
-						text="View statistics on your monthly data and generate PDF reports."/>
-			<s:Group y="116" horizontalCenter="0">
+			<s:RichText x="0" y="61" width="100%" height="32"
+						text="Enter this month's SBIRT time and expense data.&#13;Complete the data report above before doing this step."
+						textAlign="center"/>
+			<s:Button id="newCostButton" y="92" width="120" height="36" label="New Cost Report!" horizontalCenter="0"
+					  click="newCostButton_clickHandler(event)"/>
+			<s:Label y="155" text="Or edit a previous month's data." width="100%" textAlign="center"/>
+			<s:Group y="172" horizontalCenter="0">
 				<s:Label y="5" text="Select Month:"/>
-				<s:DropDownList id="costDropDown" x="80" dataProvider="{global.reportList}" labelFunction="reportLabelFunction"></s:DropDownList>
+				<s:DropDownList id="costDropDown" x="80" dataProvider="{global.costList}" labelFunction="costLabelFunction"></s:DropDownList>
 			</s:Group>
-			<s:Button id="newCostButton" y="144" width="120" height="36" label="New Cost Data!" horizontalCenter="0"
-					  click="generateFeedbackButton_clickHandler(event)"/>
-			<s:Button id="costButton" x="20" y="198" label="Go to Financial Page"
-					  click="costButton_clickHandler(event)"/>
-			<s:Button id="loadCostButton" x="20" y="222" label="Load Cost Report"
+			<s:Button id="loadCostButton" y="201" width="120" height="36" label="Edit Report!" horizontalCenter="0"
 					  click="loadCostButton_clickHandler(event)"/>
 		</s:Group>
 	</s:Group>
@@ -150,7 +161,7 @@
 				<s:Label y="5" text="Select Month:"/>
 				<s:DropDownList id="reportDropDownFeedback" x="80" dataProvider="{global.reportList}" labelFunction="reportLabelFunction"></s:DropDownList>
 			</s:Group>
-			<s:Button id="generateFeedbackButton" y="144" width="120" height="36" label="Generate Report!" horizontalCenter="0"
+			<s:Button id="generateFeedbackButton" y="144" width="134" height="36" label="Generate Feedback!" horizontalCenter="0"
 					  click="generateFeedbackButton_clickHandler(event)"/>
 		</s:Group>
 	</s:Group>

@@ -171,6 +171,89 @@ class CostReportService
         return $item; 
     }
     
+/**
+	 * Retrieve all cost reports for a user
+	 * 
+	 * @param $userid
+	 * @return CostReportVO[]
+	 */
+    public function getCostReportsByUser ($userid)
+    {        
+        $stmt = $this->connection->prepare("SELECT 
+        	autoid, userid, dataReportID, prescreenTime, screenTime, educationTime, biTime, rtTime, adminTime, trainingTime, 
+			supportTime, otherTime, otherTimeSpec, tech, supplies, otherCost, otherCostSpec, facilityCost, 	facilityPercent, 
+			prescreenTotal, screenTotal, educationTotal, biTotal, rtTotal, adminTotal, trainingTotal, supportTotal, otherTotal, 
+			serviceTotal, nonserviceTotal, expenseTotal, grandTotal, perPatientCost, comments
+			FROM $this->tablename WHERE userid = ?");
+        $this->throwExceptionOnError();
+
+        $stmt->bind_param('i',$userid);
+        $this->throwExceptionOnError();
+
+        $rs = $stmt->execute();
+        $this->throwExceptionOnError();
+
+        $reports = array();
+        $item = new CostReportVO();
+        $stmt->bind_result($item->autoid, $item->userid, $item->dataReportID, 
+        	$item->prescreenTime, $item->screenTime, $item->educationTime, $item->biTime, $item->rtTime, $item->adminTime, 
+        	$item->trainingTime, $item->supportTime, $item->otherTime, $item->otherTimeSpec, 
+        	$item->tech, $item->supplies, $item->otherCost, $item->otherCostSpec, $item->facilityCost, $item->facilityPercent, 
+        	$item->prescreenTotal, $item->screenTotal, $item->educationTotal, $item->biTotal, $item->rtTotal, 
+        	$item->adminTotal, $item->trainingTotal, $item->supportTotal, $item->otherTotal, 
+        	$item->serviceTotal, $item->nonserviceTotal, $item->expenseTotal, $item->grandTotal, $item->perPatientCost,
+			$item->comments);
+			
+		while($stmt->fetch())
+		{        
+			array_push($reports, $item);
+			
+			$item = new CostReportVO();
+	        $stmt->bind_result($item->autoid, $item->userid, $item->dataReportID, 
+	        	$item->prescreenTime, $item->screenTime, $item->educationTime, $item->biTime, $item->rtTime, $item->adminTime, 
+	        	$item->trainingTime, $item->supportTime, $item->otherTime, $item->otherTimeSpec, 
+	        	$item->tech, $item->supplies, $item->otherCost, $item->otherCostSpec, $item->facilityCost, $item->facilityPercent, 
+	        	$item->prescreenTotal, $item->screenTotal, $item->educationTotal, $item->biTotal, $item->rtTotal, 
+	        	$item->adminTotal, $item->trainingTotal, $item->supportTotal, $item->otherTotal, 
+	        	$item->serviceTotal, $item->nonserviceTotal, $item->expenseTotal, $item->grandTotal, $item->perPatientCost,
+				$item->comments);
+		}
+        $stmt->free_result();
+        
+        foreach($reports as $item)
+        {
+        	//Salaries & workload
+	        $item->salaries = $this->getSalaries($item->autoid);
+	        $item->workloadPrescreen = $this->getWorkloads($item->autoid, $this->PRESCREEN);
+	        $item->workloadScreen = $this->getWorkloads($item->autoid, $this->SCREEN);
+	        $item->workloadEducation = $this->getWorkloads($item->autoid, $this->EDUCATION);
+	        $item->workloadBI = $this->getWorkloads($item->autoid, $this->BI);
+	        $item->workloadRT = $this->getWorkloads($item->autoid, $this->RT);
+	        $item->workloadAdmin = $this->getWorkloads($item->autoid, $this->ADMIN);
+	        $item->workloadTraining = $this->getWorkloads($item->autoid, $this->TRAINING);
+	        $item->workloadSupport = $this->getWorkloads($item->autoid, $this->SUPPORT);
+	        $item->workloadOther = $this->getWorkloads($item->autoid, $this->OTHER);
+	        
+	        //Get month and year
+	        $stmt_my = $this->connection->prepare("SELECT month, year FROM data_reports WHERE autoid = ?");
+        	$this->throwExceptionOnError();
+
+	        $stmt_my->bind_param('i',$item->dataReportID);
+	        $this->throwExceptionOnError();
+	
+	        $stmt_my->execute();
+	        $this->throwExceptionOnError();
+        
+        	$stmt_my->bind_result($item->month, $item->year);
+        	$stmt_my->fetch();
+        	$stmt_my->free_result();
+        }
+        	
+        $this->connection->close();
+        
+        return $reports; 
+    }
+    
 	private function getSalaries($reportid)
     {
     	$stmt = $this->connection->prepare("SELECT position, salary FROM salaries WHERE reportid = ?");
@@ -219,6 +302,70 @@ class CostReportService
 	    
 	    $stmt->free_result();
 	    return $workloads;
+    }
+    
+	/**
+	 * Update a data report
+	 * 
+	 * @param CostReportVO $item
+	 * @return CostReportVO
+	 */
+    public function updateCostReport ($item)
+    {        
+        $stmt = $this->connection->prepare("UPDATE $this->tablename SET
+        	prescreenTime=?, screenTime=?, educationTime=?, biTime=?, rtTime=?, adminTime=?, trainingTime=?, 
+			supportTime=?, otherTime=?, otherTimeSpec=?, tech=?, supplies=?, otherCost=?, otherCostSpec=?, facilityCost=?, facilityPercent=?, 
+			prescreenTotal=?, screenTotal=?, educationTotal=?, biTotal=?, rtTotal=?, adminTotal=?, trainingTotal=?, supportTotal=?, otherTotal=?, 
+			serviceTotal=?, nonserviceTotal=?, expenseTotal=?, grandTotal=?, perPatientCost=?, comments=?
+			WHERE autoid=?");
+        $this->throwExceptionOnError();
+
+        $stmt->bind_param('ddddddddds'.'dddsdd'.'ddddddddd'.'ddddds'.'i', 
+        	$item->prescreenTime, $item->screenTime, $item->educationTime, $item->biTime, $item->rtTime, $item->adminTime, 
+        	$item->trainingTime, $item->supportTime, $item->otherTime, $item->otherTimeSpec, 
+        	$item->tech, $item->supplies, $item->otherCost, $item->otherCostSpec, $item->facilityCost, $item->facilityPercent, 
+        	$item->prescreenTotal, $item->screenTotal, $item->educationTotal, $item->biTotal, $item->rtTotal, 
+        	$item->adminTotal, $item->trainingTotal, $item->supportTotal, $item->otherTotal, 
+        	$item->serviceTotal, $item->nonserviceTotal, $item->expenseTotal, $item->grandTotal, $item->perPatientCost,
+			$item->comments, $item->autoid);
+        $this->throwExceptionOnError();
+
+        $rs = $stmt->execute();
+        $this->throwExceptionOnError();
+
+        $stmt->free_result();
+        
+        //Remove all existing salaries and workloads, then insert new ones
+    	$stmt = $this->connection->prepare("DELETE FROM salaries WHERE reportid=?");
+        $this->throwExceptionOnError();
+        $stmt->bind_param('i',$item->autoid);
+        $this->throwExceptionOnError();
+        $stmt->execute();
+        $this->throwExceptionOnError();
+        $stmt->free_result();
+        
+        $stmt = $this->connection->prepare("DELETE FROM workloads WHERE reportid=?");
+        $this->throwExceptionOnError();
+        $stmt->bind_param('i',$item->autoid);
+        $this->throwExceptionOnError();
+        $stmt->execute();
+        $this->throwExceptionOnError();
+        $stmt->free_result();
+        
+        $this->uploadSalary($item->salaries, $item->autoid);
+        $this->uploadWorkload($item->workloadPrescreen, $item->autoid, $this->PRESCREEN);
+        $this->uploadWorkload($item->workloadScreen, $item->autoid, $this->SCREEN);
+        $this->uploadWorkload($item->workloadEducation, $item->autoid, $this->EDUCATION);
+        $this->uploadWorkload($item->workloadBI, $item->autoid, $this->BI);
+        $this->uploadWorkload($item->workloadRT, $item->autoid, $this->RT);
+        $this->uploadWorkload($item->workloadAdmin, $item->autoid, $this->ADMIN);
+        $this->uploadWorkload($item->workloadTraining, $item->autoid, $this->TRAINING);
+        $this->uploadWorkload($item->workloadSupport, $item->autoid, $this->SUPPORT);
+        $this->uploadWorkload($item->workloadOther, $item->autoid, $this->OTHER);
+
+        $this->connection->close();
+        
+        return $item; 
     }
 
     

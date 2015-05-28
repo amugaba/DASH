@@ -61,7 +61,9 @@ public class _Super_CostReportVO extends flash.events.EventDispatcher implements
     private var _internal_autoid : int;
     private var _internal_userid : int;
     private var _internal_dataReportID : int;
-    private var _internal_salaries : ArrayCollection;
+    private var _internal_month : int;
+    private var _internal_year : int;
+    private var _internal_salaries : Object;
     private var _internal_prescreenTime : int;
     private var _internal_screenTime : int;
     private var _internal_educationTime : int;
@@ -72,15 +74,15 @@ public class _Super_CostReportVO extends flash.events.EventDispatcher implements
     private var _internal_supportTime : int;
     private var _internal_otherTime : int;
     private var _internal_otherTimeSpec : String;
-    private var _internal_workloadPrescreen : ArrayCollection;
-    private var _internal_workloadScreen : ArrayCollection;
-    private var _internal_workloadEducation : ArrayCollection;
-    private var _internal_workloadBI : ArrayCollection;
-    private var _internal_workloadRT : ArrayCollection;
-    private var _internal_workloadAdmin : ArrayCollection;
-    private var _internal_workloadTraining : ArrayCollection;
-    private var _internal_workloadSupport : ArrayCollection;
-    private var _internal_workloadOther : ArrayCollection;
+    private var _internal_workloadPrescreen : Object;
+    private var _internal_workloadScreen : Object;
+    private var _internal_workloadEducation : Object;
+    private var _internal_workloadBI : Object;
+    private var _internal_workloadRT : Object;
+    private var _internal_workloadAdmin : Object;
+    private var _internal_workloadTraining : Object;
+    private var _internal_workloadSupport : Object;
+    private var _internal_workloadOther : Object;
     private var _internal_tech : int;
     private var _internal_supplies : int;
     private var _internal_otherCost : int;
@@ -144,7 +146,19 @@ public class _Super_CostReportVO extends flash.events.EventDispatcher implements
     }
 
     [Bindable(event="propertyChange")]
-    public function get salaries() : ArrayCollection
+    public function get month() : int
+    {
+        return _internal_month;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get year() : int
+    {
+        return _internal_year;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get salaries() : Object
     {
         return _internal_salaries;
     }
@@ -210,55 +224,55 @@ public class _Super_CostReportVO extends flash.events.EventDispatcher implements
     }
 
     [Bindable(event="propertyChange")]
-    public function get workloadPrescreen() : ArrayCollection
+    public function get workloadPrescreen() : Object
     {
         return _internal_workloadPrescreen;
     }
 
     [Bindable(event="propertyChange")]
-    public function get workloadScreen() : ArrayCollection
+    public function get workloadScreen() : Object
     {
         return _internal_workloadScreen;
     }
 
     [Bindable(event="propertyChange")]
-    public function get workloadEducation() : ArrayCollection
+    public function get workloadEducation() : Object
     {
         return _internal_workloadEducation;
     }
 
     [Bindable(event="propertyChange")]
-    public function get workloadBI() : ArrayCollection
+    public function get workloadBI() : Object
     {
         return _internal_workloadBI;
     }
 
     [Bindable(event="propertyChange")]
-    public function get workloadRT() : ArrayCollection
+    public function get workloadRT() : Object
     {
         return _internal_workloadRT;
     }
 
     [Bindable(event="propertyChange")]
-    public function get workloadAdmin() : ArrayCollection
+    public function get workloadAdmin() : Object
     {
         return _internal_workloadAdmin;
     }
 
     [Bindable(event="propertyChange")]
-    public function get workloadTraining() : ArrayCollection
+    public function get workloadTraining() : Object
     {
         return _internal_workloadTraining;
     }
 
     [Bindable(event="propertyChange")]
-    public function get workloadSupport() : ArrayCollection
+    public function get workloadSupport() : Object
     {
         return _internal_workloadSupport;
     }
 
     [Bindable(event="propertyChange")]
-    public function get workloadOther() : ArrayCollection
+    public function get workloadOther() : Object
     {
         return _internal_workloadOther;
     }
@@ -427,27 +441,32 @@ public class _Super_CostReportVO extends flash.events.EventDispatcher implements
         }
     }
 
-    public function set salaries(value:*) : void
+    public function set month(value:int) : void
     {
-        var oldValue:ArrayCollection = _internal_salaries;
+        var oldValue:int = _internal_month;
         if (oldValue !== value)
         {
-            if (value is ArrayCollection)
-            {
-                _internal_salaries = value;
-            }
-            else if (value is Array)
-            {
-                _internal_salaries = new ArrayCollection(value);
-            }
-            else if (value == null)
-            {
-                _internal_salaries = null;
-            }
-            else
-            {
-                throw new Error("value of salaries must be a collection");
-            }
+            _internal_month = value;
+            this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "month", oldValue, _internal_month));
+        }
+    }
+
+    public function set year(value:int) : void
+    {
+        var oldValue:int = _internal_year;
+        if (oldValue !== value)
+        {
+            _internal_year = value;
+            this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "year", oldValue, _internal_year));
+        }
+    }
+
+    public function set salaries(value:Object) : void
+    {
+        var oldValue:Object = _internal_salaries;
+        if (oldValue !== value)
+        {
+            _internal_salaries = value;
             this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "salaries", oldValue, _internal_salaries));
         }
     }
@@ -552,227 +571,92 @@ public class _Super_CostReportVO extends flash.events.EventDispatcher implements
         }
     }
 
-    public function set workloadPrescreen(value:*) : void
+    public function set workloadPrescreen(value:Object) : void
     {
-        var oldValue:ArrayCollection = _internal_workloadPrescreen;
+        var oldValue:Object = _internal_workloadPrescreen;
         if (oldValue !== value)
         {
-            if (value is ArrayCollection)
-            {
-                _internal_workloadPrescreen = value;
-            }
-            else if (value is Array)
-            {
-                _internal_workloadPrescreen = new ArrayCollection(value);
-            }
-            else if (value == null)
-            {
-                _internal_workloadPrescreen = null;
-            }
-            else
-            {
-                throw new Error("value of workloadPrescreen must be a collection");
-            }
+            _internal_workloadPrescreen = value;
             this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "workloadPrescreen", oldValue, _internal_workloadPrescreen));
         }
     }
 
-    public function set workloadScreen(value:*) : void
+    public function set workloadScreen(value:Object) : void
     {
-        var oldValue:ArrayCollection = _internal_workloadScreen;
+        var oldValue:Object = _internal_workloadScreen;
         if (oldValue !== value)
         {
-            if (value is ArrayCollection)
-            {
-                _internal_workloadScreen = value;
-            }
-            else if (value is Array)
-            {
-                _internal_workloadScreen = new ArrayCollection(value);
-            }
-            else if (value == null)
-            {
-                _internal_workloadScreen = null;
-            }
-            else
-            {
-                throw new Error("value of workloadScreen must be a collection");
-            }
+            _internal_workloadScreen = value;
             this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "workloadScreen", oldValue, _internal_workloadScreen));
         }
     }
 
-    public function set workloadEducation(value:*) : void
+    public function set workloadEducation(value:Object) : void
     {
-        var oldValue:ArrayCollection = _internal_workloadEducation;
+        var oldValue:Object = _internal_workloadEducation;
         if (oldValue !== value)
         {
-            if (value is ArrayCollection)
-            {
-                _internal_workloadEducation = value;
-            }
-            else if (value is Array)
-            {
-                _internal_workloadEducation = new ArrayCollection(value);
-            }
-            else if (value == null)
-            {
-                _internal_workloadEducation = null;
-            }
-            else
-            {
-                throw new Error("value of workloadEducation must be a collection");
-            }
+            _internal_workloadEducation = value;
             this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "workloadEducation", oldValue, _internal_workloadEducation));
         }
     }
 
-    public function set workloadBI(value:*) : void
+    public function set workloadBI(value:Object) : void
     {
-        var oldValue:ArrayCollection = _internal_workloadBI;
+        var oldValue:Object = _internal_workloadBI;
         if (oldValue !== value)
         {
-            if (value is ArrayCollection)
-            {
-                _internal_workloadBI = value;
-            }
-            else if (value is Array)
-            {
-                _internal_workloadBI = new ArrayCollection(value);
-            }
-            else if (value == null)
-            {
-                _internal_workloadBI = null;
-            }
-            else
-            {
-                throw new Error("value of workloadBI must be a collection");
-            }
+            _internal_workloadBI = value;
             this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "workloadBI", oldValue, _internal_workloadBI));
         }
     }
 
-    public function set workloadRT(value:*) : void
+    public function set workloadRT(value:Object) : void
     {
-        var oldValue:ArrayCollection = _internal_workloadRT;
+        var oldValue:Object = _internal_workloadRT;
         if (oldValue !== value)
         {
-            if (value is ArrayCollection)
-            {
-                _internal_workloadRT = value;
-            }
-            else if (value is Array)
-            {
-                _internal_workloadRT = new ArrayCollection(value);
-            }
-            else if (value == null)
-            {
-                _internal_workloadRT = null;
-            }
-            else
-            {
-                throw new Error("value of workloadRT must be a collection");
-            }
+            _internal_workloadRT = value;
             this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "workloadRT", oldValue, _internal_workloadRT));
         }
     }
 
-    public function set workloadAdmin(value:*) : void
+    public function set workloadAdmin(value:Object) : void
     {
-        var oldValue:ArrayCollection = _internal_workloadAdmin;
+        var oldValue:Object = _internal_workloadAdmin;
         if (oldValue !== value)
         {
-            if (value is ArrayCollection)
-            {
-                _internal_workloadAdmin = value;
-            }
-            else if (value is Array)
-            {
-                _internal_workloadAdmin = new ArrayCollection(value);
-            }
-            else if (value == null)
-            {
-                _internal_workloadAdmin = null;
-            }
-            else
-            {
-                throw new Error("value of workloadAdmin must be a collection");
-            }
+            _internal_workloadAdmin = value;
             this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "workloadAdmin", oldValue, _internal_workloadAdmin));
         }
     }
 
-    public function set workloadTraining(value:*) : void
+    public function set workloadTraining(value:Object) : void
     {
-        var oldValue:ArrayCollection = _internal_workloadTraining;
+        var oldValue:Object = _internal_workloadTraining;
         if (oldValue !== value)
         {
-            if (value is ArrayCollection)
-            {
-                _internal_workloadTraining = value;
-            }
-            else if (value is Array)
-            {
-                _internal_workloadTraining = new ArrayCollection(value);
-            }
-            else if (value == null)
-            {
-                _internal_workloadTraining = null;
-            }
-            else
-            {
-                throw new Error("value of workloadTraining must be a collection");
-            }
+            _internal_workloadTraining = value;
             this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "workloadTraining", oldValue, _internal_workloadTraining));
         }
     }
 
-    public function set workloadSupport(value:*) : void
+    public function set workloadSupport(value:Object) : void
     {
-        var oldValue:ArrayCollection = _internal_workloadSupport;
+        var oldValue:Object = _internal_workloadSupport;
         if (oldValue !== value)
         {
-            if (value is ArrayCollection)
-            {
-                _internal_workloadSupport = value;
-            }
-            else if (value is Array)
-            {
-                _internal_workloadSupport = new ArrayCollection(value);
-            }
-            else if (value == null)
-            {
-                _internal_workloadSupport = null;
-            }
-            else
-            {
-                throw new Error("value of workloadSupport must be a collection");
-            }
+            _internal_workloadSupport = value;
             this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "workloadSupport", oldValue, _internal_workloadSupport));
         }
     }
 
-    public function set workloadOther(value:*) : void
+    public function set workloadOther(value:Object) : void
     {
-        var oldValue:ArrayCollection = _internal_workloadOther;
+        var oldValue:Object = _internal_workloadOther;
         if (oldValue !== value)
         {
-            if (value is ArrayCollection)
-            {
-                _internal_workloadOther = value;
-            }
-            else if (value is Array)
-            {
-                _internal_workloadOther = new ArrayCollection(value);
-            }
-            else if (value == null)
-            {
-                _internal_workloadOther = null;
-            }
-            else
-            {
-                throw new Error("value of workloadOther must be a collection");
-            }
+            _internal_workloadOther = value;
             this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "workloadOther", oldValue, _internal_workloadOther));
         }
     }

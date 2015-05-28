@@ -7,6 +7,7 @@
 						xmlns:datareportservice="services.datareportservice.*"
 						xmlns:components="components.*"
 						xmlns:costreportservice="services.costreportservice.*"
+						chromeColor="#69A4C9" contentBackgroundColor="#C9DEEB"
 						width="100%" height="100%">
 	<fx:Script>
 		<![CDATA[
@@ -92,7 +93,7 @@
 					created = true;
 				
 				var firstMonth:Boolean = true;
-				getDataReportsResult.token = dataReportService.getDataReports(global.activeUser.autoid);//get data reports so user can select which one this links to
+				getDataReportsWithoutCostResult.token = dataReportService.getDataReportsWithoutCost(global.activeUser.autoid);
 				
 				if(firstMonth)
 				{
@@ -230,6 +231,9 @@
 				workloadSupport.reset();
 				workloadOther.reset();
 				expenseForm.reset();
+				sumComments.text = "";
+				getDataReportsWithoutCostResult.token = dataReportService.getDataReportsWithoutCost(global.activeUser.autoid);
+				//eventually should clear summary page too
 			}
 			
 			protected function tabNavigator_changeHandler(event:IndexChangedEvent):void
@@ -433,12 +437,7 @@
 					createCostReport();
 				}
 			}
-			
-			protected function getDataReportsResult_resultHandler(event:ResultEvent):void
-			{
-				dataReportQuestion.input.dataProvider = getDataReportsResult.lastResult;
-				dataReportQuestion.input.labelFunction = reportLabelFunction;
-			}
+
 			
 			private function reportLabelFunction(item:Object):String 
 			{
@@ -509,7 +508,7 @@
 				{
 					report.autoid = global.activeCostReport.autoid;
 					global.activeCostReport = report;
-					//update service
+					updateCostReportResult.token = costReportService.updateCostReport(report);
 				}
 				else
 					createCostReportResult.token = costReportService.createCostReport(report);
@@ -522,6 +521,11 @@
 				updatingData = true;
 				submitButton.label = "Update Data!";
 				dataReportQuestion.enabled = false;
+			}
+			
+			protected function updateCostReportResult_resultHandler(event:ResultEvent):void
+			{
+				Alert.show("Cost report updated!");
 			}
 			
 			public function populate(report:CostReportVO):void
@@ -575,7 +579,7 @@
 			
 			protected function getDataReportsPopulatingResult_resultHandler(event:ResultEvent):void
 			{
-				dataReportQuestion.input.dataProvider = getDataReportsResult.lastResult;
+				dataReportQuestion.input.dataProvider = getDataReportsPopulatingResult.lastResult;
 				dataReportQuestion.input.labelFunction = reportLabelFunction;
 				if(updatingData)
 				{
@@ -587,10 +591,15 @@
 				}
 			}
 			
+			protected function getDataReportsWithoutCostResult_resultHandler(event:ResultEvent):void
+			{
+				dataReportQuestion.input.dataProvider = getDataReportsWithoutCostResult.lastResult;
+				dataReportQuestion.input.labelFunction = reportLabelFunction;
+			}
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
-		<s:CallResponder id="getDataReportsResult" result="getDataReportsResult_resultHandler(event)"/>
 		<s:CallResponder id="getDataReportsPopulatingResult" result="getDataReportsPopulatingResult_resultHandler(event)"/>
 		<datareportservice:DataReportService id="dataReportService"
 											 fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)"
@@ -599,6 +608,8 @@
 		<costreportservice:CostReportService id="costReportService"
 											 fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)"
 											 showBusyCursor="true"/>
+		<s:CallResponder id="getDataReportsWithoutCostResult" result="getDataReportsWithoutCostResult_resultHandler(event)"/>
+		<s:CallResponder id="updateCostReportResult" result="updateCostReportResult_resultHandler(event)"/>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	<mx:TabNavigator id="tabNavigator" x="7" y="29" width="685" height="650" paddingTop="0" change="tabNavigator_changeHandler(event)">
@@ -806,7 +817,7 @@
 				<s:Label text="Please describe comments or questions you have regarding SBIRT costs:" fontWeight="bold"/>
 				<s:TextArea id="sumComments" width="640" height="97"/>
 			</questions:QuestionForm>
-			<s:Button id="submitButton" y="592" height="31" label="Save Report"
+			<s:Button id="submitButton" y="592" height="31" label="Submit Data!"
 					  click="submitButton_clickHandler(event)" horizontalCenter="0"/>
 		</s:NavigatorContent>
 	</mx:TabNavigator>

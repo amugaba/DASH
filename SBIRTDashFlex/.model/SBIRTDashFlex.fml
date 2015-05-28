@@ -166,6 +166,18 @@
       </annotation>
       <parameter name="autoid" type="integer"/>
     </function>
+    <function name="getDataReportsWithoutCost" return-type="DataReportVO[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="ValidProperties">
+        <item name="propertySpecifier">autoid,userid,month,year,uniquePatients,patientsEligible,prescreens,validPrescreens,alcoholPrescreens,drugPrescreens,bothPrescreens,screens,isNotScreening,possibleScreens,screensOfPossible,educationScores,biScores,btScores,rtScores,bis,bts,rts,otherComments</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">opaque</item>
+      </annotation>
+      <parameter name="userid" type="integer"/>
+    </function>
   </service>
   <entity name="DataReportVO">
     <annotation name="EntityProperties">
@@ -189,6 +201,9 @@
       <item name="Package">valueObjects</item>
     </annotation>
     <annotation name="getDataReports">
+      <item name="propertySpecifier">autoid,userid,month,year,uniquePatients,patientsEligible,prescreens,validPrescreens,alcoholPrescreens,drugPrescreens,bothPrescreens,screens,isNotScreening,possibleScreens,screensOfPossible,educationScores,biScores,btScores,rtScores,bis,bts,rts,otherComments</item>
+    </annotation>
+    <annotation name="getDataReportsWithoutCost">
       <item name="propertySpecifier">autoid,userid,month,year,uniquePatients,patientsEligible,prescreens,validPrescreens,alcoholPrescreens,drugPrescreens,bothPrescreens,screens,isNotScreening,possibleScreens,screensOfPossible,educationScores,biScores,btScores,rtScores,bis,bts,rts,otherComments</item>
     </annotation>
     <property name="autoid" type="integer" required="true"/>
@@ -243,7 +258,7 @@
         <item name="analyzed">true</item>
       </annotation>
       <annotation name="ValidProperties">
-        <item name="propertySpecifier">autoid,userid,dataReportID,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
+        <item name="propertySpecifier">autoid,userid,dataReportID,month,year,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
       </annotation>
       <annotation name="original signature">
         <item name="returnType">CostReportVO</item>
@@ -255,11 +270,55 @@
         <item name="analyzed">true</item>
       </annotation>
       <annotation name="original signature">
+        <item name="returnType">CostReportVO</item>
+        <item name="inputParams">opaque</item>
+        <item name="inputParamNames">autoid</item>
+      </annotation>
+      <annotation name="ValidProperties">
+        <item name="propertySpecifier">autoid,userid,dataReportID,month,year,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
+      </annotation>
+      <parameter name="autoid" type="integer"/>
+    </function>
+    <function name="getCostReportsByUser" return-type="CostReportVO[]">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="ValidProperties">
+        <item name="propertySpecifier">autoid,userid,dataReportID,month,year,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="inputParamNames">userid</item>
+        <item name="inputParams">opaque</item>
         <item name="returnType">opaque</item>
       </annotation>
-      <parameter name="autoid" type="opaque"/>
+      <parameter name="userid" type="integer"/>
+    </function>
+    <function name="updateCostReport" return-type="CostReportVO">
+      <annotation name="analyze group">
+        <item name="analyzed">true</item>
+      </annotation>
+      <annotation name="original signature">
+        <item name="returnType">opaque</item>
+      </annotation>
+      <parameter name="item" type="CostReportVO"/>
     </function>
   </service>
+  <entity name="StdClass">
+    <annotation name="EntityProperties">
+      <item name="EntityOriginalName">StdClass</item>
+      <item name="location">C:/Users/tiddd/Adobe Flash Builder 4.5/.metadata/.plugins/org.eclipse.php.core/__language__/808eb2ee/Core.php</item>
+    </annotation>
+    <annotation name="ServerProperties">
+      <item name="RemoteClass">StdClass</item>
+      <item name="IncludeRemoteClass">nonempty</item>
+    </annotation>
+    <annotation name="service Group">
+      <item name="service">CostReportService</item>
+    </annotation>
+    <annotation name="ActionScriptGeneration">
+      <item name="Package">valueObjects</item>
+    </annotation>
+  </entity>
   <entity name="CostReportVO">
     <annotation name="EntityProperties">
       <item name="EntityOriginalName">CostReportVO</item>
@@ -270,7 +329,7 @@
       <item name="IncludeRemoteClass">nonempty</item>
     </annotation>
     <annotation name="createCostReport">
-      <item name="propertySpecifier">autoid,userid,dataReportID,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
+      <item name="propertySpecifier">autoid,userid,dataReportID,month,year,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
     </annotation>
     <annotation name="service Group">
       <item name="service">CostReportService</item>
@@ -279,12 +338,20 @@
       <item name="Package">valueObjects</item>
     </annotation>
     <annotation name="getCostReportByID">
-      <item name="propertySpecifier">autoid,userid,dataReportID,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
+      <item name="propertySpecifier">autoid,userid,dataReportID,month,year,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
+    </annotation>
+    <annotation name="getCostReportsByUser">
+      <item name="propertySpecifier">autoid,userid,dataReportID,month,year,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
+    </annotation>
+    <annotation name="updateCostReport">
+      <item name="propertySpecifier">autoid,userid,dataReportID,month,year,salaries,prescreenTime,screenTime,educationTime,biTime,rtTime,adminTime,trainingTime,supportTime,otherTime,otherTimeSpec,workloadPrescreen,workloadScreen,workloadEducation,workloadBI,workloadRT,workloadAdmin,workloadTraining,workloadSupport,workloadOther,tech,supplies,otherCost,otherCostSpec,facilityCost,facilityPercent,prescreenTotal,screenTotal,educationTotal,biTotal,rtTotal,adminTotal,trainingTotal,supportTotal,otherTotal,serviceTotal,nonserviceTotal,expenseTotal,grandTotal,perPatientCost,comments</item>
     </annotation>
     <property name="autoid" type="integer"/>
     <property name="userid" type="integer"/>
     <property name="dataReportID" type="integer"/>
-    <property name="salaries" type="opaque[]"/>
+    <property name="month" type="integer"/>
+    <property name="year" type="integer"/>
+    <property name="salaries" type="opaque"/>
     <property name="prescreenTime" type="integer"/>
     <property name="screenTime" type="integer"/>
     <property name="educationTime" type="integer"/>
@@ -295,15 +362,15 @@
     <property name="supportTime" type="integer"/>
     <property name="otherTime" type="integer"/>
     <property name="otherTimeSpec" type="string"/>
-    <property name="workloadPrescreen" type="opaque[]"/>
-    <property name="workloadScreen" type="opaque[]"/>
-    <property name="workloadEducation" type="opaque[]"/>
-    <property name="workloadBI" type="opaque[]"/>
-    <property name="workloadRT" type="opaque[]"/>
-    <property name="workloadAdmin" type="opaque[]"/>
-    <property name="workloadTraining" type="opaque[]"/>
-    <property name="workloadSupport" type="opaque[]"/>
-    <property name="workloadOther" type="opaque[]"/>
+    <property name="workloadPrescreen" type="opaque"/>
+    <property name="workloadScreen" type="opaque"/>
+    <property name="workloadEducation" type="opaque"/>
+    <property name="workloadBI" type="opaque"/>
+    <property name="workloadRT" type="opaque"/>
+    <property name="workloadAdmin" type="opaque"/>
+    <property name="workloadTraining" type="opaque"/>
+    <property name="workloadSupport" type="opaque"/>
+    <property name="workloadOther" type="opaque"/>
     <property name="tech" type="integer"/>
     <property name="supplies" type="integer"/>
     <property name="otherCost" type="integer"/>

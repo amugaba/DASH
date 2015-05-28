@@ -2,34 +2,20 @@
 include_once 'UserVO.php';
 	require_once('Zend/Mail/Transport/Smtp.php');
 	require_once 'Zend/Mail.php';
-
+include_once 'ConnectionManager.php';
 
 class UserService
 
 {
-/*
-    public $username = "sbirt";
-    public $password = "ry94v8co";
-    public $server = "127.0.0.1";
-    public $databasename = "sbirt_dash";
-*/
-
-    public $username = "root";
-    public $password = "asdf2423";
-    public $server = "localhost";
-    public $databasename = "sbirt_dash";
-
-    
-    public $port = "3306";
     var $tablename = "users";
     public $connection;
 
     public function __construct ()
     {
+		$cm = new ConnectionManager();
 
-        $this->connection = mysqli_connect($this->server, $this->username,
-
-        $this->password, $this->databasename, $this->port);
+        $this->connection = mysqli_connect($cm->server, $cm->username,
+        $cm->password, $cm->databasename, $cm->port);
 
         $this->throwExceptionOnError($this->connection);
     }
