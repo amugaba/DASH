@@ -46,6 +46,11 @@ package components.questions
 			return input;
 		}
 		
+		public override function removeErrorMessage():void
+		{
+			input.errorString = "";
+		}
+		
 		public override function enable():void
 		{
 			isSkipped = false;

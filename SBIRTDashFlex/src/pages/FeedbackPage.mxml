@@ -107,6 +107,8 @@
 				servicesPie.setDataProvider(servicesBreakdown);
 				
 				//Apply narrative to text fields
+				textServiceSummary.textFlow = TextConverter.importToFlow(reportWriter.summaryServicesText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				textCostSummary.textFlow = TextConverter.importToFlow(reportWriter.summaryCostsText, TextConverter.TEXT_FIELD_HTML_FORMAT);
 				textFieldPrescreen1.textFlow = TextConverter.importToFlow(reportWriter.prescreenCaptureText, TextConverter.TEXT_FIELD_HTML_FORMAT);
 				textFieldPrescreen2.textFlow = TextConverter.importToFlow(reportWriter.prescreenDistributionText, TextConverter.TEXT_FIELD_HTML_FORMAT);
 				textFieldScreening1.textFlow = TextConverter.importToFlow(reportWriter.screenCaptureText, TextConverter.TEXT_FIELD_HTML_FORMAT);
@@ -185,6 +187,13 @@
 	<s:Label id="reportPeriodLabel" y="7" fontSize="22" text="Report of Activities:" width="100%" textAlign="center"/>
 	<s:Button x="572" y="22" height="27" label="Export to PDF!" click="createReportPDF(event)"/>
 	<mx:TabNavigator x="5" y="39" width="680" height="669" id="tabNavigator">
+		<!-- Summary Page -->
+		<s:NavigatorContent width="100%" height="100%" label="Summary">
+			<s:Label y="{titleY}" fontSize="18" text="SBIRT Summary" width="100%" textAlign="center"/>
+			<s:RichEditableText id="textServiceSummary" x="{textX}" y="{textY1}" width="630" />
+			<s:RichEditableText id="textCostSummary" x="{textX}" y="{textY2}" width="385" />
+		</s:NavigatorContent>
+		
 		<!-- Prescreen Page -->
 		<s:NavigatorContent width="100%" height="100%" label="Prescreening">
 			<s:Label y="{titleY}" fontSize="18" text="Prescreening" width="100%" textAlign="center"/>

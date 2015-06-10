@@ -93,7 +93,7 @@ Delete button destroys the item and removes it from the parent container.
 				{
 					var qPos:QuestionClass = positionForm.questions[i];
 					var qSal:QuestionClass = salaryForm.questions[i];
-					salaryDict[qPos.answer] = parseFloat(qSal.answer);
+					salaryDict[qPos.answer] = qSal.answerNumber;
 				}
 				return salaryDict;
 			}

@@ -72,15 +72,22 @@
 					reset();
 			}
 			
+			/**
+			 * Reset data to default values, unskip/enable each question and skip pattern, process skip patterns based on default values, remove error messages.
+			 * Validators don't preserve state. Inputs preserve data and error messages. Questions preserve skipped state. Skip Patterns perserve skip state.
+			 * */
 			public function reset():void
 			{
 				for each(var q:QuestionClass in questions)
-					q.restoreDefault();
+				{
+					q.reset();
+				}
 					
 				doAllSkips();
 				removeAllErrors();
 			}
 			
+			//This will validate each question and then process skips based on the question's current answer and valid status
 			public function doAllSkips():void
 			{
 				for each(var q:QuestionClass in questions)
@@ -93,8 +100,7 @@
 			{
 				for each(var q:QuestionClass in questions)
 				{
-					for each(var val:Validator in q.validators)
-						val.dispatchEvent(new ValidationResultEvent(ValidationResultEvent.VALID));
+					q.removeErrorMessage();
 				}
 			}
 			

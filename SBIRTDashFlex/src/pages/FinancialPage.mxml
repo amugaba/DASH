@@ -93,7 +93,7 @@
 					created = true;
 				
 				var firstMonth:Boolean = true;
-				getDataReportsWithoutCostResult.token = dataReportService.getDataReportsWithoutCost(global.activeUser.autoid);
+				//getDataReportsWithoutCostResult.token = dataReportService.getDataReportsWithoutCost(global.activeUser.autoid);
 				
 				if(firstMonth)
 				{
@@ -180,6 +180,8 @@
 				expenseForm.addQuestion(facilityPercent, 90);
 				facilityPercent.text.setStyle("paddingLeft",QUESTION_INDENT);
 				Valid.addNumberValidator(facilityPercent,0,100);
+				
+				resetPage();
 			}
 			
 			protected function addQuestionNumber(q:QuestionClass, form:QuestionForm, width:int=-1):void
@@ -257,7 +259,7 @@
 			{
 				//draw from dataReport
 				dataReport = dataReportQuestion.input.selectedItem;
-				sumNumPrescreen.text = dataReport.prescreens.toString();//need to get this before testing
+				sumNumPrescreen.text = dataReport.prescreens.toString();
 				sumNumScreen.text = dataReport.screens.toString();
 				sumNumEducation.text = dataReport.educationScores.toString();
 				sumNumIntervention.text = (dataReport.bis + dataReport.bts).toString();
@@ -271,11 +273,11 @@
 				sumTimeReferral.text = referralEstimate.answer;
 				
 				//calculate total time
-				var prescreenTimeCalc:Number = dataReport.prescreens * parseFloat(prescreenEstimate.answer);
-				var screenTimeCalc:Number = dataReport.screens * parseFloat(screenEstimate.answer);
-				var educationTimeCalc:Number = dataReport.educationScores * parseFloat(educationEstimate.answer);
-				var interventionTimeCalc:Number = (dataReport.bis + dataReport.bts) * parseFloat(interventionEstimate.answer);
-				var referralTimeCalc:Number = dataReport.rts * parseFloat(referralEstimate.answer);
+				var prescreenTimeCalc:Number = dataReport.prescreens * prescreenEstimate.answerNumber;
+				var screenTimeCalc:Number = dataReport.screens * screenEstimate.answerNumber;
+				var educationTimeCalc:Number = dataReport.educationScores * educationEstimate.answerNumber;
+				var interventionTimeCalc:Number = (dataReport.bis + dataReport.bts) * interventionEstimate.answerNumber;
+				var referralTimeCalc:Number = dataReport.rts * referralEstimate.answerNumber;
 				
 				//calculate cost rate from salary and workload
 				salaryDict = salaryQuestion.getSalariesMap();
@@ -325,10 +327,10 @@
 				sumOtherCost.text = roundCost(otherRate);
 				
 				//calculate total cost
-				adminTotalCost = adminRate * parseFloat(administrationTime.answer);
-				trainingTotalCost = trainingRate * parseFloat(trainingTime.answer);
-				supportTotalCost = supportRate * parseFloat(supportTime.answer);
-				otherTotalCost = otherRate * parseFloat(otherTime.answer);
+				adminTotalCost = adminRate * administrationTime.answerNumber;
+				trainingTotalCost = trainingRate * trainingTime.answerNumber;
+				supportTotalCost = supportRate * supportTime.answerNumber;
+				otherTotalCost = otherRate * otherTime.answerNumber;
 				sumAdminTotalCost.text = roundCost(adminTotalCost);
 				sumTrainingTotalCost.text = roundCost(trainingTotalCost);
 				sumSupportTotalCost.text = roundCost(supportTotalCost);
@@ -339,7 +341,7 @@
 				sumNonService.text = roundCost(totalNonServiceCost);
 				
 				//Expenses cost
-				expensesCost = parseFloat(techCost.answer) + parseFloat(suppliesCost.answer) + parseFloat(otherCost.answer) + parseFloat(facilityTotal.answer) * parseFloat(facilityPercent.answer)/100.0;
+				expensesCost = techCost.answerNumber + suppliesCost.answerNumber + otherCost.answerNumber + facilityTotal.answerNumber * facilityPercent.answerNumber/100.0;
 				sumExpenses.text = roundCost(expensesCost);
 				
 				totalCost = totalServiceCost + totalNonServiceCost + expensesCost;
@@ -359,7 +361,7 @@
 				for(var i:int = 0; i < positionForm.numElements; i++)
 				{
 					var position:String = positionForm.questions[i].answer;
-					var percent:Number = parseFloat(percentForm.questions[i].answer) / 100.0;
+					var percent:Number = percentForm.questions[i].answerNumber / 100.0;
 					yearlySalary += (salaryDict[position] as Number) * percent;
 				}
 				
@@ -456,15 +458,15 @@
 				report.salaries = salaryDict;
 				
 				//Times
-				report.prescreenTime = parseFloat(prescreenEstimate.answer);
-				report.screenTime = parseFloat(screenEstimate.answer);
-				report.educationTime = parseFloat(educationEstimate.answer);
-				report.biTime = parseFloat(interventionEstimate.answer);
-				report.rtTime = parseFloat(referralEstimate.answer);
-				report.adminTime = parseFloat(administrationTime.answer);
-				report.trainingTime = parseFloat(trainingTime.answer);
-				report.supportTime = parseFloat(supportTime.answer);
-				report.otherTime = parseFloat(otherTime.answer);
+				report.prescreenTime = prescreenEstimate.answerNumber;
+				report.screenTime = screenEstimate.answerNumber;
+				report.educationTime = educationEstimate.answerNumber;
+				report.biTime = interventionEstimate.answerNumber;
+				report.rtTime = referralEstimate.answerNumber;
+				report.adminTime = administrationTime.answerNumber;
+				report.trainingTime = trainingTime.answerNumber;
+				report.supportTime = supportTime.answerNumber;
+				report.otherTime = otherTime.answerNumber;
 				report.otherTimeSpec = otherTimeSpec.answer;
 				
 				//Workloads
@@ -479,12 +481,11 @@
 				report.workloadOther = workloadOther.getWorkloadsMap();
 				
 				//Expenses
-				report.tech = parseFloat(techCost.answer);
-				report.supplies = parseFloat(suppliesCost.answer);
-				report.otherCost = parseFloat(otherCost.answer);
-				report.otherCostSpec = otherCostSpec.answer;
-				report.facilityCost = parseFloat(facilityTotal.answer);
-				report.facilityPercent = parseFloat(facilityPercent.answer);
+				report.tech = techCost.answerNumber;
+				report.supplies = suppliesCost.answerNumber;
+				report.otherCost = otherCost.answerNumber;
+				report.facilityCost = facilityTotal.answerNumber;
+				report.facilityPercent = facilityPercent.answerNumber;
 				
 				//Computed costs
 				report.prescreenTotal = prescreenFinalCost;
@@ -575,6 +576,9 @@
 				
 				//calculations should be done when flipping to the last page. No point in loading them
 				sumComments.text = report.comments;
+				
+				timeForm.doAllSkips();
+				expenseForm.doAllSkips();
 			}
 			
 			protected function getDataReportsPopulatingResult_resultHandler(event:ResultEvent):void

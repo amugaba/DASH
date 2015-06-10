@@ -3,6 +3,7 @@ package components.questions
 	import components.skips.SkipPattern;
 	
 	import flash.display.InteractiveObject;
+	import flash.globalization.NumberFormatter;
 	
 	import flashx.textLayout.elements.LinkElement;
 	import flashx.textLayout.events.FlowElementMouseEvent;
@@ -31,6 +32,7 @@ package components.questions
 		public var bindTargets:ArrayList = new ArrayList();
 		public var replaceStrings:ArrayList = new ArrayList();
 		protected var helpText:String;
+		public static var nf:NumberFormatter = new NumberFormatter( "en-US" );
 		
 		public function QuestionClass(codeName:String, questionLabel:String = "")
 		{
@@ -47,6 +49,16 @@ package components.questions
 		}
 		
 		public function set answer(value:String):void
+		{
+			//to be overidden
+		}
+		
+		public function get answerNumber():Number
+		{
+			return Number.NaN;
+		}
+		
+		public function set answerNumber(value:Number):void
 		{
 			//to be overidden
 		}
@@ -69,7 +81,12 @@ package components.questions
 		public function refreshSkips():void
 		{
 			for each(var s:SkipPattern in skipPatterns)
-			s.skipHandler(null);
+				s.skipHandler(null);
+		}
+		
+		public function removeErrorMessage():void
+		{
+			//to be overridden
 		}
 		
 		public function enable():void
@@ -79,6 +96,15 @@ package components.questions
 		public function disable():void
 		{
 			isSkipped = true;	
+		}
+		
+		public function reset():void
+		{
+			restoreDefault();
+			enable();
+			for each(var s:SkipPattern in skipPatterns)
+				s.isSkipping = false;
+			removeErrorMessage();
 		}
 		
 		public function addHelpText(txt:String):void

@@ -23,7 +23,7 @@
 			import valueObjects.DataReportVO;
 			import valueObjects.UserVO;	
 			
-			public static var DEBUG_MODE:int = 0;//0 = release, 1 = remote debug, 2 = local debug
+			public static var DEBUG_MODE:int = 2;//0 = release, 1 = remote debug, 2 = local debug
 			public static var ENDPOINT_RELEASE:String = "https://www.drugs.indiana.edu/SBIRT/DASH/gateway.php";
 			
 			[Bindable] public var activeUser:UserVO = new UserVO();
@@ -32,21 +32,9 @@
 			[Bindable] public var reportList:ArrayCollection = new ArrayCollection();
 			[Bindable] public var costList:ArrayCollection = new ArrayCollection();
 			public var monthList:ArrayList = new ArrayList(["January","February","March","April","May","June","July","August","September","October","November","December"]);
-
-			//public var pageLoginButton:ButtonBarButton;
-			//public var pageHomeButton:ButtonBarButton;
-			//public var pageReportingButton:ButtonBarButton;
-			//public var pageFeedbackButton:ButtonBarButton;
 			
 			protected function mainState_enterStateHandler(event:FlexEvent):void
 			{
-				//pageHomeButton = pageButtonBar.getChildAt(0) as ButtonBarButton;
-				//pageReportingButton = pageButtonBar.getChildAt(1) as ButtonBarButton;
-				//pageFeedbackButton = pageButtonBar.getChildAt(2) as ButtonBarButton;
-				//pageHomeButton.enabled = true;
-				//pageReportingButton.enabled = true;
-				//pageFeedbackButton.enabled = true;
-				//pageViewstack.selectedChild = pageHome;
 				pageHome.refresh();
 			}
 			

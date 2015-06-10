@@ -1,6 +1,7 @@
 package feedback
 {
 	import mx.collections.ArrayCollection;
+	import mx.core.FlexGlobals;
 	
 	import spark.collections.Sort;
 	import spark.collections.SortField;
@@ -21,6 +22,19 @@ package feedback
 		private var avgScreenCaptureRate:Number;
 		private var avgServiceCaptureRate:Number;
 		
+		public var summaryServicesText:String;
+		public var summaryCostsText:String;
+		private var totalPatientsEligible:int = 0;
+		private var totalValidPrescreens:int = 0;
+		private var totalPrescreens:int = 0;
+		private var totalAODPrescreens:int = 0;
+		private var totalScreens:int = 0;
+		private var totalPositiveScreens:int = 0;
+		private var totalBIs:int = 0;
+		private var totalBTs:int = 0;
+		private var totalRTs:int = 0;
+		private var totalServices:int = 0;
+		
 		public var prescreenCaptureText:String;
 		public var prescreenDistributionText:String;
 		public var screenCaptureText:String;
@@ -28,6 +42,8 @@ package feedback
 		public var serviceCaptureText:String;
 		public var serviceDistributionText:String;
 		//public var commentsText:String;
+		
+		private var global:SBIRTDashFlex = FlexGlobals.topLevelApplication as SBIRTDashFlex;
 		
 		public function ReportWriter(report:DataReportVO, reportsAll:ArrayCollection, userTemp:UserVO)
 		{
@@ -67,20 +83,47 @@ package feedback
 				//combine the year with the month to get an int value to plot on a chart
 				reportTemp.monthYear = (reportTemp.year - activeReport.year)*12 + reportTemp.month;
 				
-				//Average the capture rates
-				avgPrescreenCaptureRate += reportTemp.prescreenCaptureRate;
-				avgScreenCaptureRate += reportTemp.screenCaptureRate;
-				avgServiceCaptureRate += reportTemp.serviceCaptureRate;
+				//Sum services
+				totalPrescreens += reportTemp.prescreens;
+				totalScreens += reportTemp.screens;
+				totalBIs += reportTemp.bis;
+				totalBTs += reportTemp.bts;
+				totalRTs += reportTemp.rts;
+				totalValidPrescreens += reportTemp.validPrescreens;
+				totalPatientsEligible += reportTemp.patientsEligible;
+				totalAODPrescreens += reportTemp.aodPrescreens;
+				totalPositiveScreens += reportTemp.positiveScreens;
+				totalServices += reportTemp.services;
 			}
-			avgPrescreenCaptureRate /= reports.length;
-			avgScreenCaptureRate /= reports.length;
-			avgServiceCaptureRate /= reports.length;
+			
+			avgPrescreenCaptureRate = totalValidPrescreens*1.0/totalPatientsEligible;
+			avgScreenCaptureRate = totalScreens*1.0/totalAODPrescreens;
+			avgServiceCaptureRate = totalServices*1.0/totalPositiveScreens;
 			
 			generateNarrative();
 		}
 		
 		protected function generateNarrative():void
 		{
+			//Summary text
+			var firstReport:DataReportDetailed = reports.getItemAt(0) as DataReportDetailed;
+			var firstDate:String = global.monthList.getItemAt(firstReport.month-1) + " " + firstReport.year;
+			summaryServicesText = "SBIRT data was first reported on <b>" + firstDate + "</b>.<br />Since that time, our clinic has provided the following total number of services:<br /><br />" +
+				" <b>" + totalPrescreens + "</b> Prescreens<br />" +
+				" <b>" + totalScreens + "</b> Full Screens<br />" +
+				" <b>" + totalBIs + "</b> Brief Interventions<br />" +
+				" <b>" + totalBTs + "</b> Brief Treatments<br />" +
+				" <b>" + totalRTs + "</b> Referrals to Treatment<br /><br />" +
+				"The <b>aggregate capture rates</b> for our clinic are shown below.<br />[<b>Capture Rate</b> = " +
+				"patients who received a service / total patients who should have received it]<br /><br />" +
+				" <b>" + percentLabel(avgPrescreenCaptureRate) + "</b> Prescreen Capture Rate<br />" +
+				" <b>" + percentLabel(avgScreenCaptureRate) + "</b> Full Screen Capture Rate<br />" +
+				" <b>" + percentLabel(avgServiceCaptureRate) + "</b> Treatment Capture Rate (where 'Treatment' means brief intervention, brief treatment, or referral to treatment)";
+			
+			summaryCostsText = "Cost data was first reported on <b>" + "</b>. Since that time, the total costs of implementing and operating SBIRT has been <b>$" + "</b>." +
+				" The average cost per prescreen is <b>$" + "</b><br />" +
+				" The average cost per intervention, treatment, or referral is <b>$" + "</b><br />";
+			
 			//Higher than average strings
 			var prescreenCaptureHigherAverage:String = activeReport.prescreenCaptureRate > avgPrescreenCaptureRate ? "higher" : "lower";
 			var screenCaptureHigherAverage:String = activeReport.screenCaptureRate > avgScreenCaptureRate ? "higher" : "lower";

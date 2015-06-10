@@ -64,7 +64,7 @@
 					for(var i:int = 0; i < percentForm.numElements; i++)
 					{
 						var q:QuestionText = percentForm.getElementAt(i) as QuestionText;
-						var val:Number = parseFloat(q.answer);
+						var val:Number = q.answerNumber;
 						if(!isNaN(val))
 							total += val;
 					}
@@ -97,7 +97,7 @@
 				{
 					var qPos:QuestionClass = positionForm.questions[i];
 					var qPer:QuestionClass = percentForm.questions[i];
-					dict[qPos.answer] = parseFloat(qPer.answer);
+					dict[qPos.answer] = qPer.answerNumber;
 				}
 				return dict;
 			}
