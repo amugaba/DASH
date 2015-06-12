@@ -54,21 +54,6 @@ class CostReportVO
 	public $facilityCost;
 	public $facilityPercent;
 	
-	public $prescreenTotal;
-	public $screenTotal;
-	public $educationTotal;
-	public $biTotal;
-	public $rtTotal;
-	public $adminTotal;
-	public $trainingTotal;
-	public $supportTotal;
-	public $otherTotal;
-	public $serviceTotal;
-	public $nonserviceTotal;
-	public $expenseTotal;
-	public $grandTotal;
-	public $perPatientCost;
-	
 	public $comments;
 
 	public function __construct()
@@ -107,21 +92,6 @@ class CostReportVO
 		$this->otherCostSpec = "";
 		$this->facilityCost = 0;
 		$this->facilityPercent = 0;
-		
-		$this->prescreenTotal = 0;
-		$this->screenTotal = 0;
-		$this->educationTotal = 0;
-		$this->biTotal = 0;
-		$this->rtTotal = 0;
-		$this->adminTotal = 0;
-		$this->trainingTotal = 0;
-		$this->supportTotal = 0;
-		$this->otherTotal = 0;
-		$this->serviceTotal = 0;
-		$this->nonserviceTotal = 0;
-		$this->expenseTotal = 0;
-		$this->grandTotal = 0;
-		$this->perPatientCost = 0;
 		
 		$this->comments = "";
 	}

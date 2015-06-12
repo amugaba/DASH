@@ -107,26 +107,56 @@ package feedback
 			pdf.setFontSize(12);
 			pdf.setMargins(introMarginLeft,0, introMarginRight);
 			pdf.setY(introY);
-			pdf.writeFlashHtmlText(5, "This report details the SBIRT performance at <b>" + rw.user.name + "</b> during <b>" + 
-				rw.reportPeriodLabel + "</b>. Data regarding prescreening, screening, and services can be found on pages 2, 3, and 4 respectively.");
+			pdf.writeFlashHtmlText(5, "This report is an overview of what the SBIRT implementation at <b>" + rw.user.name + "</b>  has achieved and how well it is currently functioning. " +
+				"You can use this report to identify which aspects of your process are going well and which ones need to be re-examined and improved.");
 			
-			pdf.setY(introY+20);
+			pdf.setY(introY+25);
 			pdf.setFontSize(16);
-			pdf.writeFlashHtmlText(5, "Key Concepts:");
-			pdf.setY(introY+30);
+			pdf.writeFlashHtmlText(5, "How to Use Each Report Page:");
+			pdf.setY(introY+35);
 			pdf.setFontSize(12);
-			pdf.writeFlashHtmlText(5, "Capture Rate - At the top of each data page is the capture rate for that section. Capture rate is the number of patients who received " +
-				"an SBIRT activity, divided by the the total number of patients who should have received that activity. For example, the prescreening capture rate = " +
-				"(patients prescreened)/(patients due for their yearly prescreening). The goal is to have a 100% capture rate for each section.<br /><br />" +
-				"Distribution - At the bottom of each data page is the distribution of that activity. It shows how many patients fell into each screening category or service category.<br /><br />" +
-				"Unknown - If a piece of data was entered as 'Missing Data' on the monthly data report, statistics related to it will be written as 'unknown' in this report.");
+			pdf.writeFlashHtmlText(5, "<b>1. Summary</b> - View aggregate screening, service, and cost statistics for all months combined. Check your overall capture rates to see if you are " +
+				"achieving your goals. Review the cost data to see if your current cost per patient is sustainable, or if you need to plan to reduce costs or seek reimbursement.<br /><br />" +
+				"<b>2 to 4. Prescreening, Screening, and Services</b> - View the activities performed this month. The line graph tracks capture rate over time. You can check whether your " +
+				"capture rate is improving or worsening. The pie graph shows the distribution of results of the activity, such as what percentage of patients screened positive vs. negative. " +
+				"Use this to check whether your screening rates are normal or anomalous.<br /><br />");
 			
 			pdf.setY(introY+95);
+			pdf.setFontSize(16);
+			pdf.writeFlashHtmlText(5, "Other Important Information:");
+			pdf.setY(introY+105);
+			pdf.setFontSize(12);
+			pdf.writeFlashHtmlText(5, 
+				"<b>Capture Rate</b> - Capture rate is the number of patients who received an SBIRT activity, divided by the the total number of patients who should have received that activity. " +
+				"For example, the prescreening capture rate = (patients prescreened)/(patients due for their yearly prescreening). The goal is to have a 100% capture rate for each section.<br /><br />" +
+				"<b>Unknown</b> - If a piece of data was entered as 'Missing Data' on the monthly data report, statistics related to it will be written as 'unknown' in this report.");
+			
+			/*pdf.setY(introY+95);
 			pdf.setFontSize(16);
 			pdf.writeFlashHtmlText(5, "Additional Comments by Data Reporter:");
 			pdf.setY(introY+105);
 			pdf.setFontSize(12);
-			pdf.writeFlashHtmlText(5, rw.activeReport.otherComments);
+			pdf.writeFlashHtmlText(5, rw.activeReport.otherComments);*/
+			
+			//Page 2
+			pdf.addPage();
+			pdf.setMargins(0,0);
+			
+			//Title and page number
+			pdf.setFont(copperPlateGothicLightFont, 26);
+			pdf.textStyle(new RGBColor(0x000000));
+			pdf.addText("Summary", sectionTitleX, sectionTitleY);
+			pdf.setFont(new CoreFont(FontFamily.HELVETICA),12);
+			pdf.addText("Report Page 1", pageNumberX, pageNumberY);
+			
+			//Services Text
+			pdf.setMargins(captureMarginLeft,0,captureMarginRight,20);
+			pdf.setY(captureY);
+			pdf.writeFlashHtmlText(5, rw.summaryServicesText);
+			
+			//Services Text
+			pdf.setY(captureY+100);
+			pdf.writeFlashHtmlText(5, rw.summaryCostsText);
 			
 			//Page 2
 			writeContentPage(pdf, "Prescreening", 2, feedbackPage.captureRateLine, feedbackPage.prescreenPie, "Prescreening Distribution", rw.prescreenCaptureText, rw.prescreenDistributionText);
@@ -162,6 +192,7 @@ package feedback
 			//pdf.setFontSize(12);
 			
 			//Text
+			pdf.setFont(new CoreFont(FontFamily.HELVETICA_BOLD),12);
 			pdf.setMargins(captureMarginLeft,0,captureMarginRight,20);
 			pdf.setY(captureY);
 			pdf.writeFlashHtmlText(5, captureText);

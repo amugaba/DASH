@@ -6,6 +6,7 @@ package feedback
 	import spark.collections.Sort;
 	import spark.collections.SortField;
 	
+	import valueObjects.CostReportVO;
 	import valueObjects.DataReportVO;
 	import valueObjects.UserVO;
 
@@ -22,8 +23,6 @@ package feedback
 		private var avgScreenCaptureRate:Number;
 		private var avgServiceCaptureRate:Number;
 		
-		public var summaryServicesText:String;
-		public var summaryCostsText:String;
 		private var totalPatientsEligible:int = 0;
 		private var totalValidPrescreens:int = 0;
 		private var totalPrescreens:int = 0;
@@ -35,6 +34,17 @@ package feedback
 		private var totalRTs:int = 0;
 		private var totalServices:int = 0;
 		
+		private var firstReportWithCost:DataReportDetailed = null;
+		private var totalCost:Number = 0;
+		private var prescreensWithCost:int = 0;
+		private var servicesWithCost:int = 0;
+		private var avgPrescreenCost:Number;
+		private var avgServiceCost:Number;
+		
+		public var summaryText:String;
+		public var summaryHowTo:String;
+		public var summaryServicesText:String;
+		public var summaryCostsText:String;
 		public var prescreenCaptureText:String;
 		public var prescreenDistributionText:String;
 		public var screenCaptureText:String;
@@ -45,19 +55,19 @@ package feedback
 		
 		private var global:SBIRTDashFlex = FlexGlobals.topLevelApplication as SBIRTDashFlex;
 		
-		public function ReportWriter(report:DataReportVO, reportsAll:ArrayCollection, userTemp:UserVO)
+		public function ReportWriter(currentReport:DataReportVO, dataReports:ArrayCollection, costReports:ArrayCollection, userTemp:UserVO)
 		{
-			activeReport = new DataReportDetailed(report);
+			activeReport = new DataReportDetailed(currentReport, findLinkedCostReport(currentReport,costReports));
 			user = userTemp;
 			reportPeriodLabel = monthValues.getItemAt(activeReport.month-1) + " " + activeReport.year;
 			
 			//use the main list to create a secondary list containing only reports prior to the current one
-			for each(var rep:DataReportVO in reportsAll)
+			for each(var rep:DataReportVO in dataReports)
 			{
 				if(rep.year < activeReport.year)
-					reports.addItem(new DataReportDetailed(rep));
+					reports.addItem(new DataReportDetailed(rep, findLinkedCostReport(rep,costReports)));
 				else if(rep.year == activeReport.year && rep.month <= activeReport.month)
-					reports.addItem(new DataReportDetailed(rep));
+					reports.addItem(new DataReportDetailed(rep, findLinkedCostReport(rep,costReports)));
 			}
 			
 			var dataSortYear:SortField = new SortField();
@@ -94,18 +104,50 @@ package feedback
 				totalAODPrescreens += reportTemp.aodPrescreens;
 				totalPositiveScreens += reportTemp.positiveScreens;
 				totalServices += reportTemp.services;
+				
+				//Sum costs
+				if(reportTemp.hasCost)
+				{
+					if(firstReportWithCost == null)
+						firstReportWithCost = reportTemp;
+					totalCost += reportTemp.grandTotal;
+					//sum services with costs attached here
+					prescreensWithCost += reportTemp.prescreens;
+					servicesWithCost += reportTemp.services;
+				}
 			}
 			
 			avgPrescreenCaptureRate = totalValidPrescreens*1.0/totalPatientsEligible;
 			avgScreenCaptureRate = totalScreens*1.0/totalAODPrescreens;
 			avgServiceCaptureRate = totalServices*1.0/totalPositiveScreens;
+			avgPrescreenCost = totalCost / prescreensWithCost;
+			avgServiceCost = totalCost / servicesWithCost;
 			
 			generateNarrative();
+		}
+		
+		protected function findLinkedCostReport(dataReport:DataReportVO, costReports:ArrayCollection):CostReportVO
+		{
+			for each(var rep:CostReportVO in costReports)
+			{
+				if(rep.dataReportID == dataReport.autoid)
+					return rep;
+			}
+			return null;
 		}
 		
 		protected function generateNarrative():void
 		{
 			//Summary text
+			summaryText = "The SBIRT Report of Activities is an overview of what your SBIRT implementation has achieved and how well it is currently functioning. " +
+				"You can use this report to identify which aspects of your process are going well and which ones need to be re-examined and improved. Click the Export to " +
+				"PDF button to generate a PDF document that you can share with your staff to solicit their input.";
+			
+			summaryHowTo = "<b>How to Use Each Report Page:</b><br /><br />" +
+				"<b>1. Summary</b> - View aggregate screening, service, and cost statistics for all months combined. Check your overall capture rates to see if you are achieving your goals. Review the cost data to see if your current cost per patient is sustainable, or if you need to plan to reduce costs or seek reimbursement.<br />" +
+				"<b>2 to 4. Prescreening, Screening, and Services</b> - View the activities performed this month. The line graph tracks capture rate over time. You can check whether your capture rate is improving or worsening. The pie graph shows the distribution of results of the activity, such as what percentage of patients screened positive vs. negative. Use this to check whether your screening rates are normal or anomalous.<br />" +
+				"<b>5. Concerns</b> - Based on your data, the SBIRT Dash system will automatically identify possible problems in your process. Review these concerns and determine whether they are significant and need to be addressed. This page will not be included in the exported PDF document.";
+			
 			var firstReport:DataReportDetailed = reports.getItemAt(0) as DataReportDetailed;
 			var firstDate:String = global.monthList.getItemAt(firstReport.month-1) + " " + firstReport.year;
 			summaryServicesText = "SBIRT data was first reported on <b>" + firstDate + "</b>.<br />Since that time, our clinic has provided the following total number of services:<br /><br />" +
@@ -115,14 +157,24 @@ package feedback
 				" <b>" + totalBTs + "</b> Brief Treatments<br />" +
 				" <b>" + totalRTs + "</b> Referrals to Treatment<br /><br />" +
 				"The <b>aggregate capture rates</b> for our clinic are shown below.<br />[<b>Capture Rate</b> = " +
-				"patients who received a service / total patients who should have received it]<br /><br />" +
+				"patients who received an activity / total patients who should have received it]<br /><br />" +
 				" <b>" + percentLabel(avgPrescreenCaptureRate) + "</b> Prescreen Capture Rate<br />" +
 				" <b>" + percentLabel(avgScreenCaptureRate) + "</b> Full Screen Capture Rate<br />" +
-				" <b>" + percentLabel(avgServiceCaptureRate) + "</b> Treatment Capture Rate (where 'Treatment' means brief intervention, brief treatment, or referral to treatment)";
+				" <b>" + percentLabel(avgServiceCaptureRate) + "</b> Service Capture Rate (where 'Service' means brief intervention, brief treatment, or referral to treatment)";
 			
-			summaryCostsText = "Cost data was first reported on <b>" + "</b>. Since that time, the total costs of implementing and operating SBIRT has been <b>$" + "</b>." +
-				" The average cost per prescreen is <b>$" + "</b><br />" +
-				" The average cost per intervention, treatment, or referral is <b>$" + "</b><br />";
+			if(firstReportWithCost == null)
+				summaryCostsText = "Cost data has not yet been reported. Enter cost data and then run this report again to view aggregate cost data.";
+			else
+			{
+				var firstCostDate:String = global.monthList.getItemAt(firstReportWithCost.month-1) + " " + firstReportWithCost.year;
+				
+				summaryCostsText = "Cost data was first reported on <b>" + firstCostDate + "</b>.<br />" +
+					"Since that time, the total cost of implementing and operating SBIRT has been <b>$" + roundCost(totalCost) + "</b>.<br /><br />" +
+					"Dividing the total cost by the number of prescreens or services provided gives our average cost per action.<br />" +
+					"[<b>NOTE</b>: To keep these values accurate, if there are months for which you submitted a data report but not a cost report, those data reports without an associated cost report will not be included in this calculation.<br /><br />" +
+					" The average cost per prescreen is <b>$" + roundCost(avgPrescreenCost) + "</b><br />" +
+					" The average cost per service is <b>$" + roundCost(avgServiceCost) + "</b><br />";
+			}
 			
 			//Higher than average strings
 			var prescreenCaptureHigherAverage:String = activeReport.prescreenCaptureRate > avgPrescreenCaptureRate ? "higher" : "lower";
@@ -203,6 +255,11 @@ package feedback
 			
 			//Do free response page
 			//commentsText = activeReport.otherComments;
+		}
+		
+		protected function roundCost(val:Number):String
+		{
+			return (Math.round(val*100)/100).toString();
 		}
 		
 		private function parseMissing(val:int):String

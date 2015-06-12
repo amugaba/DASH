@@ -39,19 +39,14 @@ class CostReportService
     {        
         $stmt = $this->connection->prepare("INSERT IGNORE INTO $this->tablename
         (	userid, dataReportID, prescreenTime, screenTime, educationTime, biTime, rtTime, adminTime, trainingTime, 
-			supportTime, otherTime, otherTimeSpec, tech, supplies, otherCost, otherCostSpec, facilityCost, 	facilityPercent, 
-			prescreenTotal, screenTotal, educationTotal, biTotal, rtTotal, adminTotal, trainingTotal, supportTotal, otherTotal, 
-			serviceTotal, nonserviceTotal, expenseTotal, grandTotal, perPatientCost, comments) 
-			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			supportTime, otherTime, otherTimeSpec, tech, supplies, otherCost, otherCostSpec, facilityCost, 	facilityPercent, comments) 
+			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,)");
         $this->throwExceptionOnError();
 
-        $stmt->bind_param('ii'.'ddddddddds'.'dddsdd'.'ddddddddd'.'ddddds', $item->userid, $item->dataReportID, 
+        $stmt->bind_param('ii'.'ddddddddds'.'dddsdds', $item->userid, $item->dataReportID, 
         	$item->prescreenTime, $item->screenTime, $item->educationTime, $item->biTime, $item->rtTime, $item->adminTime, 
         	$item->trainingTime, $item->supportTime, $item->otherTime, $item->otherTimeSpec, 
-        	$item->tech, $item->supplies, $item->otherCost, $item->otherCostSpec, $item->facilityCost, $item->facilityPercent, 
-        	$item->prescreenTotal, $item->screenTotal, $item->educationTotal, $item->biTotal, $item->rtTotal, 
-        	$item->adminTotal, $item->trainingTotal, $item->supportTotal, $item->otherTotal, 
-        	$item->serviceTotal, $item->nonserviceTotal, $item->expenseTotal, $item->grandTotal, $item->perPatientCost,
+        	$item->tech, $item->supplies, $item->otherCost, $item->otherCostSpec, $item->facilityCost, $item->facilityPercent,
 			$item->comments);
         $this->throwExceptionOnError();
 
@@ -130,9 +125,7 @@ class CostReportService
     {        
         $stmt = $this->connection->prepare("SELECT 
         	autoid, userid, dataReportID, prescreenTime, screenTime, educationTime, biTime, rtTime, adminTime, trainingTime, 
-			supportTime, otherTime, otherTimeSpec, tech, supplies, otherCost, otherCostSpec, facilityCost, 	facilityPercent, 
-			prescreenTotal, screenTotal, educationTotal, biTotal, rtTotal, adminTotal, trainingTotal, supportTotal, otherTotal, 
-			serviceTotal, nonserviceTotal, expenseTotal, grandTotal, perPatientCost, comments
+			supportTime, otherTime, otherTimeSpec, tech, supplies, otherCost, otherCostSpec, facilityCost, 	facilityPercent, comments
 			FROM $this->tablename WHERE autoid = ?");
         $this->throwExceptionOnError();
 
@@ -147,9 +140,6 @@ class CostReportService
         	$item->prescreenTime, $item->screenTime, $item->educationTime, $item->biTime, $item->rtTime, $item->adminTime, 
         	$item->trainingTime, $item->supportTime, $item->otherTime, $item->otherTimeSpec, 
         	$item->tech, $item->supplies, $item->otherCost, $item->otherCostSpec, $item->facilityCost, $item->facilityPercent, 
-        	$item->prescreenTotal, $item->screenTotal, $item->educationTotal, $item->biTotal, $item->rtTotal, 
-        	$item->adminTotal, $item->trainingTotal, $item->supportTotal, $item->otherTotal, 
-        	$item->serviceTotal, $item->nonserviceTotal, $item->expenseTotal, $item->grandTotal, $item->perPatientCost,
 			$item->comments);
         $stmt->fetch();
         $stmt->free_result();
@@ -181,9 +171,7 @@ class CostReportService
     {        
         $stmt = $this->connection->prepare("SELECT 
         	autoid, userid, dataReportID, prescreenTime, screenTime, educationTime, biTime, rtTime, adminTime, trainingTime, 
-			supportTime, otherTime, otherTimeSpec, tech, supplies, otherCost, otherCostSpec, facilityCost, 	facilityPercent, 
-			prescreenTotal, screenTotal, educationTotal, biTotal, rtTotal, adminTotal, trainingTotal, supportTotal, otherTotal, 
-			serviceTotal, nonserviceTotal, expenseTotal, grandTotal, perPatientCost, comments
+			supportTime, otherTime, otherTimeSpec, tech, supplies, otherCost, otherCostSpec, facilityCost, 	facilityPercent, comments
 			FROM $this->tablename WHERE userid = ?");
         $this->throwExceptionOnError();
 
@@ -199,9 +187,6 @@ class CostReportService
         	$item->prescreenTime, $item->screenTime, $item->educationTime, $item->biTime, $item->rtTime, $item->adminTime, 
         	$item->trainingTime, $item->supportTime, $item->otherTime, $item->otherTimeSpec, 
         	$item->tech, $item->supplies, $item->otherCost, $item->otherCostSpec, $item->facilityCost, $item->facilityPercent, 
-        	$item->prescreenTotal, $item->screenTotal, $item->educationTotal, $item->biTotal, $item->rtTotal, 
-        	$item->adminTotal, $item->trainingTotal, $item->supportTotal, $item->otherTotal, 
-        	$item->serviceTotal, $item->nonserviceTotal, $item->expenseTotal, $item->grandTotal, $item->perPatientCost,
 			$item->comments);
 			
 		while($stmt->fetch())
@@ -213,9 +198,6 @@ class CostReportService
 	        	$item->prescreenTime, $item->screenTime, $item->educationTime, $item->biTime, $item->rtTime, $item->adminTime, 
 	        	$item->trainingTime, $item->supportTime, $item->otherTime, $item->otherTimeSpec, 
 	        	$item->tech, $item->supplies, $item->otherCost, $item->otherCostSpec, $item->facilityCost, $item->facilityPercent, 
-	        	$item->prescreenTotal, $item->screenTotal, $item->educationTotal, $item->biTotal, $item->rtTotal, 
-	        	$item->adminTotal, $item->trainingTotal, $item->supportTotal, $item->otherTotal, 
-	        	$item->serviceTotal, $item->nonserviceTotal, $item->expenseTotal, $item->grandTotal, $item->perPatientCost,
 				$item->comments);
 		}
         $stmt->free_result();
@@ -314,19 +296,14 @@ class CostReportService
     {        
         $stmt = $this->connection->prepare("UPDATE $this->tablename SET
         	prescreenTime=?, screenTime=?, educationTime=?, biTime=?, rtTime=?, adminTime=?, trainingTime=?, 
-			supportTime=?, otherTime=?, otherTimeSpec=?, tech=?, supplies=?, otherCost=?, otherCostSpec=?, facilityCost=?, facilityPercent=?, 
-			prescreenTotal=?, screenTotal=?, educationTotal=?, biTotal=?, rtTotal=?, adminTotal=?, trainingTotal=?, supportTotal=?, otherTotal=?, 
-			serviceTotal=?, nonserviceTotal=?, expenseTotal=?, grandTotal=?, perPatientCost=?, comments=?
+			supportTime=?, otherTime=?, otherTimeSpec=?, tech=?, supplies=?, otherCost=?, otherCostSpec=?, facilityCost=?, facilityPercent=?, comments=?
 			WHERE autoid=?");
         $this->throwExceptionOnError();
 
-        $stmt->bind_param('ddddddddds'.'dddsdd'.'ddddddddd'.'ddddds'.'i', 
+        $stmt->bind_param('ddddddddds'.'dddsdds'.'i', 
         	$item->prescreenTime, $item->screenTime, $item->educationTime, $item->biTime, $item->rtTime, $item->adminTime, 
         	$item->trainingTime, $item->supportTime, $item->otherTime, $item->otherTimeSpec, 
         	$item->tech, $item->supplies, $item->otherCost, $item->otherCostSpec, $item->facilityCost, $item->facilityPercent, 
-        	$item->prescreenTotal, $item->screenTotal, $item->educationTotal, $item->biTotal, $item->rtTotal, 
-        	$item->adminTotal, $item->trainingTotal, $item->supportTotal, $item->otherTotal, 
-        	$item->serviceTotal, $item->nonserviceTotal, $item->expenseTotal, $item->grandTotal, $item->perPatientCost,
 			$item->comments, $item->autoid);
         $this->throwExceptionOnError();
 

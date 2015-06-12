@@ -20,14 +20,14 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
 {
     private static var emptyArray:Array = new Array();
 
-    model_internal static var allProperties:Array = new Array("autoid", "userid", "dataReportID", "month", "year", "salaries", "prescreenTime", "screenTime", "educationTime", "biTime", "rtTime", "adminTime", "trainingTime", "supportTime", "otherTime", "otherTimeSpec", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther", "tech", "supplies", "otherCost", "otherCostSpec", "facilityCost", "facilityPercent", "prescreenTotal", "screenTotal", "educationTotal", "biTotal", "rtTotal", "adminTotal", "trainingTotal", "supportTotal", "otherTotal", "serviceTotal", "nonserviceTotal", "expenseTotal", "grandTotal", "perPatientCost", "comments");
+    model_internal static var allProperties:Array = new Array("workloadPrescreen", "educationTime", "otherTime", "workloadRT", "otherCost", "userid", "autoid", "workloadTraining", "trainingTime", "year", "workloadAdmin", "facilityPercent", "supplies", "biTime", "workloadOther", "workloadBI", "otherCostSpec", "workloadSupport", "adminTime", "otherTimeSpec", "workloadScreen", "tech", "screenTime", "salaries", "workloadEducation", "supportTime", "month", "rtTime", "dataReportID", "prescreenTime", "facilityCost", "comments");
     model_internal static var allAssociationProperties:Array = new Array();
     model_internal static var allRequiredProperties:Array = new Array();
-    model_internal static var allAlwaysAvailableProperties:Array = new Array("autoid", "userid", "dataReportID", "month", "year", "salaries", "prescreenTime", "screenTime", "educationTime", "biTime", "rtTime", "adminTime", "trainingTime", "supportTime", "otherTime", "otherTimeSpec", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther", "tech", "supplies", "otherCost", "otherCostSpec", "facilityCost", "facilityPercent", "prescreenTotal", "screenTotal", "educationTotal", "biTotal", "rtTotal", "adminTotal", "trainingTotal", "supportTotal", "otherTotal", "serviceTotal", "nonserviceTotal", "expenseTotal", "grandTotal", "perPatientCost", "comments");
+    model_internal static var allAlwaysAvailableProperties:Array = new Array("workloadPrescreen", "educationTime", "otherTime", "workloadRT", "otherCost", "userid", "autoid", "workloadTraining", "trainingTime", "year", "workloadAdmin", "facilityPercent", "supplies", "biTime", "workloadOther", "workloadBI", "otherCostSpec", "workloadSupport", "adminTime", "otherTimeSpec", "workloadScreen", "tech", "screenTime", "salaries", "workloadEducation", "supportTime", "month", "rtTime", "dataReportID", "prescreenTime", "facilityCost", "comments");
     model_internal static var guardedProperties:Array = new Array();
-    model_internal static var dataProperties:Array = new Array("autoid", "userid", "dataReportID", "month", "year", "salaries", "prescreenTime", "screenTime", "educationTime", "biTime", "rtTime", "adminTime", "trainingTime", "supportTime", "otherTime", "otherTimeSpec", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther", "tech", "supplies", "otherCost", "otherCostSpec", "facilityCost", "facilityPercent", "prescreenTotal", "screenTotal", "educationTotal", "biTotal", "rtTotal", "adminTotal", "trainingTotal", "supportTotal", "otherTotal", "serviceTotal", "nonserviceTotal", "expenseTotal", "grandTotal", "perPatientCost", "comments");
+    model_internal static var dataProperties:Array = new Array("workloadPrescreen", "educationTime", "otherTime", "workloadRT", "otherCost", "userid", "autoid", "workloadTraining", "trainingTime", "year", "workloadAdmin", "facilityPercent", "supplies", "biTime", "workloadOther", "workloadBI", "otherCostSpec", "workloadSupport", "adminTime", "otherTimeSpec", "workloadScreen", "tech", "screenTime", "salaries", "workloadEducation", "supportTime", "month", "rtTime", "dataReportID", "prescreenTime", "facilityCost", "comments");
     model_internal static var sourceProperties:Array = emptyArray
-    model_internal static var nonDerivedProperties:Array = new Array("autoid", "userid", "dataReportID", "month", "year", "salaries", "prescreenTime", "screenTime", "educationTime", "biTime", "rtTime", "adminTime", "trainingTime", "supportTime", "otherTime", "otherTimeSpec", "workloadPrescreen", "workloadScreen", "workloadEducation", "workloadBI", "workloadRT", "workloadAdmin", "workloadTraining", "workloadSupport", "workloadOther", "tech", "supplies", "otherCost", "otherCostSpec", "facilityCost", "facilityPercent", "prescreenTotal", "screenTotal", "educationTotal", "biTotal", "rtTotal", "adminTotal", "trainingTotal", "supportTotal", "otherTotal", "serviceTotal", "nonserviceTotal", "expenseTotal", "grandTotal", "perPatientCost", "comments");
+    model_internal static var nonDerivedProperties:Array = new Array("workloadPrescreen", "educationTime", "otherTime", "workloadRT", "otherCost", "userid", "autoid", "workloadTraining", "trainingTime", "year", "workloadAdmin", "facilityPercent", "supplies", "biTime", "workloadOther", "workloadBI", "otherCostSpec", "workloadSupport", "adminTime", "otherTimeSpec", "workloadScreen", "tech", "screenTime", "salaries", "workloadEducation", "supportTime", "month", "rtTime", "dataReportID", "prescreenTime", "facilityCost", "comments");
     model_internal static var derivedProperties:Array = new Array();
     model_internal static var collectionProperties:Array = new Array();
     model_internal static var collectionBaseMap:Object;
@@ -47,51 +47,37 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
         {
             // dependents map
             model_internal::dependentsOnMap = new Object();
-            model_internal::dependentsOnMap["autoid"] = new Array();
-            model_internal::dependentsOnMap["userid"] = new Array();
-            model_internal::dependentsOnMap["dataReportID"] = new Array();
-            model_internal::dependentsOnMap["month"] = new Array();
-            model_internal::dependentsOnMap["year"] = new Array();
-            model_internal::dependentsOnMap["salaries"] = new Array();
-            model_internal::dependentsOnMap["prescreenTime"] = new Array();
-            model_internal::dependentsOnMap["screenTime"] = new Array();
-            model_internal::dependentsOnMap["educationTime"] = new Array();
-            model_internal::dependentsOnMap["biTime"] = new Array();
-            model_internal::dependentsOnMap["rtTime"] = new Array();
-            model_internal::dependentsOnMap["adminTime"] = new Array();
-            model_internal::dependentsOnMap["trainingTime"] = new Array();
-            model_internal::dependentsOnMap["supportTime"] = new Array();
-            model_internal::dependentsOnMap["otherTime"] = new Array();
-            model_internal::dependentsOnMap["otherTimeSpec"] = new Array();
             model_internal::dependentsOnMap["workloadPrescreen"] = new Array();
-            model_internal::dependentsOnMap["workloadScreen"] = new Array();
-            model_internal::dependentsOnMap["workloadEducation"] = new Array();
-            model_internal::dependentsOnMap["workloadBI"] = new Array();
+            model_internal::dependentsOnMap["educationTime"] = new Array();
+            model_internal::dependentsOnMap["otherTime"] = new Array();
             model_internal::dependentsOnMap["workloadRT"] = new Array();
-            model_internal::dependentsOnMap["workloadAdmin"] = new Array();
-            model_internal::dependentsOnMap["workloadTraining"] = new Array();
-            model_internal::dependentsOnMap["workloadSupport"] = new Array();
-            model_internal::dependentsOnMap["workloadOther"] = new Array();
-            model_internal::dependentsOnMap["tech"] = new Array();
-            model_internal::dependentsOnMap["supplies"] = new Array();
             model_internal::dependentsOnMap["otherCost"] = new Array();
-            model_internal::dependentsOnMap["otherCostSpec"] = new Array();
-            model_internal::dependentsOnMap["facilityCost"] = new Array();
+            model_internal::dependentsOnMap["userid"] = new Array();
+            model_internal::dependentsOnMap["autoid"] = new Array();
+            model_internal::dependentsOnMap["workloadTraining"] = new Array();
+            model_internal::dependentsOnMap["trainingTime"] = new Array();
+            model_internal::dependentsOnMap["year"] = new Array();
+            model_internal::dependentsOnMap["workloadAdmin"] = new Array();
             model_internal::dependentsOnMap["facilityPercent"] = new Array();
-            model_internal::dependentsOnMap["prescreenTotal"] = new Array();
-            model_internal::dependentsOnMap["screenTotal"] = new Array();
-            model_internal::dependentsOnMap["educationTotal"] = new Array();
-            model_internal::dependentsOnMap["biTotal"] = new Array();
-            model_internal::dependentsOnMap["rtTotal"] = new Array();
-            model_internal::dependentsOnMap["adminTotal"] = new Array();
-            model_internal::dependentsOnMap["trainingTotal"] = new Array();
-            model_internal::dependentsOnMap["supportTotal"] = new Array();
-            model_internal::dependentsOnMap["otherTotal"] = new Array();
-            model_internal::dependentsOnMap["serviceTotal"] = new Array();
-            model_internal::dependentsOnMap["nonserviceTotal"] = new Array();
-            model_internal::dependentsOnMap["expenseTotal"] = new Array();
-            model_internal::dependentsOnMap["grandTotal"] = new Array();
-            model_internal::dependentsOnMap["perPatientCost"] = new Array();
+            model_internal::dependentsOnMap["supplies"] = new Array();
+            model_internal::dependentsOnMap["biTime"] = new Array();
+            model_internal::dependentsOnMap["workloadOther"] = new Array();
+            model_internal::dependentsOnMap["workloadBI"] = new Array();
+            model_internal::dependentsOnMap["otherCostSpec"] = new Array();
+            model_internal::dependentsOnMap["workloadSupport"] = new Array();
+            model_internal::dependentsOnMap["adminTime"] = new Array();
+            model_internal::dependentsOnMap["otherTimeSpec"] = new Array();
+            model_internal::dependentsOnMap["workloadScreen"] = new Array();
+            model_internal::dependentsOnMap["tech"] = new Array();
+            model_internal::dependentsOnMap["screenTime"] = new Array();
+            model_internal::dependentsOnMap["salaries"] = new Array();
+            model_internal::dependentsOnMap["workloadEducation"] = new Array();
+            model_internal::dependentsOnMap["supportTime"] = new Array();
+            model_internal::dependentsOnMap["month"] = new Array();
+            model_internal::dependentsOnMap["rtTime"] = new Array();
+            model_internal::dependentsOnMap["dataReportID"] = new Array();
+            model_internal::dependentsOnMap["prescreenTime"] = new Array();
+            model_internal::dependentsOnMap["facilityCost"] = new Array();
             model_internal::dependentsOnMap["comments"] = new Array();
 
             // collection base map
@@ -100,51 +86,37 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
 
         // Property type Map
         model_internal::propertyTypeMap = new Object();
-        model_internal::propertyTypeMap["autoid"] = "int";
-        model_internal::propertyTypeMap["userid"] = "int";
-        model_internal::propertyTypeMap["dataReportID"] = "int";
-        model_internal::propertyTypeMap["month"] = "int";
-        model_internal::propertyTypeMap["year"] = "int";
-        model_internal::propertyTypeMap["salaries"] = "Object";
-        model_internal::propertyTypeMap["prescreenTime"] = "int";
-        model_internal::propertyTypeMap["screenTime"] = "int";
-        model_internal::propertyTypeMap["educationTime"] = "int";
-        model_internal::propertyTypeMap["biTime"] = "int";
-        model_internal::propertyTypeMap["rtTime"] = "int";
-        model_internal::propertyTypeMap["adminTime"] = "int";
-        model_internal::propertyTypeMap["trainingTime"] = "int";
-        model_internal::propertyTypeMap["supportTime"] = "int";
-        model_internal::propertyTypeMap["otherTime"] = "int";
-        model_internal::propertyTypeMap["otherTimeSpec"] = "String";
         model_internal::propertyTypeMap["workloadPrescreen"] = "Object";
-        model_internal::propertyTypeMap["workloadScreen"] = "Object";
-        model_internal::propertyTypeMap["workloadEducation"] = "Object";
-        model_internal::propertyTypeMap["workloadBI"] = "Object";
+        model_internal::propertyTypeMap["educationTime"] = "Number";
+        model_internal::propertyTypeMap["otherTime"] = "Number";
         model_internal::propertyTypeMap["workloadRT"] = "Object";
-        model_internal::propertyTypeMap["workloadAdmin"] = "Object";
+        model_internal::propertyTypeMap["otherCost"] = "Number";
+        model_internal::propertyTypeMap["userid"] = "int";
+        model_internal::propertyTypeMap["autoid"] = "int";
         model_internal::propertyTypeMap["workloadTraining"] = "Object";
-        model_internal::propertyTypeMap["workloadSupport"] = "Object";
+        model_internal::propertyTypeMap["trainingTime"] = "Number";
+        model_internal::propertyTypeMap["year"] = "int";
+        model_internal::propertyTypeMap["workloadAdmin"] = "Object";
+        model_internal::propertyTypeMap["facilityPercent"] = "Number";
+        model_internal::propertyTypeMap["supplies"] = "Number";
+        model_internal::propertyTypeMap["biTime"] = "Number";
         model_internal::propertyTypeMap["workloadOther"] = "Object";
-        model_internal::propertyTypeMap["tech"] = "int";
-        model_internal::propertyTypeMap["supplies"] = "int";
-        model_internal::propertyTypeMap["otherCost"] = "int";
+        model_internal::propertyTypeMap["workloadBI"] = "Object";
         model_internal::propertyTypeMap["otherCostSpec"] = "String";
-        model_internal::propertyTypeMap["facilityCost"] = "int";
-        model_internal::propertyTypeMap["facilityPercent"] = "int";
-        model_internal::propertyTypeMap["prescreenTotal"] = "int";
-        model_internal::propertyTypeMap["screenTotal"] = "int";
-        model_internal::propertyTypeMap["educationTotal"] = "int";
-        model_internal::propertyTypeMap["biTotal"] = "int";
-        model_internal::propertyTypeMap["rtTotal"] = "int";
-        model_internal::propertyTypeMap["adminTotal"] = "int";
-        model_internal::propertyTypeMap["trainingTotal"] = "int";
-        model_internal::propertyTypeMap["supportTotal"] = "int";
-        model_internal::propertyTypeMap["otherTotal"] = "int";
-        model_internal::propertyTypeMap["serviceTotal"] = "int";
-        model_internal::propertyTypeMap["nonserviceTotal"] = "int";
-        model_internal::propertyTypeMap["expenseTotal"] = "int";
-        model_internal::propertyTypeMap["grandTotal"] = "int";
-        model_internal::propertyTypeMap["perPatientCost"] = "int";
+        model_internal::propertyTypeMap["workloadSupport"] = "Object";
+        model_internal::propertyTypeMap["adminTime"] = "Number";
+        model_internal::propertyTypeMap["otherTimeSpec"] = "String";
+        model_internal::propertyTypeMap["workloadScreen"] = "Object";
+        model_internal::propertyTypeMap["tech"] = "Number";
+        model_internal::propertyTypeMap["screenTime"] = "Number";
+        model_internal::propertyTypeMap["salaries"] = "Object";
+        model_internal::propertyTypeMap["workloadEducation"] = "Object";
+        model_internal::propertyTypeMap["supportTime"] = "Number";
+        model_internal::propertyTypeMap["month"] = "int";
+        model_internal::propertyTypeMap["rtTime"] = "Number";
+        model_internal::propertyTypeMap["dataReportID"] = "int";
+        model_internal::propertyTypeMap["prescreenTime"] = "Number";
+        model_internal::propertyTypeMap["facilityCost"] = "Number";
         model_internal::propertyTypeMap["comments"] = "String";
 
         model_internal::_instance = value;
@@ -375,49 +347,7 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
     }
 
     [Bindable(event="propertyChange")]
-    public function get isAutoidAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isUseridAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isDataReportIDAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isMonthAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isYearAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isSalariesAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isPrescreenTimeAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isScreenTimeAvailable():Boolean
+    public function get isWorkloadPrescreenAvailable():Boolean
     {
         return true;
     }
@@ -429,67 +359,7 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
     }
 
     [Bindable(event="propertyChange")]
-    public function get isBiTimeAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isRtTimeAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isAdminTimeAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isTrainingTimeAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isSupportTimeAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
     public function get isOtherTimeAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isOtherTimeSpecAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isWorkloadPrescreenAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isWorkloadScreenAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isWorkloadEducationAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isWorkloadBIAvailable():Boolean
     {
         return true;
     }
@@ -501,7 +371,19 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
     }
 
     [Bindable(event="propertyChange")]
-    public function get isWorkloadAdminAvailable():Boolean
+    public function get isOtherCostAvailable():Boolean
+    {
+        return true;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get isUseridAvailable():Boolean
+    {
+        return true;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get isAutoidAvailable():Boolean
     {
         return true;
     }
@@ -513,43 +395,19 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
     }
 
     [Bindable(event="propertyChange")]
-    public function get isWorkloadSupportAvailable():Boolean
+    public function get isTrainingTimeAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isWorkloadOtherAvailable():Boolean
+    public function get isYearAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isTechAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isSuppliesAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isOtherCostAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isOtherCostSpecAvailable():Boolean
-    {
-        return true;
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get isFacilityCostAvailable():Boolean
+    public function get isWorkloadAdminAvailable():Boolean
     {
         return true;
     }
@@ -561,85 +419,115 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
     }
 
     [Bindable(event="propertyChange")]
-    public function get isPrescreenTotalAvailable():Boolean
+    public function get isSuppliesAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isScreenTotalAvailable():Boolean
+    public function get isBiTimeAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isEducationTotalAvailable():Boolean
+    public function get isWorkloadOtherAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isBiTotalAvailable():Boolean
+    public function get isWorkloadBIAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isRtTotalAvailable():Boolean
+    public function get isOtherCostSpecAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isAdminTotalAvailable():Boolean
+    public function get isWorkloadSupportAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isTrainingTotalAvailable():Boolean
+    public function get isAdminTimeAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isSupportTotalAvailable():Boolean
+    public function get isOtherTimeSpecAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isOtherTotalAvailable():Boolean
+    public function get isWorkloadScreenAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isServiceTotalAvailable():Boolean
+    public function get isTechAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isNonserviceTotalAvailable():Boolean
+    public function get isScreenTimeAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isExpenseTotalAvailable():Boolean
+    public function get isSalariesAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isGrandTotalAvailable():Boolean
+    public function get isWorkloadEducationAvailable():Boolean
     {
         return true;
     }
 
     [Bindable(event="propertyChange")]
-    public function get isPerPatientCostAvailable():Boolean
+    public function get isSupportTimeAvailable():Boolean
+    {
+        return true;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get isMonthAvailable():Boolean
+    {
+        return true;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get isRtTimeAvailable():Boolean
+    {
+        return true;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get isDataReportIDAvailable():Boolean
+    {
+        return true;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get isPrescreenTimeAvailable():Boolean
+    {
+        return true;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get isFacilityCostAvailable():Boolean
     {
         return true;
     }
@@ -661,49 +549,7 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
     }
 
     [Bindable(event="propertyChange")]   
-    public function get autoidStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get useridStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get dataReportIDStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get monthStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get yearStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get salariesStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get prescreenTimeStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get screenTimeStyle():com.adobe.fiber.styles.Style
+    public function get workloadPrescreenStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
@@ -715,67 +561,7 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
     }
 
     [Bindable(event="propertyChange")]   
-    public function get biTimeStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get rtTimeStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get adminTimeStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get trainingTimeStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get supportTimeStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
     public function get otherTimeStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get otherTimeSpecStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get workloadPrescreenStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get workloadScreenStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get workloadEducationStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get workloadBIStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
@@ -787,7 +573,19 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
     }
 
     [Bindable(event="propertyChange")]   
-    public function get workloadAdminStyle():com.adobe.fiber.styles.Style
+    public function get otherCostStyle():com.adobe.fiber.styles.Style
+    {
+        return model_internal::_nullStyle;
+    }
+
+    [Bindable(event="propertyChange")]   
+    public function get useridStyle():com.adobe.fiber.styles.Style
+    {
+        return model_internal::_nullStyle;
+    }
+
+    [Bindable(event="propertyChange")]   
+    public function get autoidStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
@@ -799,43 +597,19 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
     }
 
     [Bindable(event="propertyChange")]   
-    public function get workloadSupportStyle():com.adobe.fiber.styles.Style
+    public function get trainingTimeStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get workloadOtherStyle():com.adobe.fiber.styles.Style
+    public function get yearStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get techStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get suppliesStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get otherCostStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get otherCostSpecStyle():com.adobe.fiber.styles.Style
-    {
-        return model_internal::_nullStyle;
-    }
-
-    [Bindable(event="propertyChange")]   
-    public function get facilityCostStyle():com.adobe.fiber.styles.Style
+    public function get workloadAdminStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
@@ -847,85 +621,115 @@ internal class _CostReportVOEntityMetadata extends com.adobe.fiber.valueobjects.
     }
 
     [Bindable(event="propertyChange")]   
-    public function get prescreenTotalStyle():com.adobe.fiber.styles.Style
+    public function get suppliesStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get screenTotalStyle():com.adobe.fiber.styles.Style
+    public function get biTimeStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get educationTotalStyle():com.adobe.fiber.styles.Style
+    public function get workloadOtherStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get biTotalStyle():com.adobe.fiber.styles.Style
+    public function get workloadBIStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get rtTotalStyle():com.adobe.fiber.styles.Style
+    public function get otherCostSpecStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get adminTotalStyle():com.adobe.fiber.styles.Style
+    public function get workloadSupportStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get trainingTotalStyle():com.adobe.fiber.styles.Style
+    public function get adminTimeStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get supportTotalStyle():com.adobe.fiber.styles.Style
+    public function get otherTimeSpecStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get otherTotalStyle():com.adobe.fiber.styles.Style
+    public function get workloadScreenStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get serviceTotalStyle():com.adobe.fiber.styles.Style
+    public function get techStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get nonserviceTotalStyle():com.adobe.fiber.styles.Style
+    public function get screenTimeStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get expenseTotalStyle():com.adobe.fiber.styles.Style
+    public function get salariesStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get grandTotalStyle():com.adobe.fiber.styles.Style
+    public function get workloadEducationStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get perPatientCostStyle():com.adobe.fiber.styles.Style
+    public function get supportTimeStyle():com.adobe.fiber.styles.Style
+    {
+        return model_internal::_nullStyle;
+    }
+
+    [Bindable(event="propertyChange")]   
+    public function get monthStyle():com.adobe.fiber.styles.Style
+    {
+        return model_internal::_nullStyle;
+    }
+
+    [Bindable(event="propertyChange")]   
+    public function get rtTimeStyle():com.adobe.fiber.styles.Style
+    {
+        return model_internal::_nullStyle;
+    }
+
+    [Bindable(event="propertyChange")]   
+    public function get dataReportIDStyle():com.adobe.fiber.styles.Style
+    {
+        return model_internal::_nullStyle;
+    }
+
+    [Bindable(event="propertyChange")]   
+    public function get prescreenTimeStyle():com.adobe.fiber.styles.Style
+    {
+        return model_internal::_nullStyle;
+    }
+
+    [Bindable(event="propertyChange")]   
+    public function get facilityCostStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }

@@ -18,6 +18,8 @@
 			import components.text.TextStyle;
 			import components.validators.Valid;
 			
+			import feedback.DataReportDetailed;
+			
 			import mx.binding.utils.BindingUtils;
 			import mx.collections.ArrayList;
 			import mx.controls.Alert;
@@ -26,6 +28,9 @@
 			import mx.events.IndexChangedEvent;
 			import mx.rpc.events.ResultEvent;
 			import mx.validators.NumberValidator;
+			
+			import spark.collections.Sort;
+			import spark.collections.SortField;
 			
 			import valueObjects.CostReportVO;
 			import valueObjects.DataReportVO;
@@ -64,23 +69,6 @@
 			
 			private var facilityTotal:QuestionText = new QuestionText("facilityCost","What is the total monthly cost of your facility (e.g. rent, utilities, and other building expenses)?","");
 			private var facilityPercent:QuestionText = new QuestionText("facilityPercent","What percentage (%) of your clinic’s total time is spent on SBIRT? (This value will likely be between 1% and 5%.)","");
-			
-			//Summary Calculations
-			private var prescreenFinalCost:Number;
-			private var screenFinalCost:Number;
-			private var educationFinalCost:Number;
-			private var interventionFinalCost:Number;
-			private var referralFinalCost:Number;
-			private var adminTotalCost:Number;
-			private var trainingTotalCost:Number;
-			private var supportTotalCost:Number;
-			private var otherTotalCost:Number;
-			private var totalServiceCost:Number;
-			private var totalNonServiceCost:Number;
-			private var expensesCost:Number;
-			private var totalCost:Number;
-			private var totalCostPerPatient:Number;
-			private var salaryDict:Object;
 			
 			public function initPage():void
 			{
@@ -235,7 +223,56 @@
 				expenseForm.reset();
 				sumComments.text = "";
 				getDataReportsWithoutCostResult.token = dataReportService.getDataReportsWithoutCost(global.activeUser.autoid);
+				
 				//eventually should clear summary page too
+			}
+			
+			public function populateOldValues():void
+			{
+				if(global.costList.length == 0)
+					return;
+				
+				//sort cost reports by date
+				var dataSortYear:SortField = new SortField();
+				dataSortYear.name = "year";
+				dataSortYear.numeric = true;
+				var dataSortMonth:SortField = new SortField();
+				dataSortMonth.name = "month";
+				dataSortMonth.numeric = true;
+				
+				//Sort reports by date, oldest to newest
+				var numericDataSort:Sort = new Sort();
+				numericDataSort.fields = [dataSortYear,dataSortMonth];
+				global.costList.sort = numericDataSort;
+				global.costList.refresh();
+				
+				var newestReport:CostReportVO = global.costList.getItemAt(global.costList.length-1) as CostReportVO;
+				
+				//salaries
+				salaryQuestion.populateSalaries(newestReport.salaries);
+				positionList = salaryQuestion.getPositions();
+				
+				//times
+				prescreenEstimate.answer = newestReport.prescreenTime.toString();
+				screenEstimate.answer = newestReport.screenTime.toString();
+				educationEstimate.answer = newestReport.educationTime.toString();
+				interventionEstimate.answer = newestReport.biTime.toString();
+				referralEstimate.answer = newestReport.rtTime.toString();
+				
+				//workloads
+				workloadPrescreen.populateWorkloads(newestReport.workloadPrescreen);
+				workloadScreen.populateWorkloads(newestReport.workloadScreen);
+				workloadEducation.populateWorkloads(newestReport.workloadEducation);
+				workloadIntervention.populateWorkloads(newestReport.workloadBI);
+				workloadReferral.populateWorkloads(newestReport.workloadRT);
+				workloadAdmin.populateWorkloads(newestReport.workloadAdmin);
+				workloadTraining.populateWorkloads(newestReport.workloadTraining);
+				workloadSupport.populateWorkloads(newestReport.workloadSupport);
+				workloadOther.populateWorkloads(newestReport.workloadOther);
+				
+				//facility
+				facilityTotal.answer = newestReport.facilityCost.toString();
+				facilityPercent.answer = newestReport.facilityPercent.toString();
 			}
 			
 			protected function tabNavigator_changeHandler(event:IndexChangedEvent):void
@@ -257,8 +294,12 @@
 			
 			protected function calculateSummary():void
 			{
-				//draw from dataReport
 				dataReport = dataReportQuestion.input.selectedItem;
+				global.activeCostReport = createCostReportVO();
+				
+				var detailedReport:DataReportDetailed = new DataReportDetailed(dataReport, global.activeCostReport);
+				
+				//draw from dataReport
 				sumNumPrescreen.text = dataReport.prescreens.toString();
 				sumNumScreen.text = dataReport.screens.toString();
 				sumNumEducation.text = dataReport.educationScores.toString();
@@ -272,42 +313,21 @@
 				sumTimeIntervention.text = interventionEstimate.answer;
 				sumTimeReferral.text = referralEstimate.answer;
 				
-				//calculate total time
-				var prescreenTimeCalc:Number = dataReport.prescreens * prescreenEstimate.answerNumber;
-				var screenTimeCalc:Number = dataReport.screens * screenEstimate.answerNumber;
-				var educationTimeCalc:Number = dataReport.educationScores * educationEstimate.answerNumber;
-				var interventionTimeCalc:Number = (dataReport.bis + dataReport.bts) * interventionEstimate.answerNumber;
-				var referralTimeCalc:Number = dataReport.rts * referralEstimate.answerNumber;
-				
-				//calculate cost rate from salary and workload
-				salaryDict = salaryQuestion.getSalariesMap();
-				
-				var prescreenRate:Number = getSalaryPerMinute(workloadPrescreen.positionForm, workloadPrescreen.percentForm, salaryDict);
-				sumCostPrescreen.text = roundCost(prescreenRate);
-				var screenRate:Number = getSalaryPerMinute(workloadScreen.positionForm, workloadScreen.percentForm, salaryDict);
-				sumCostScreen.text = roundCost(screenRate);
-				var educationRate:Number = getSalaryPerMinute(workloadEducation.positionForm, workloadEducation.percentForm, salaryDict);
-				sumCostEducation.text = roundCost(educationRate);
-				var interventionRate:Number = getSalaryPerMinute(workloadIntervention.positionForm, workloadIntervention.percentForm, salaryDict);
-				sumCostIntervention.text = roundCost(interventionRate);
-				var referralRate:Number = getSalaryPerMinute(workloadReferral.positionForm, workloadReferral.percentForm, salaryDict);
-				sumCostReferral.text = roundCost(referralRate);
+				sumCostPrescreen.text = roundCost(detailedReport.prescreenTotal);
+				sumCostScreen.text = roundCost(detailedReport.screenRate);
+				sumCostEducation.text = roundCost(detailedReport.educationRate);
+				sumCostIntervention.text = roundCost(detailedReport.interventionRate);
+				sumCostReferral.text = roundCost(detailedReport.referralRate);
 				
 				//calculate total cost
-				prescreenFinalCost = prescreenRate * prescreenTimeCalc;
-				screenFinalCost = screenRate * screenTimeCalc;
-				educationFinalCost = educationRate * educationTimeCalc;
-				interventionFinalCost = interventionRate * interventionTimeCalc;
-				referralFinalCost = referralRate * referralTimeCalc;
-				sumTotalCostPrescreen.text = roundCost(prescreenFinalCost);
-				sumTotalCostScreen.text = roundCost(screenFinalCost);
-				sumTotalCostEducation.text = roundCost(educationFinalCost);
-				sumTotalCostIntervention.text = roundCost(interventionFinalCost);
-				sumTotalCostReferral.text = roundCost(referralFinalCost);
+				sumTotalCostPrescreen.text = roundCost(detailedReport.prescreenTotal);
+				sumTotalCostScreen.text = roundCost(detailedReport.screenTotal);
+				sumTotalCostEducation.text = roundCost(detailedReport.educationTotal);
+				sumTotalCostIntervention.text = roundCost(detailedReport.biTotal);
+				sumTotalCostReferral.text = roundCost(detailedReport.rtTotal);
 				
 				//sum costs
-				totalServiceCost = prescreenFinalCost + screenFinalCost + educationFinalCost + interventionFinalCost + referralFinalCost;
-				sumServices.text = roundCost(totalServiceCost);
+				sumServices.text = roundCost(detailedReport.serviceTotal);
 				
 				//Non-service activities
 				//draw times from time page
@@ -317,56 +337,30 @@
 				sumOtherHours.text = otherTime.answer;
 				
 				//caculate rate from salary and workload
-				var adminRate:Number = getSalaryPerMinute(workloadAdmin.positionForm, workloadAdmin.percentForm, salaryDict) * 60;
-				sumAdminCost.text = roundCost(adminRate);
-				var trainingRate:Number = getSalaryPerMinute(workloadTraining.positionForm, workloadTraining.percentForm, salaryDict) * 60;
-				sumTrainingCost.text = roundCost(trainingRate);
-				var supportRate:Number = getSalaryPerMinute(workloadSupport.positionForm, workloadSupport.percentForm, salaryDict) * 60;
-				sumSupportCost.text = roundCost(supportRate);
-				var otherRate:Number = getSalaryPerMinute(workloadOther.positionForm, workloadOther.percentForm, salaryDict) * 60;
-				sumOtherCost.text = roundCost(otherRate);
+				sumAdminCost.text = roundCost(detailedReport.adminRate);
+				sumTrainingCost.text = roundCost(detailedReport.trainingRate);
+				sumSupportCost.text = roundCost(detailedReport.supportRate);
+				sumOtherCost.text = roundCost(detailedReport.otherRate);
 				
 				//calculate total cost
-				adminTotalCost = adminRate * administrationTime.answerNumber;
-				trainingTotalCost = trainingRate * trainingTime.answerNumber;
-				supportTotalCost = supportRate * supportTime.answerNumber;
-				otherTotalCost = otherRate * otherTime.answerNumber;
-				sumAdminTotalCost.text = roundCost(adminTotalCost);
-				sumTrainingTotalCost.text = roundCost(trainingTotalCost);
-				sumSupportTotalCost.text = roundCost(supportTotalCost);
-				sumOtherTotalCost.text = roundCost(otherTotalCost);
+				sumAdminTotalCost.text = roundCost(detailedReport.adminTotal);
+				sumTrainingTotalCost.text = roundCost(detailedReport.trainingTotal);
+				sumSupportTotalCost.text = roundCost(detailedReport.supportTotal);
+				sumOtherTotalCost.text = roundCost(detailedReport.otherTotal);
 				
 				//sum costs
-				totalNonServiceCost = adminTotalCost + trainingTotalCost + supportTotalCost + otherTotalCost;
-				sumNonService.text = roundCost(totalNonServiceCost);
+				sumNonService.text = roundCost(detailedReport.nonserviceTotal);
 				
 				//Expenses cost
-				expensesCost = techCost.answerNumber + suppliesCost.answerNumber + otherCost.answerNumber + facilityTotal.answerNumber * facilityPercent.answerNumber/100.0;
-				sumExpenses.text = roundCost(expensesCost);
+				sumExpenses.text = roundCost(detailedReport.expenseTotal);
 				
-				totalCost = totalServiceCost + totalNonServiceCost + expensesCost;
-				sumGrandTotal.text = roundCost(totalCost);
-				totalCostPerPatient = totalCost / dataReport.prescreens;
-				sumPatientPrescreened.text = roundCost(totalCostPerPatient);
+				sumGrandTotal.text = roundCost(detailedReport.grandTotal);
+				sumPatientPrescreened.text = roundCost(detailedReport.perPatientCost);
 			}
 			
 			protected function roundCost(val:Number):String
 			{
 				return (Math.round(val*100)/100).toString();
-			}
-			
-			protected function getSalaryPerMinute(positionForm:QuestionForm, percentForm:QuestionForm, salaryDict:Object):Number
-			{
-				var yearlySalary:Number = 0;
-				for(var i:int = 0; i < positionForm.numElements; i++)
-				{
-					var position:String = positionForm.questions[i].answer;
-					var percent:Number = percentForm.questions[i].answerNumber / 100.0;
-					yearlySalary += (salaryDict[position] as Number) * percent;
-				}
-				
-				var minPerYear:Number = 240*8*60;//assuming four weeks off (240 days worked), 8 hours per day
-				return yearlySalary / minPerYear;
 			}
 			
 			protected function validateCost():ArrayList
@@ -447,15 +441,14 @@
 				return global.monthList.getItemAt(report.month-1) + " " + report.year;
 			}
 			
-			
-			protected function createCostReport():void
+			protected function createCostReportVO():CostReportVO
 			{
 				var report:CostReportVO = new CostReportVO();
 				report.userid = global.activeUser.autoid;
 				report.dataReportID = (dataReportQuestion.input.selectedItem as DataReportVO).autoid;
 				
 				//Salaries
-				report.salaries = salaryDict;
+				report.salaries = salaryQuestion.getSalariesMap();
 				
 				//Times
 				report.prescreenTime = prescreenEstimate.answerNumber;
@@ -487,23 +480,14 @@
 				report.facilityCost = facilityTotal.answerNumber;
 				report.facilityPercent = facilityPercent.answerNumber;
 				
-				//Computed costs
-				report.prescreenTotal = prescreenFinalCost;
-				report.screenTotal = screenFinalCost;
-				report.educationTotal = educationFinalCost;
-				report.biTotal = interventionFinalCost;
-				report.rtTotal = referralFinalCost;
-				report.adminTotal = adminTotalCost;
-				report.trainingTotal = trainingTotalCost;
-				report.supportTotal = supportTotalCost;
-				report.otherTotal = otherTotalCost;
-				report.serviceTotal = totalServiceCost;
-				report.nonserviceTotal = totalNonServiceCost;
-				report.expenseTotal = expensesCost;
-				report.grandTotal = totalCost;
-				report.perPatientCost = totalCostPerPatient;
-				
 				report.comments = sumComments.text;
+				
+				return report;
+			}
+			
+			protected function createCostReport():void
+			{
+				var report:CostReportVO = createCostReportVO();
 				
 				if(updatingData)
 				{

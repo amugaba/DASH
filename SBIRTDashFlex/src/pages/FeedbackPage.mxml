@@ -78,7 +78,7 @@
 			public function populate(report:DataReportVO):void
 			{			
 				resetPage();
-				reportWriter = new ReportWriter(report, global.reportList, global.activeUser);
+				reportWriter = new ReportWriter(report, global.reportList, global.costList, global.activeUser);
 				activeReport = reportWriter.activeReport;
 				reportPeriodLabel.text = "Report of Activities: " + reportWriter.reportPeriodLabel;
 				
@@ -107,6 +107,8 @@
 				servicesPie.setDataProvider(servicesBreakdown);
 				
 				//Apply narrative to text fields
+				textSummary.textFlow = TextConverter.importToFlow(reportWriter.summaryText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				textHowTo.textFlow = TextConverter.importToFlow(reportWriter.summaryHowTo, TextConverter.TEXT_FIELD_HTML_FORMAT);
 				textServiceSummary.textFlow = TextConverter.importToFlow(reportWriter.summaryServicesText, TextConverter.TEXT_FIELD_HTML_FORMAT);
 				textCostSummary.textFlow = TextConverter.importToFlow(reportWriter.summaryCostsText, TextConverter.TEXT_FIELD_HTML_FORMAT);
 				textFieldPrescreen1.textFlow = TextConverter.importToFlow(reportWriter.prescreenCaptureText, TextConverter.TEXT_FIELD_HTML_FORMAT);
@@ -189,16 +191,19 @@
 	<mx:TabNavigator x="5" y="39" width="680" height="669" id="tabNavigator">
 		<!-- Summary Page -->
 		<s:NavigatorContent width="100%" height="100%" label="Summary">
-			<s:Label y="{titleY}" fontSize="18" text="SBIRT Summary" width="100%" textAlign="center"/>
-			<s:RichEditableText id="textServiceSummary" x="{textX}" y="{textY1}" width="630" />
-			<s:RichEditableText id="textCostSummary" x="{textX}" y="{textY2}" width="385" />
+			<s:RichText id="textSummary" x="20" y="5" width="630" fontStyle="italic"/>
+			<s:RichText id="textHowTo" x="20" y="75" width="630" paragraphStartIndent="50" textIndent="-50"/>
+			<mx:HRule height="5" width="630" x="20" y="250" />
+			<s:RichText id="textServiceSummary" x="20" y="265" width="630" />
+			<mx:HRule height="5" width="630" x="20" y="483" />
+			<s:RichText id="textCostSummary" x="{textX}" y="495" width="630" />
 		</s:NavigatorContent>
 		
 		<!-- Prescreen Page -->
 		<s:NavigatorContent width="100%" height="100%" label="Prescreening">
 			<s:Label y="{titleY}" fontSize="18" text="Prescreening" width="100%" textAlign="center"/>
-			<s:RichEditableText id="textFieldPrescreen1" x="{textX}" y="{textY1}" width="630" />
-			<s:RichEditableText id="textFieldPrescreen2" x="{textX}" y="{textY2}" width="385" />
+			<s:RichText id="textFieldPrescreen1" x="{textX}" y="{textY1}" width="630" />
+			<s:RichText id="textFieldPrescreen2" x="{textX}" y="{textY2}" width="385" />
 			<feedback:PieChartSBIRT id="prescreenPie" x="{pieX}" y="{pieY}"  label="Prescreening Distribution"/>
 			<feedback:MonthlyLineChart x="{chartX}" y="{chartY}" id="captureRateLine" label="Prescreen Capture Rate by Month"/>
 		</s:NavigatorContent>

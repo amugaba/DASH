@@ -94,6 +94,7 @@
 			protected function newCostButton_clickHandler(event:MouseEvent):void
 			{
 				global.pageFinance.initPage();
+				global.pageFinance.populateOldValues();
 				global.goToPage(global.pageFinance);
 			}
 			
