@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<questions:QuestionPage xmlns:fx="http://ns.adobe.com/mxml/2009"
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009"
 						xmlns:s="library://ns.adobe.com/flex/spark"
 						xmlns:mx="library://ns.adobe.com/flex/mx"
 						xmlns:questions="components.questions.*"
@@ -207,10 +207,10 @@
 				updatingData = false;
 				submitButton.label = "Submit Data!";
 				dataReportQuestion.enabled = true;
-				salaryForm.reset();
+				salaryForm.resetForm();
 				salaryQuestion.reset();
 				positionList = new ArrayList();
-				timeForm.reset();
+				timeForm.resetForm();
 				workloadPrescreen.reset();
 				workloadScreen.reset();
 				workloadEducation.reset();
@@ -220,7 +220,7 @@
 				workloadTraining.reset();
 				workloadSupport.reset();
 				workloadOther.reset();
-				expenseForm.reset();
+				expenseForm.resetForm();
 				sumComments.text = "";
 				getDataReportsWithoutCostResult.token = dataReportService.getDataReportsWithoutCost(global.activeUser.autoid);
 				
@@ -810,4 +810,4 @@
 		</s:NavigatorContent>
 	</mx:TabNavigator>
 	<s:Label x="246" y="8" fontSize="22" fontWeight="normal" text="SBIRT Cost Reporting"/>
-</questions:QuestionPage>
+</s:NavigatorContent>

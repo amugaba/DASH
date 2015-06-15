@@ -85,11 +85,6 @@ package components.questions
 			var watcherSetter:ChangeWatcher = BindingUtils.bindSetter(func, input, "text");
 		}
 		
-		public override function bindVariable(target:Object, prop:String):void
-		{
-			var watcherSetter:ChangeWatcher = BindingUtils.bindProperty(target, prop, input, "text");
-		}
-		
 		public override function bindToQuestionLabel(target:QuestionClass, replaceStr:String):void
 		{
 			super.bindToQuestionLabel(target, replaceStr);

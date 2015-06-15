@@ -217,8 +217,8 @@
 				month.input.enabled = true;
 				year.input.enabled = true;
 				submitButton.label = "Submit Data!";
-				reportingForm.reset();
-				reportingForm2.reset();
+				reportingForm.resetForm();
+				reportingForm2.resetForm();
 			}
 			
 			protected function submitButton_clickHandler(event:MouseEvent):void

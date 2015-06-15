@@ -118,11 +118,6 @@ package components.questions
 			var watcherSetter:ChangeWatcher = BindingUtils.bindSetter(func, inputControl, "text");
 		}
 		
-		public function bindVariable(target:Object, prop:String):void
-		{
-			var watcherSetter:ChangeWatcher = BindingUtils.bindProperty(target, prop, inputControl, "text");
-		}
-		
 		public function bindToQuestionLabel(target:QuestionClass, replaceStr:String):void
 		{
 			bindTargets.addItem(target);

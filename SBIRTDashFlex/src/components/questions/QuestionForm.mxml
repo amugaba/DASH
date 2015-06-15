@@ -69,14 +69,14 @@
 					created = true;
 				}
 				else
-					reset();
+					resetForm();
 			}
 			
 			/**
 			 * Reset data to default values, unskip/enable each question and skip pattern, process skip patterns based on default values, remove error messages.
 			 * Validators don't preserve state. Inputs preserve data and error messages. Questions preserve skipped state. Skip Patterns perserve skip state.
 			 * */
-			public function reset():void
+			public function resetForm():void
 			{
 				for each(var q:QuestionClass in questions)
 				{

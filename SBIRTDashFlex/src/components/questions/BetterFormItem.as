@@ -2,7 +2,7 @@ package components.questions
 {
 	/**
 	 * Version 2.0
-	 * Text input is HTML rendered as RichEditableText.
+	 * Text input is HTML rendered as RichText.
 	 * By default, no linking in the text is enabled.
 	 * If linkFunction is assigned a value, then that linking will be enabled
 	 * and will execute that value/function.
@@ -20,12 +20,11 @@ package components.questions
 	import mx.styles.CSSStyleDeclaration;
 	import mx.styles.StyleManager;
 	
-	import spark.components.RichEditableText;
 	import spark.components.RichText;
 	
 	public class BetterFormItem extends FormItem {
 		public var maxLabelWidth:Number = 200;
-		public var text:RichEditableText;
+		public var text:RichText;
 		public var selectable:Boolean = false;
 		public var multiline:Boolean = false;
 		public var linkEnabled:Boolean = false;
@@ -40,8 +39,7 @@ package components.questions
 			itemLabel.maxWidth = maxLabelWidth;
 			if (multiline) {
 				itemLabel.visible = false;
-				text = new RichEditableText();
-				text.editable = false;
+				text = new RichText();
 				text.tabEnabled = false;
 				text.tabFocusEnabled = false;
 				text.setStyle("textAlign", "left");
