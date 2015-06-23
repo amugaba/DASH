@@ -3,8 +3,8 @@
 			   xmlns:s="library://ns.adobe.com/flex/spark"
 			   xmlns:pages="pages.*"
 			   xmlns:mx="library://ns.adobe.com/flex/mx"
-			   width="700" height="850" currentState="Login"
-			   backgroundColor="#E2E6E8" 
+			   xmlns:userservice="services.userservice.*"
+			   width="700" height="850" backgroundColor="#E2E6E8" currentState="Login"
 			   width.Main="700" height.Main="850">
 	<fx:Script>
 		<![CDATA[
@@ -18,24 +18,53 @@
 			import mx.rpc.events.ResultEvent;
 			
 			import spark.components.NavigatorContent;
+			import spark.events.IndexChangeEvent;
 			
 			import valueObjects.CostReportVO;
 			import valueObjects.DataReportVO;
 			import valueObjects.UserVO;	
 			
-			public static var DEBUG_MODE:int = 2;//0 = release, 1 = remote debug, 2 = local debug
+			public static var DEBUG_MODE:int = 0;//0 = release, 1 = remote debug, 2 = local debug
 			public static var ENDPOINT_RELEASE:String = "https://www.drugs.indiana.edu/SBIRT/DASH/gateway.php";
+			public var adminMode:Boolean = false;
+			public var adminAutoid:int = 0;
 			
 			[Bindable] public var activeUser:UserVO = new UserVO();
 			public var activeDataReport:DataReportVO = null;
 			public var activeCostReport:CostReportVO = null;
+			
 			[Bindable] public var reportList:ArrayCollection = new ArrayCollection();
 			[Bindable] public var costList:ArrayCollection = new ArrayCollection();
+			[Bindable] public var userList:ArrayCollection = new ArrayCollection();
 			public var monthList:ArrayList = new ArrayList(["January","February","March","April","May","June","July","August","September","October","November","December"]);
 			
 			protected function mainState_enterStateHandler(event:FlexEvent):void
 			{
-				pageHome.refresh();
+				adminMode = activeUser.admin;
+				
+				if(adminMode)
+				{
+					//Show drop down, hide single-user label
+					//Get all users and put in drop down list
+					//When selecting a user from dropdown, set that user as activeUser
+					adminAutoid = activeUser.autoid;
+					adminUserSelect.visible = true;
+					adminUserDropdown.visible = true;
+					organizationLabel.visible = false;
+					costList.removeAll();
+					userList.removeAll();
+					getUsersResult.token = userService.getUsers();
+					activeUser = null;
+					
+				}
+				else
+				{
+					//Just show single-user label, populate data and cost lists
+					adminUserSelect.visible = false;
+					adminUserDropdown.visible = false;
+					organizationLabel.visible = true;
+				}
+				goToPage(pageHome);
 			}
 			
 			public function goToPage(page:NavigatorContent):void
@@ -43,9 +72,11 @@
 				//when going to Home, leave everything open
 				//when going to Reporting, close all pages except Home
 				pageViewstack.selectedChild = page;
+				adminUserDropdown.enabled = false;
 				if(page == pageHome)
 				{
 					pageHome.refresh();
+					adminUserDropdown.enabled = true;
 				}
 				if(page == pageReporting)
 				{
@@ -70,13 +101,32 @@
 				pageLogin.resetPage();
 			}
 			
+			protected function getUsersResult_resultHandler(event:ResultEvent):void
+			{
+				for each(var user:UserVO in getUsersResult.lastResult)
+				{
+					if(user.adminid == adminAutoid)
+						userList.addItem(user);
+				}
+			}
+			
+			protected function adminUserDropdown_changeHandler(event:IndexChangeEvent):void
+			{
+				activeUser = adminUserDropdown.selectedItem;
+				pageHome.refresh();
+			}
+			
 		]]>
 	</fx:Script>
 	<s:states>
-		<s:State name="Main"/>
+		<s:State name="Main" enterState="mainState_enterStateHandler(event)"/>
 		<s:State name="Login"/>
 	</s:states>
 	<fx:Declarations>
+		<s:CallResponder id="getUsersResult" result="getUsersResult_resultHandler(event)"/>
+		<userservice:UserService id="userService"
+								 fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)"
+								 showBusyCursor="true"/>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	<pages:LoginPage id="pageLogin" width="100%" height="100%" label="Login" includeIn="Login"/>
@@ -104,13 +154,9 @@
 				 x.Main="0" y.Main="61"/>
 		<s:Image x="235" y="3" source="assets/img/SbirtDash5.png"
 				 x.Main="235" y.Main="10"/>
-		<!--
-		<s:Label id="totalPrescreensLabel" x="138" y="41" fontSize="14" text="Total Prescreens: 9999"/>
-		<s:Label id="totalServicesLabel" x="138" y="63" fontSize="14" text="Total Services: 9999"/>
-		<s:Label id="reportDueLabel" x="372" y="43" fontSize="14" text="Next Report Due: #####"/>
-		-->
+		<s:DropDownList id="adminUserDropdown" x="267" y="59" width="250" visible="false" dataProvider="{userList}" labelField="name"
+						change="adminUserDropdown_changeHandler(event)"/>
+		<s:Label id="adminUserSelect" x="167" y="63" fontSize="16" fontWeight="bold"
+				 text="Select User:" visible="false"/>
 	</s:Group>
-	<!--<mx:ToggleButtonBar id="pageButtonBar" includeIn="Main" x="12" y="10" direction="vertical"
-						dataProvider="{pageViewstack}" creationComplete="mainState_enterStateHandler(event)"/>
-	-->
 </s:Application>

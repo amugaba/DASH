@@ -26,9 +26,12 @@
 		
 			public function refresh():void
 			{
-				//load report list
-				getDataReportsResult.token = dataReportService.getDataReports(global.activeUser.autoid);
-				getCostReportsByUserResult.token = costReportService.getCostReportsByUser(global.activeUser.autoid);
+				if(global.activeUser != null)
+				{
+					//load report list
+					getDataReportsResult.token = dataReportService.getDataReports(global.activeUser.autoid);
+					getCostReportsByUserResult.token = costReportService.getCostReportsByUser(global.activeUser.autoid);
+				}
 			}
 			
 			protected function getDataReportsResult_resultHandler(event:ResultEvent):void
@@ -128,7 +131,9 @@
 			<s:Label y="155" text="Or edit a previous month's data." width="100%" textAlign="center"/>
 			<s:Group y="172" horizontalCenter="0">
 				<s:Label y="5" text="Select Month:"/>
-				<s:DropDownList id="reportDropDown" x="80" dataProvider="{global.reportList}" labelFunction="reportLabelFunction"></s:DropDownList>
+				<s:DropDownList id="reportDropDown" x="80" width="120"
+								dataProvider="{global.reportList}"
+								labelFunction="reportLabelFunction"></s:DropDownList>
 			</s:Group>
 			<s:Button id="loadReportButton" y="201" width="120" height="36" label="Edit Data!" horizontalCenter="0"
 					  click="loadReportButton_clickHandler(event)"/>
@@ -146,7 +151,8 @@
 			<s:Label y="155" text="Or edit a previous month's data." width="100%" textAlign="center"/>
 			<s:Group y="172" horizontalCenter="0">
 				<s:Label y="5" text="Select Month:"/>
-				<s:DropDownList id="costDropDown" x="80" dataProvider="{global.costList}" labelFunction="costLabelFunction"></s:DropDownList>
+				<s:DropDownList id="costDropDown" x="80" width="120" dataProvider="{global.costList}"
+								labelFunction="costLabelFunction"></s:DropDownList>
 			</s:Group>
 			<s:Button id="loadCostButton" y="201" width="120" height="36" label="Edit Report!" horizontalCenter="0"
 					  click="loadCostButton_clickHandler(event)"/>
@@ -160,24 +166,12 @@
 						text="View statistics on your monthly data and generate PDF reports."/>
 			<s:Group y="116" horizontalCenter="0">
 				<s:Label y="5" text="Select Month:"/>
-				<s:DropDownList id="reportDropDownFeedback" x="80" dataProvider="{global.reportList}" labelFunction="reportLabelFunction"></s:DropDownList>
+				<s:DropDownList id="reportDropDownFeedback" x="80" width="120"
+								dataProvider="{global.reportList}"
+								labelFunction="reportLabelFunction"></s:DropDownList>
 			</s:Group>
 			<s:Button id="generateFeedbackButton" y="144" width="134" height="36" label="Generate Feedback!" horizontalCenter="0"
 					  click="generateFeedbackButton_clickHandler(event)"/>
 		</s:Group>
 	</s:Group>
-	<!--
-	<s:Group y="504" width="600" height="250" horizontalCenter="0">
-		<s:Image source="assets/img/mainPageTab3.png"/>
-		<s:Group x="237" y="0" width="363" height="100%">
-			<s:Label y="27" fontSize="18" text="Organization Profile" width="100%" textAlign="center"/>
-			<s:RichText y="66" height="32" width="226" textAlign="center" horizontalCenter="0"
-						text="Edit organization details and view SBIRT goals and progress."/>
-			<s:Label x="0" y="121" width="100%" text="Profile Summary: etc etc etc etc"
-					 textAlign="center"/>
-			<s:Button id="profileButton" y="148" width="120" height="36" label="View Profile!" horizontalCenter="0"
-					  click="profileButton_clickHandler(event)"/>
-		</s:Group>
-	</s:Group>
-	-->
 </s:NavigatorContent>

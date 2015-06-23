@@ -6,14 +6,10 @@
 package valueObjects
 {
 import com.adobe.fiber.services.IFiberManagingService;
-import com.adobe.fiber.util.FiberUtils;
 import com.adobe.fiber.valueobjects.IValueObject;
-import flash.events.Event;
 import flash.events.EventDispatcher;
-import mx.binding.utils.ChangeWatcher;
 import mx.collections.ArrayCollection;
 import mx.events.PropertyChangeEvent;
-import mx.validators.ValidationResult;
 
 import flash.net.registerClassAlias;
 import flash.net.getClassByAlias;
@@ -68,6 +64,8 @@ public class _Super_UserVO extends flash.events.EventDispatcher implements com.a
     private var _internal_password : String;
     private var _internal_email : String;
     private var _internal_eulaSigned : int;
+    private var _internal_admin : Boolean;
+    private var _internal_adminid : int;
 
     private static var emptyArray:Array = new Array();
 
@@ -84,10 +82,6 @@ public class _Super_UserVO extends flash.events.EventDispatcher implements com.a
         _model = new _UserVOEntityMetadata(this);
 
         // Bind to own data or source properties for cache invalidation triggering
-        model_internal::_changeWatcherArray.push(mx.binding.utils.ChangeWatcher.watch(this, "username", model_internal::setterListenerUsername));
-        model_internal::_changeWatcherArray.push(mx.binding.utils.ChangeWatcher.watch(this, "name", model_internal::setterListenerName));
-        model_internal::_changeWatcherArray.push(mx.binding.utils.ChangeWatcher.watch(this, "password", model_internal::setterListenerPassword));
-        model_internal::_changeWatcherArray.push(mx.binding.utils.ChangeWatcher.watch(this, "email", model_internal::setterListenerEmail));
 
     }
 
@@ -129,6 +123,18 @@ public class _Super_UserVO extends flash.events.EventDispatcher implements com.a
     public function get eulaSigned() : int
     {
         return _internal_eulaSigned;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get admin() : Boolean
+    {
+        return _internal_admin;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get adminid() : int
+    {
+        return _internal_adminid;
     }
 
     public function clearAssociations() : void
@@ -199,6 +205,26 @@ public class _Super_UserVO extends flash.events.EventDispatcher implements com.a
         }
     }
 
+    public function set admin(value:Boolean) : void
+    {
+        var oldValue:Boolean = _internal_admin;
+        if (oldValue !== value)
+        {
+            _internal_admin = value;
+            this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "admin", oldValue, _internal_admin));
+        }
+    }
+
+    public function set adminid(value:int) : void
+    {
+        var oldValue:int = _internal_adminid;
+        if (oldValue !== value)
+        {
+            _internal_adminid = value;
+            this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "adminid", oldValue, _internal_adminid));
+        }
+    }
+
     /**
      * Data/source property setter listeners
      *
@@ -210,26 +236,6 @@ public class _Super_UserVO extends flash.events.EventDispatcher implements com.a
      *  - the validity of the property (and the containing entity) if the given data property has a length restriction.
      *  - the validity of the property (and the containing entity) if the given data property is required.
      */
-
-    model_internal function setterListenerUsername(value:flash.events.Event):void
-    {
-        _model.invalidateDependentOnUsername();
-    }
-
-    model_internal function setterListenerName(value:flash.events.Event):void
-    {
-        _model.invalidateDependentOnName();
-    }
-
-    model_internal function setterListenerPassword(value:flash.events.Event):void
-    {
-        _model.invalidateDependentOnPassword();
-    }
-
-    model_internal function setterListenerEmail(value:flash.events.Event):void
-    {
-        _model.invalidateDependentOnEmail();
-    }
 
 
     /**
@@ -252,26 +258,6 @@ public class _Super_UserVO extends flash.events.EventDispatcher implements com.a
         var validationFailureMessages:Array = new Array();
 
         var propertyValidity:Boolean = true;
-        if (!_model.usernameIsValid)
-        {
-            propertyValidity = false;
-            com.adobe.fiber.util.FiberUtils.arrayAdd(validationFailureMessages, _model.model_internal::_usernameValidationFailureMessages);
-        }
-        if (!_model.nameIsValid)
-        {
-            propertyValidity = false;
-            com.adobe.fiber.util.FiberUtils.arrayAdd(validationFailureMessages, _model.model_internal::_nameValidationFailureMessages);
-        }
-        if (!_model.passwordIsValid)
-        {
-            propertyValidity = false;
-            com.adobe.fiber.util.FiberUtils.arrayAdd(validationFailureMessages, _model.model_internal::_passwordValidationFailureMessages);
-        }
-        if (!_model.emailIsValid)
-        {
-            propertyValidity = false;
-            com.adobe.fiber.util.FiberUtils.arrayAdd(validationFailureMessages, _model.model_internal::_emailValidationFailureMessages);
-        }
 
         model_internal::_cacheInitialized_isValid = true;
         model_internal::invalidConstraints_der = violatedConsts;
@@ -351,114 +337,6 @@ public class _Super_UserVO extends flash.events.EventDispatcher implements com.a
         }
     }
 
-    model_internal var _doValidationCacheOfUsername : Array = null;
-    model_internal var _doValidationLastValOfUsername : String;
-
-    model_internal function _doValidationForUsername(valueIn:Object):Array
-    {
-        var value : String = valueIn as String;
-
-        if (model_internal::_doValidationCacheOfUsername != null && model_internal::_doValidationLastValOfUsername == value)
-           return model_internal::_doValidationCacheOfUsername ;
-
-        _model.model_internal::_usernameIsValidCacheInitialized = true;
-        var validationFailures:Array = new Array();
-        var errorMessage:String;
-        var failure:Boolean;
-
-        var valRes:ValidationResult;
-        if (_model.isUsernameAvailable && _internal_username == null)
-        {
-            validationFailures.push(new ValidationResult(true, "", "", "username is required"));
-        }
-
-        model_internal::_doValidationCacheOfUsername = validationFailures;
-        model_internal::_doValidationLastValOfUsername = value;
-
-        return validationFailures;
-    }
-    
-    model_internal var _doValidationCacheOfName : Array = null;
-    model_internal var _doValidationLastValOfName : String;
-
-    model_internal function _doValidationForName(valueIn:Object):Array
-    {
-        var value : String = valueIn as String;
-
-        if (model_internal::_doValidationCacheOfName != null && model_internal::_doValidationLastValOfName == value)
-           return model_internal::_doValidationCacheOfName ;
-
-        _model.model_internal::_nameIsValidCacheInitialized = true;
-        var validationFailures:Array = new Array();
-        var errorMessage:String;
-        var failure:Boolean;
-
-        var valRes:ValidationResult;
-        if (_model.isNameAvailable && _internal_name == null)
-        {
-            validationFailures.push(new ValidationResult(true, "", "", "name is required"));
-        }
-
-        model_internal::_doValidationCacheOfName = validationFailures;
-        model_internal::_doValidationLastValOfName = value;
-
-        return validationFailures;
-    }
-    
-    model_internal var _doValidationCacheOfPassword : Array = null;
-    model_internal var _doValidationLastValOfPassword : String;
-
-    model_internal function _doValidationForPassword(valueIn:Object):Array
-    {
-        var value : String = valueIn as String;
-
-        if (model_internal::_doValidationCacheOfPassword != null && model_internal::_doValidationLastValOfPassword == value)
-           return model_internal::_doValidationCacheOfPassword ;
-
-        _model.model_internal::_passwordIsValidCacheInitialized = true;
-        var validationFailures:Array = new Array();
-        var errorMessage:String;
-        var failure:Boolean;
-
-        var valRes:ValidationResult;
-        if (_model.isPasswordAvailable && _internal_password == null)
-        {
-            validationFailures.push(new ValidationResult(true, "", "", "password is required"));
-        }
-
-        model_internal::_doValidationCacheOfPassword = validationFailures;
-        model_internal::_doValidationLastValOfPassword = value;
-
-        return validationFailures;
-    }
-    
-    model_internal var _doValidationCacheOfEmail : Array = null;
-    model_internal var _doValidationLastValOfEmail : String;
-
-    model_internal function _doValidationForEmail(valueIn:Object):Array
-    {
-        var value : String = valueIn as String;
-
-        if (model_internal::_doValidationCacheOfEmail != null && model_internal::_doValidationLastValOfEmail == value)
-           return model_internal::_doValidationCacheOfEmail ;
-
-        _model.model_internal::_emailIsValidCacheInitialized = true;
-        var validationFailures:Array = new Array();
-        var errorMessage:String;
-        var failure:Boolean;
-
-        var valRes:ValidationResult;
-        if (_model.isEmailAvailable && _internal_email == null)
-        {
-            validationFailures.push(new ValidationResult(true, "", "", "email is required"));
-        }
-
-        model_internal::_doValidationCacheOfEmail = validationFailures;
-        model_internal::_doValidationLastValOfEmail = value;
-
-        return validationFailures;
-    }
-    
 
 }
 

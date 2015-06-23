@@ -130,7 +130,6 @@
 					{
 						global.currentState = "Main";
 						global.goToPage(global.pageHome);
-						global.pageHome.refresh();
 					}
 				}
 			}			

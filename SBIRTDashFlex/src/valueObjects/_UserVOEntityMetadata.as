@@ -6,11 +6,9 @@ package valueObjects
 {
 import com.adobe.fiber.styles.IStyle;
 import com.adobe.fiber.styles.Style;
-import com.adobe.fiber.styles.StyleValidator;
 import com.adobe.fiber.valueobjects.AbstractEntityMetadata;
 import com.adobe.fiber.valueobjects.AvailablePropertyIterator;
 import com.adobe.fiber.valueobjects.IPropertyIterator;
-import mx.events.ValidationResultEvent;
 import com.adobe.fiber.core.model_internal;
 import com.adobe.fiber.valueobjects.IModelType;
 import mx.events.PropertyChangeEvent;
@@ -22,14 +20,14 @@ internal class _UserVOEntityMetadata extends com.adobe.fiber.valueobjects.Abstra
 {
     private static var emptyArray:Array = new Array();
 
-    model_internal static var allProperties:Array = new Array("autoid", "username", "name", "password", "email", "eulaSigned");
+    model_internal static var allProperties:Array = new Array("autoid", "username", "name", "password", "email", "eulaSigned", "admin", "adminid");
     model_internal static var allAssociationProperties:Array = new Array();
-    model_internal static var allRequiredProperties:Array = new Array("autoid", "username", "name", "password", "email", "eulaSigned");
-    model_internal static var allAlwaysAvailableProperties:Array = new Array("autoid", "username", "name", "password", "email", "eulaSigned");
+    model_internal static var allRequiredProperties:Array = new Array();
+    model_internal static var allAlwaysAvailableProperties:Array = new Array("autoid", "username", "name", "password", "email", "eulaSigned", "admin", "adminid");
     model_internal static var guardedProperties:Array = new Array();
-    model_internal static var dataProperties:Array = new Array("autoid", "username", "name", "password", "email", "eulaSigned");
+    model_internal static var dataProperties:Array = new Array("autoid", "username", "name", "password", "email", "eulaSigned", "admin", "adminid");
     model_internal static var sourceProperties:Array = emptyArray
-    model_internal static var nonDerivedProperties:Array = new Array("autoid", "username", "name", "password", "email", "eulaSigned");
+    model_internal static var nonDerivedProperties:Array = new Array("autoid", "username", "name", "password", "email", "eulaSigned", "admin", "adminid");
     model_internal static var derivedProperties:Array = new Array();
     model_internal static var collectionProperties:Array = new Array();
     model_internal static var collectionBaseMap:Object;
@@ -38,26 +36,6 @@ internal class _UserVOEntityMetadata extends com.adobe.fiber.valueobjects.Abstra
     model_internal static var dependedOnServices:Array = new Array();
     model_internal static var propertyTypeMap:Object;
 
-    
-    model_internal var _usernameIsValid:Boolean;
-    model_internal var _usernameValidator:com.adobe.fiber.styles.StyleValidator;
-    model_internal var _usernameIsValidCacheInitialized:Boolean = false;
-    model_internal var _usernameValidationFailureMessages:Array;
-    
-    model_internal var _nameIsValid:Boolean;
-    model_internal var _nameValidator:com.adobe.fiber.styles.StyleValidator;
-    model_internal var _nameIsValidCacheInitialized:Boolean = false;
-    model_internal var _nameValidationFailureMessages:Array;
-    
-    model_internal var _passwordIsValid:Boolean;
-    model_internal var _passwordValidator:com.adobe.fiber.styles.StyleValidator;
-    model_internal var _passwordIsValidCacheInitialized:Boolean = false;
-    model_internal var _passwordValidationFailureMessages:Array;
-    
-    model_internal var _emailIsValid:Boolean;
-    model_internal var _emailValidator:com.adobe.fiber.styles.StyleValidator;
-    model_internal var _emailIsValidCacheInitialized:Boolean = false;
-    model_internal var _emailValidationFailureMessages:Array;
 
     model_internal var _instance:_Super_UserVO;
     model_internal static var _nullStyle:com.adobe.fiber.styles.Style = new com.adobe.fiber.styles.Style();
@@ -75,6 +53,8 @@ internal class _UserVOEntityMetadata extends com.adobe.fiber.valueobjects.Abstra
             model_internal::dependentsOnMap["password"] = new Array();
             model_internal::dependentsOnMap["email"] = new Array();
             model_internal::dependentsOnMap["eulaSigned"] = new Array();
+            model_internal::dependentsOnMap["admin"] = new Array();
+            model_internal::dependentsOnMap["adminid"] = new Array();
 
             // collection base map
             model_internal::collectionBaseMap = new Object();
@@ -88,28 +68,10 @@ internal class _UserVOEntityMetadata extends com.adobe.fiber.valueobjects.Abstra
         model_internal::propertyTypeMap["password"] = "String";
         model_internal::propertyTypeMap["email"] = "String";
         model_internal::propertyTypeMap["eulaSigned"] = "int";
+        model_internal::propertyTypeMap["admin"] = "Boolean";
+        model_internal::propertyTypeMap["adminid"] = "int";
 
         model_internal::_instance = value;
-        model_internal::_usernameValidator = new StyleValidator(model_internal::_instance.model_internal::_doValidationForUsername);
-        model_internal::_usernameValidator.required = true;
-        model_internal::_usernameValidator.requiredFieldError = "username is required";
-        //model_internal::_usernameValidator.source = model_internal::_instance;
-        //model_internal::_usernameValidator.property = "username";
-        model_internal::_nameValidator = new StyleValidator(model_internal::_instance.model_internal::_doValidationForName);
-        model_internal::_nameValidator.required = true;
-        model_internal::_nameValidator.requiredFieldError = "name is required";
-        //model_internal::_nameValidator.source = model_internal::_instance;
-        //model_internal::_nameValidator.property = "name";
-        model_internal::_passwordValidator = new StyleValidator(model_internal::_instance.model_internal::_doValidationForPassword);
-        model_internal::_passwordValidator.required = true;
-        model_internal::_passwordValidator.requiredFieldError = "password is required";
-        //model_internal::_passwordValidator.source = model_internal::_instance;
-        //model_internal::_passwordValidator.property = "password";
-        model_internal::_emailValidator = new StyleValidator(model_internal::_instance.model_internal::_doValidationForEmail);
-        model_internal::_emailValidator.required = true;
-        model_internal::_emailValidator.requiredFieldError = "email is required";
-        //model_internal::_emailValidator.source = model_internal::_instance;
-        //model_internal::_emailValidator.property = "email";
     }
 
     override public function getEntityName():String
@@ -372,42 +334,22 @@ internal class _UserVOEntityMetadata extends com.adobe.fiber.valueobjects.Abstra
         return true;
     }
 
+    [Bindable(event="propertyChange")]
+    public function get isAdminAvailable():Boolean
+    {
+        return true;
+    }
+
+    [Bindable(event="propertyChange")]
+    public function get isAdminidAvailable():Boolean
+    {
+        return true;
+    }
+
 
     /**
      * derived property recalculation
      */
-    public function invalidateDependentOnUsername():void
-    {
-        if (model_internal::_usernameIsValidCacheInitialized )
-        {
-            model_internal::_instance.model_internal::_doValidationCacheOfUsername = null;
-            model_internal::calculateUsernameIsValid();
-        }
-    }
-    public function invalidateDependentOnName():void
-    {
-        if (model_internal::_nameIsValidCacheInitialized )
-        {
-            model_internal::_instance.model_internal::_doValidationCacheOfName = null;
-            model_internal::calculateNameIsValid();
-        }
-    }
-    public function invalidateDependentOnPassword():void
-    {
-        if (model_internal::_passwordIsValidCacheInitialized )
-        {
-            model_internal::_instance.model_internal::_doValidationCacheOfPassword = null;
-            model_internal::calculatePasswordIsValid();
-        }
-    }
-    public function invalidateDependentOnEmail():void
-    {
-        if (model_internal::_emailIsValidCacheInitialized )
-        {
-            model_internal::_instance.model_internal::_doValidationCacheOfEmail = null;
-            model_internal::calculateEmailIsValid();
-        }
-    }
 
     model_internal function fireChangeEvent(propertyName:String, oldValue:Object, newValue:Object):void
     {
@@ -426,198 +368,10 @@ internal class _UserVOEntityMetadata extends com.adobe.fiber.valueobjects.Abstra
         return model_internal::_nullStyle;
     }
 
-    public function get usernameValidator() : StyleValidator
-    {
-        return model_internal::_usernameValidator;
-    }
-
-    model_internal function set _usernameIsValid_der(value:Boolean):void 
-    {
-        var oldValue:Boolean = model_internal::_usernameIsValid;         
-        if (oldValue !== value)
-        {
-            model_internal::_usernameIsValid = value;
-            this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "usernameIsValid", oldValue, value));
-        }                             
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get usernameIsValid():Boolean
-    {
-        if (!model_internal::_usernameIsValidCacheInitialized)
-        {
-            model_internal::calculateUsernameIsValid();
-        }
-
-        return model_internal::_usernameIsValid;
-    }
-
-    model_internal function calculateUsernameIsValid():void
-    {
-        var valRes:ValidationResultEvent = model_internal::_usernameValidator.validate(model_internal::_instance.username)
-        model_internal::_usernameIsValid_der = (valRes.results == null);
-        model_internal::_usernameIsValidCacheInitialized = true;
-        if (valRes.results == null)
-             model_internal::usernameValidationFailureMessages_der = emptyArray;
-        else
-        {
-            var _valFailures:Array = new Array();
-            for (var a:int = 0 ; a<valRes.results.length ; a++)
-            {
-                _valFailures.push(valRes.results[a].errorMessage);
-            }
-            model_internal::usernameValidationFailureMessages_der = _valFailures;
-        }
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get usernameValidationFailureMessages():Array
-    {
-        if (model_internal::_usernameValidationFailureMessages == null)
-            model_internal::calculateUsernameIsValid();
-
-        return _usernameValidationFailureMessages;
-    }
-
-    model_internal function set usernameValidationFailureMessages_der(value:Array) : void
-    {
-        var oldValue:Array = model_internal::_usernameValidationFailureMessages;
-
-        var needUpdate : Boolean = false;
-        if (oldValue == null)
-            needUpdate = true;
-    
-        // avoid firing the event when old and new value are different empty arrays
-        if (!needUpdate && (oldValue !== value && (oldValue.length > 0 || value.length > 0)))
-        {
-            if (oldValue.length == value.length)
-            {
-                for (var a:int=0; a < oldValue.length; a++)
-                {
-                    if (oldValue[a] !== value[a])
-                    {
-                        needUpdate = true;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                needUpdate = true;
-            }
-        }
-
-        if (needUpdate)
-        {
-            model_internal::_usernameValidationFailureMessages = value;   
-            this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "usernameValidationFailureMessages", oldValue, value));
-            // Only execute calculateIsValid if it has been called before, to update the validationFailureMessages for
-            // the entire entity.
-            if (model_internal::_instance.model_internal::_cacheInitialized_isValid)
-            {
-                model_internal::_instance.model_internal::isValid_der = model_internal::_instance.model_internal::calculateIsValid();
-            }
-        }
-    }
-
     [Bindable(event="propertyChange")]   
     public function get nameStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
-    }
-
-    public function get nameValidator() : StyleValidator
-    {
-        return model_internal::_nameValidator;
-    }
-
-    model_internal function set _nameIsValid_der(value:Boolean):void 
-    {
-        var oldValue:Boolean = model_internal::_nameIsValid;         
-        if (oldValue !== value)
-        {
-            model_internal::_nameIsValid = value;
-            this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "nameIsValid", oldValue, value));
-        }                             
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get nameIsValid():Boolean
-    {
-        if (!model_internal::_nameIsValidCacheInitialized)
-        {
-            model_internal::calculateNameIsValid();
-        }
-
-        return model_internal::_nameIsValid;
-    }
-
-    model_internal function calculateNameIsValid():void
-    {
-        var valRes:ValidationResultEvent = model_internal::_nameValidator.validate(model_internal::_instance.name)
-        model_internal::_nameIsValid_der = (valRes.results == null);
-        model_internal::_nameIsValidCacheInitialized = true;
-        if (valRes.results == null)
-             model_internal::nameValidationFailureMessages_der = emptyArray;
-        else
-        {
-            var _valFailures:Array = new Array();
-            for (var a:int = 0 ; a<valRes.results.length ; a++)
-            {
-                _valFailures.push(valRes.results[a].errorMessage);
-            }
-            model_internal::nameValidationFailureMessages_der = _valFailures;
-        }
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get nameValidationFailureMessages():Array
-    {
-        if (model_internal::_nameValidationFailureMessages == null)
-            model_internal::calculateNameIsValid();
-
-        return _nameValidationFailureMessages;
-    }
-
-    model_internal function set nameValidationFailureMessages_der(value:Array) : void
-    {
-        var oldValue:Array = model_internal::_nameValidationFailureMessages;
-
-        var needUpdate : Boolean = false;
-        if (oldValue == null)
-            needUpdate = true;
-    
-        // avoid firing the event when old and new value are different empty arrays
-        if (!needUpdate && (oldValue !== value && (oldValue.length > 0 || value.length > 0)))
-        {
-            if (oldValue.length == value.length)
-            {
-                for (var a:int=0; a < oldValue.length; a++)
-                {
-                    if (oldValue[a] !== value[a])
-                    {
-                        needUpdate = true;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                needUpdate = true;
-            }
-        }
-
-        if (needUpdate)
-        {
-            model_internal::_nameValidationFailureMessages = value;   
-            this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "nameValidationFailureMessages", oldValue, value));
-            // Only execute calculateIsValid if it has been called before, to update the validationFailureMessages for
-            // the entire entity.
-            if (model_internal::_instance.model_internal::_cacheInitialized_isValid)
-            {
-                model_internal::_instance.model_internal::isValid_der = model_internal::_instance.model_internal::calculateIsValid();
-            }
-        }
     }
 
     [Bindable(event="propertyChange")]   
@@ -626,202 +380,26 @@ internal class _UserVOEntityMetadata extends com.adobe.fiber.valueobjects.Abstra
         return model_internal::_nullStyle;
     }
 
-    public function get passwordValidator() : StyleValidator
-    {
-        return model_internal::_passwordValidator;
-    }
-
-    model_internal function set _passwordIsValid_der(value:Boolean):void 
-    {
-        var oldValue:Boolean = model_internal::_passwordIsValid;         
-        if (oldValue !== value)
-        {
-            model_internal::_passwordIsValid = value;
-            this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "passwordIsValid", oldValue, value));
-        }                             
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get passwordIsValid():Boolean
-    {
-        if (!model_internal::_passwordIsValidCacheInitialized)
-        {
-            model_internal::calculatePasswordIsValid();
-        }
-
-        return model_internal::_passwordIsValid;
-    }
-
-    model_internal function calculatePasswordIsValid():void
-    {
-        var valRes:ValidationResultEvent = model_internal::_passwordValidator.validate(model_internal::_instance.password)
-        model_internal::_passwordIsValid_der = (valRes.results == null);
-        model_internal::_passwordIsValidCacheInitialized = true;
-        if (valRes.results == null)
-             model_internal::passwordValidationFailureMessages_der = emptyArray;
-        else
-        {
-            var _valFailures:Array = new Array();
-            for (var a:int = 0 ; a<valRes.results.length ; a++)
-            {
-                _valFailures.push(valRes.results[a].errorMessage);
-            }
-            model_internal::passwordValidationFailureMessages_der = _valFailures;
-        }
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get passwordValidationFailureMessages():Array
-    {
-        if (model_internal::_passwordValidationFailureMessages == null)
-            model_internal::calculatePasswordIsValid();
-
-        return _passwordValidationFailureMessages;
-    }
-
-    model_internal function set passwordValidationFailureMessages_der(value:Array) : void
-    {
-        var oldValue:Array = model_internal::_passwordValidationFailureMessages;
-
-        var needUpdate : Boolean = false;
-        if (oldValue == null)
-            needUpdate = true;
-    
-        // avoid firing the event when old and new value are different empty arrays
-        if (!needUpdate && (oldValue !== value && (oldValue.length > 0 || value.length > 0)))
-        {
-            if (oldValue.length == value.length)
-            {
-                for (var a:int=0; a < oldValue.length; a++)
-                {
-                    if (oldValue[a] !== value[a])
-                    {
-                        needUpdate = true;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                needUpdate = true;
-            }
-        }
-
-        if (needUpdate)
-        {
-            model_internal::_passwordValidationFailureMessages = value;   
-            this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "passwordValidationFailureMessages", oldValue, value));
-            // Only execute calculateIsValid if it has been called before, to update the validationFailureMessages for
-            // the entire entity.
-            if (model_internal::_instance.model_internal::_cacheInitialized_isValid)
-            {
-                model_internal::_instance.model_internal::isValid_der = model_internal::_instance.model_internal::calculateIsValid();
-            }
-        }
-    }
-
     [Bindable(event="propertyChange")]   
     public function get emailStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
 
-    public function get emailValidator() : StyleValidator
+    [Bindable(event="propertyChange")]   
+    public function get eulaSignedStyle():com.adobe.fiber.styles.Style
     {
-        return model_internal::_emailValidator;
-    }
-
-    model_internal function set _emailIsValid_der(value:Boolean):void 
-    {
-        var oldValue:Boolean = model_internal::_emailIsValid;         
-        if (oldValue !== value)
-        {
-            model_internal::_emailIsValid = value;
-            this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "emailIsValid", oldValue, value));
-        }                             
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get emailIsValid():Boolean
-    {
-        if (!model_internal::_emailIsValidCacheInitialized)
-        {
-            model_internal::calculateEmailIsValid();
-        }
-
-        return model_internal::_emailIsValid;
-    }
-
-    model_internal function calculateEmailIsValid():void
-    {
-        var valRes:ValidationResultEvent = model_internal::_emailValidator.validate(model_internal::_instance.email)
-        model_internal::_emailIsValid_der = (valRes.results == null);
-        model_internal::_emailIsValidCacheInitialized = true;
-        if (valRes.results == null)
-             model_internal::emailValidationFailureMessages_der = emptyArray;
-        else
-        {
-            var _valFailures:Array = new Array();
-            for (var a:int = 0 ; a<valRes.results.length ; a++)
-            {
-                _valFailures.push(valRes.results[a].errorMessage);
-            }
-            model_internal::emailValidationFailureMessages_der = _valFailures;
-        }
-    }
-
-    [Bindable(event="propertyChange")]
-    public function get emailValidationFailureMessages():Array
-    {
-        if (model_internal::_emailValidationFailureMessages == null)
-            model_internal::calculateEmailIsValid();
-
-        return _emailValidationFailureMessages;
-    }
-
-    model_internal function set emailValidationFailureMessages_der(value:Array) : void
-    {
-        var oldValue:Array = model_internal::_emailValidationFailureMessages;
-
-        var needUpdate : Boolean = false;
-        if (oldValue == null)
-            needUpdate = true;
-    
-        // avoid firing the event when old and new value are different empty arrays
-        if (!needUpdate && (oldValue !== value && (oldValue.length > 0 || value.length > 0)))
-        {
-            if (oldValue.length == value.length)
-            {
-                for (var a:int=0; a < oldValue.length; a++)
-                {
-                    if (oldValue[a] !== value[a])
-                    {
-                        needUpdate = true;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                needUpdate = true;
-            }
-        }
-
-        if (needUpdate)
-        {
-            model_internal::_emailValidationFailureMessages = value;   
-            this.dispatchEvent(mx.events.PropertyChangeEvent.createUpdateEvent(this, "emailValidationFailureMessages", oldValue, value));
-            // Only execute calculateIsValid if it has been called before, to update the validationFailureMessages for
-            // the entire entity.
-            if (model_internal::_instance.model_internal::_cacheInitialized_isValid)
-            {
-                model_internal::_instance.model_internal::isValid_der = model_internal::_instance.model_internal::calculateIsValid();
-            }
-        }
+        return model_internal::_nullStyle;
     }
 
     [Bindable(event="propertyChange")]   
-    public function get eulaSignedStyle():com.adobe.fiber.styles.Style
+    public function get adminStyle():com.adobe.fiber.styles.Style
+    {
+        return model_internal::_nullStyle;
+    }
+
+    [Bindable(event="propertyChange")]   
+    public function get adminidStyle():com.adobe.fiber.styles.Style
     {
         return model_internal::_nullStyle;
     }
@@ -851,22 +429,6 @@ internal class _UserVOEntityMetadata extends com.adobe.fiber.valueobjects.Abstra
      {
          switch(propertyName)
          {
-            case("username"):
-            {
-                return usernameValidationFailureMessages;
-            }
-            case("name"):
-            {
-                return nameValidationFailureMessages;
-            }
-            case("password"):
-            {
-                return passwordValidationFailureMessages;
-            }
-            case("email"):
-            {
-                return emailValidationFailureMessages;
-            }
             default:
             {
                 return emptyArray;

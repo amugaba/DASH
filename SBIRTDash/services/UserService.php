@@ -31,7 +31,7 @@ class UserService
     public function loginUser($username, $password)
     {
     	$stmt = $this->connection->prepare("SELECT
-        	autoid, username, name, password, email, eulaSigned
+        	autoid, username, name, password, email, eulaSigned, admin 
            FROM $this->tablename WHERE username=? AND password=?");
         $this->throwExceptionOnError();
         
@@ -43,7 +43,7 @@ class UserService
 
         $obj = new UserVO();
         
-        $stmt->bind_result($obj->autoid, $obj->username, $obj->name, $obj->password, $obj->email, $obj->eulaSigned);
+        $stmt->bind_result($obj->autoid, $obj->username, $obj->name, $obj->password, $obj->email, $obj->eulaSigned, $obj->admin);
         
         $auth = $stmt->fetch();
         
@@ -63,7 +63,7 @@ class UserService
 	 */
     public function getUsers()
     {
-    	$stmt = $this->connection->prepare("SELECT autoid, username, name, email, eulaSigned FROM $this->tablename");
+    	$stmt = $this->connection->prepare("SELECT autoid, username, name, email, eulaSigned, admin, adminid FROM $this->tablename");
     	$this->throwExceptionOnError();
     	
     	$stmt->execute();
@@ -72,14 +72,13 @@ class UserService
     	$users = array();
     	
     	$obj = new UserVO();
-    	$stmt->bind_result($obj->autoid, $obj->username, $obj->name, $obj->email, $obj->eulaSigned);
+    	$stmt->bind_result($obj->autoid, $obj->username, $obj->name, $obj->email, $obj->eulaSigned, $obj->admin, $obj->adminid);
     	
     	while ($stmt->fetch()) 
     	{
-    		if($obj->initials != 'ZZ')
-            	$users[] = $obj;
+            $users[] = $obj;
             $obj = new UserVO();
-    		$stmt->bind_result($obj->autoid, $obj->username, $obj->name, $obj->email, $obj->eulaSigned);
+    		$stmt->bind_result($obj->autoid, $obj->username, $obj->name, $obj->email, $obj->eulaSigned, $obj->admin, $obj->adminid);
         }
     	
     	mysqli_stmt_free_result($stmt);

@@ -167,7 +167,7 @@ package feedback
 			var screenTimeCalc:Number = screens * screenTime;
 			var educationTimeCalc:Number = educationScores * educationTime;
 			var interventionTimeCalc:Number = (bis + bts) * biTime;
-			var referralTimeCalc:Number = rts * rtTime;
+			var referralTimeCalc:Number = rts * (rtTime + biTime);//BIs are still given to RT patients. The RT time is just the additional time for the referral
 			
 			prescreenRate = getSalaryPerMinute(workloadPrescreen);
 			screenRate = getSalaryPerMinute(workloadScreen);

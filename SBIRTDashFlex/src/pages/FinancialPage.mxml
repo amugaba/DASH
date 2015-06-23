@@ -311,7 +311,7 @@
 				sumTimeScreen.text = screenEstimate.answer;
 				sumTimeEducation.text = educationEstimate.answer;
 				sumTimeIntervention.text = interventionEstimate.answer;
-				sumTimeReferral.text = referralEstimate.answer;
+				sumTimeReferral.text = interventionEstimate.answer + " + " + referralEstimate.answer;
 				
 				sumCostPrescreen.text = roundCost(detailedReport.prescreenTotal);
 				sumCostScreen.text = roundCost(detailedReport.screenRate);

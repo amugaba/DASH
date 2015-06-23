@@ -22,6 +22,14 @@ class UserVO
 	 */
 	public $email;
 	public $eulaSigned;
+	/**
+	 * @var bool
+	 */
+	public $admin;
+	/**
+	 * @var int
+	 */
+	public $adminid;
 
 	public function __construct()
 	{
@@ -30,7 +38,9 @@ class UserVO
 		$this->name = "";
 		$this->password = "";
 		$this->email = "";
+		$this->admin = FALSE;
 		$this->eulaSigned = 0;
+		$this->adminid = 0;
 	}
 }
 ?>
