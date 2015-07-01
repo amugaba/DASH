@@ -40,7 +40,7 @@ class CostReportService
         $stmt = $this->connection->prepare("INSERT IGNORE INTO $this->tablename
         (	userid, dataReportID, prescreenTime, screenTime, educationTime, biTime, rtTime, adminTime, trainingTime, 
 			supportTime, otherTime, otherTimeSpec, tech, supplies, otherCost, otherCostSpec, facilityCost, 	facilityPercent, comments) 
-			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,)");
+			VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
         $this->throwExceptionOnError();
 
         $stmt->bind_param('ii'.'ddddddddds'.'dddsdds', $item->userid, $item->dataReportID, 

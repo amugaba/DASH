@@ -313,7 +313,7 @@
 				sumTimeIntervention.text = interventionEstimate.answer;
 				sumTimeReferral.text = interventionEstimate.answer + " + " + referralEstimate.answer;
 				
-				sumCostPrescreen.text = roundCost(detailedReport.prescreenTotal);
+				sumCostPrescreen.text = roundCost(detailedReport.prescreenRate);
 				sumCostScreen.text = roundCost(detailedReport.screenRate);
 				sumCostEducation.text = roundCost(detailedReport.educationRate);
 				sumCostIntervention.text = roundCost(detailedReport.interventionRate);
@@ -445,6 +445,8 @@
 			{
 				var report:CostReportVO = new CostReportVO();
 				report.userid = global.activeUser.autoid;
+				if(global.activeCostReport != null)
+					report.autoid = global.activeCostReport.autoid;
 				report.dataReportID = (dataReportQuestion.input.selectedItem as DataReportVO).autoid;
 				
 				//Salaries
@@ -477,6 +479,7 @@
 				report.tech = techCost.answerNumber;
 				report.supplies = suppliesCost.answerNumber;
 				report.otherCost = otherCost.answerNumber;
+				report.otherCostSpec = otherCostSpec.answer;
 				report.facilityCost = facilityTotal.answerNumber;
 				report.facilityPercent = facilityPercent.answerNumber;
 				

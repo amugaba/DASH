@@ -191,19 +191,19 @@
 	<mx:TabNavigator x="5" y="39" width="680" height="669" id="tabNavigator">
 		<!-- Summary Page -->
 		<s:NavigatorContent width="100%" height="100%" label="Summary">
-			<s:RichText id="textSummary" x="20" y="5" width="630" fontStyle="italic"/>
-			<s:RichText id="textHowTo" x="20" y="75" width="630" paragraphStartIndent="50" textIndent="-50"/>
+			<s:RichEditableText id="textSummary" x="20" y="5" width="630" fontStyle="italic" editable="false"/>
+			<s:RichEditableText id="textHowTo" x="20" y="75" width="630" paragraphStartIndent="50" textIndent="-50" editable="false"/>
 			<mx:HRule height="5" width="630" x="20" y="250" />
-			<s:RichText id="textServiceSummary" x="20" y="265" width="630" />
+			<s:RichEditableText id="textServiceSummary" x="20" y="265" width="630"  editable="false"/>
 			<mx:HRule height="5" width="630" x="20" y="483" />
-			<s:RichText id="textCostSummary" x="{textX}" y="495" width="630" />
+			<s:RichEditableText id="textCostSummary" x="{textX}" y="495" width="630" editable="false"/>
 		</s:NavigatorContent>
 		
 		<!-- Prescreen Page -->
 		<s:NavigatorContent width="100%" height="100%" label="Prescreening">
 			<s:Label y="{titleY}" fontSize="18" text="Prescreening" width="100%" textAlign="center"/>
-			<s:RichText id="textFieldPrescreen1" x="{textX}" y="{textY1}" width="630" />
-			<s:RichText id="textFieldPrescreen2" x="{textX}" y="{textY2}" width="385" />
+			<s:RichEditableText id="textFieldPrescreen1" x="{textX}" y="{textY1}" width="630"  editable="false"/>
+			<s:RichEditableText id="textFieldPrescreen2" x="{textX}" y="{textY2}" width="385"  editable="false"/>
 			<feedback:PieChartSBIRT id="prescreenPie" x="{pieX}" y="{pieY}"  label="Prescreening Distribution"/>
 			<feedback:MonthlyLineChart x="{chartX}" y="{chartY}" id="captureRateLine" label="Prescreen Capture Rate by Month"/>
 		</s:NavigatorContent>
@@ -211,8 +211,8 @@
 		<!-- Screen Page -->
 		<s:NavigatorContent width="100%" height="100%" label="Screening">
 			<s:Label y="{titleY}" fontSize="18" text="Screening" width="100%" textAlign="center"/>
-			<s:RichEditableText id="textFieldScreening1" x="{textX}" y="{textY1}" width="630" />
-			<s:RichEditableText id="textFieldScreening2" x="{textX}" y="{textY2}" width="385" />
+			<s:RichEditableText id="textFieldScreening1" x="{textX}" y="{textY1}" width="630"  editable="false"/>
+			<s:RichEditableText id="textFieldScreening2" x="{textX}" y="{textY2}" width="385"  editable="false"/>
 			<feedback:PieChartSBIRT id="screeningPie" x="{pieX}" y="{pieY}"  label="Screening Distribution"/>
 			<feedback:MonthlyLineChart x="{chartX}" y="{chartY}" id="screeningRateLine" label="Screening Capture Rate by Month"/>
 		</s:NavigatorContent>
@@ -220,8 +220,8 @@
 		<!-- Services Page -->
 		<s:NavigatorContent width="100%" height="100%" label="Services">
 			<s:Label y="{titleY}" fontSize="18" text="Services" width="100%" textAlign="center"/>
-			<s:RichEditableText id="textFieldServices1" x="{textX}" y="{textY1}" width="630" />
-			<s:RichEditableText id="textFieldServices2" x="{textX}" y="{textY2}" width="385" />
+			<s:RichEditableText id="textFieldServices1" x="{textX}" y="{textY1}" width="630"  editable="false"/>
+			<s:RichEditableText id="textFieldServices2" x="{textX}" y="{textY2}" width="385"  editable="false"/>
 			<feedback:PieChartSBIRT id="servicesPie" x="{pieX}" y="{pieY}" dataProvider="{servicesBreakdown}" label="Services Distribution"/>
 			<feedback:MonthlyLineChart x="{chartX}" y="{chartY}" id="servicesRateLine" label="Service Capture Rate by Month"/>
 		</s:NavigatorContent>
@@ -231,7 +231,7 @@
 			<s:Label y="{titleY}" fontSize="18" text="Possible Concerns" width="100%" textAlign="center"/>
 			<s:Button id="concernsExplanationButton" x="297" y="22" height="20" label="Explanation"
 					  click="concernsExplanationButton_clickHandler(event)"/>
-			<s:RichEditableText id="concernsText" x="{textX}" y="65" width="630" />
+			<s:RichEditableText id="concernsText" x="{textX}" y="65" width="630" editable="false"/>
 		</s:NavigatorContent>
 
 	</mx:TabNavigator>

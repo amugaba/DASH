@@ -214,7 +214,7 @@ package feedback
 			for(var position:String in keypairs)
 			{
 				var percent:Number = keypairs[position];
-				yearlySalary += (salaries[position] as Number) * percent/100.0;
+				yearlySalary += parseFloat(salaries[position]) * percent/100.0;
 			}
 			
 			var minPerYear:Number = 240*8*60;//assuming four weeks off (240 days worked), 8 hours per day
@@ -280,6 +280,11 @@ package feedback
 			
 			if(positiveScreens > 0 && services >= 0)
 				serviceCaptureRate = services*1.0/positiveScreens;
+			
+			//Bound the rates between 0 and 1
+			prescreenCaptureRate = Math.min(1, Math.max(0,prescreenCaptureRate));
+			screenCaptureRate = Math.min(1, Math.max(0,screenCaptureRate));
+			serviceCaptureRate = Math.min(1, Math.max(0,serviceCaptureRate));
 		}
 		
 		private function sumWithMissing(args:Array):int
