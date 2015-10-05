@@ -11,7 +11,7 @@ package components.questions
 		public var input:TextArea;
 		public var defaultValue:String;		
 		
-		public function QuestionTextArea(label:String,defaultValue:String,editable:Boolean=true)
+		public function QuestionTextArea(label:String,defaultValue:String,height:int=150,editable:Boolean=true)
 		{
 			super("",label);
 			var group:Group = new Group();
@@ -22,7 +22,7 @@ package components.questions
 			input.text = defaultValue;
 			this.enabled = editable;
 			input.width = 500;
-			input.height = 150;
+			input.height = height;
 			input.x = -400;
 			input.y = 20;
 		}

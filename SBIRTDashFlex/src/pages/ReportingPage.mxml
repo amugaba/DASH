@@ -44,40 +44,40 @@
 			private var year1:int = new Date().getFullYear();
 			private var year2:int = year1 - 1;
 			
-			private var month:QuestionList = new QuestionList("month","For what month are you reporting data?",global.monthList,-1);
-			private var year:QuestionList = new QuestionList("year","For what year?", new ArrayList([year1, year2]),0);
-			private var uniquePatients:QuestionTextRefusable = new QuestionTextRefusable("uniquePatients","During <b><u>____</b></u>, how many <a>unique patients</a> aged 18 or older had a primary care visit?","");
+			private var month:QuestionList = new QuestionList("month","<b>Month -</b> For what month are you reporting data?",global.monthList,-1);
+			private var year:QuestionList = new QuestionList("year","<b>Year -</b> For what year?", new ArrayList([year1, year2]),0);
+			private var uniquePatients:QuestionTextRefusable = new QuestionTextRefusable("uniquePatients","<b>Total Patients -</b> During <b><u>____</b></u>, how many <a>unique patients</a> aged 18 or older had a primary care visit?","");
 			
 			private var uniquePatientsLabel:QuestionClass = new QuestionClass("","<b>Of those <u>____</u> unique patients...</b><br>");
-			private var patientsEligible:QuestionTextRefusable = new QuestionTextRefusable("patientsEligible","How many patients <a>had not yet been prescreened in the last year?</a>","");
-			private var prescreensEligible:QuestionTextRefusable = new QuestionTextRefusable("prescreens","How many did you prescreen that had NOT received a prescreen in the last year?","");
-			private var prescreensIneligible:QuestionTextRefusable = new QuestionTextRefusable("validPrescreens","How many did you prescreen that had already received a prescreen in the last year?","");
+			private var patientsEligible:QuestionTextRefusable = new QuestionTextRefusable("patientsEligible","<b>Prescreens Due -</b> How many patients <a>had not yet been prescreened in the last year?</a>","");
+			private var prescreensEligible:QuestionTextRefusable = new QuestionTextRefusable("prescreens","<b>Prescreens Completed -</b> How many did you prescreen that had NOT received a prescreen in the last year?","");
+			private var prescreensIneligible:QuestionTextRefusable = new QuestionTextRefusable("validPrescreens","<b>Unnecessary Prescreens -</b> How many did you prescreen that had already received a prescreen in the last year?","");
 			
 			private var prescreensLabel:QuestionClass = new QuestionClass("","<b>Of those <u>____</u> total patients prescreened...</b><br>");
-			private var alcoholPrescreens:QuestionTextRefusable = new QuestionTextRefusable("alcoholPrescreens","How many were positive for alcohol but negative for drugs?","");
-			private var drugPrescreens:QuestionTextRefusable = new QuestionTextRefusable("drugPrescreens","How many were positive for drugs but negative for alcohol?","");
-			private var bothPrescreens:QuestionTextRefusable = new QuestionTextRefusable("bothPrescreens","How many were positive for both alcohol and drugs?","");
+			private var alcoholPrescreens:QuestionTextRefusable = new QuestionTextRefusable("alcoholPrescreens","<b>Alcohol Only -</b> How many were positive for alcohol but negative for drugs?","");
+			private var drugPrescreens:QuestionTextRefusable = new QuestionTextRefusable("drugPrescreens","<b>Drugs Only -</b> How many were positive for drugs but negative for alcohol?","");
+			private var bothPrescreens:QuestionTextRefusable = new QuestionTextRefusable("bothPrescreens","<b>Both -</b> How many were positive for both alcohol and drugs?","");
 			
-			private var screensAll:QuestionTextRefusable = new QuestionTextRefusable("screens","Of those <b><u>____</b></u> positive patients, how many received a full screening?","");
-			private var isNotScreening:QuestionList = new QuestionList("isNotScreening","Does your site prescreen some patients in buildings, units, or other areas where it is not yet possible " +
+			private var screensAll:QuestionTextRefusable = new QuestionTextRefusable("screens","<b>Screens Completed -</b> Of those <b><u>____</b></u> positive patients, how many received a full screening?","");
+			private var isNotScreening:QuestionList = new QuestionList("isNotScreening","<b>SBIRT Not Fully Implemented -</b> Does your site prescreen some patients in buildings, units, or other areas where it is not yet possible " +
 				"for those patients to receive a full screening?", new ArrayList(["No","Yes"]),0);
 			
 			//If not screening some patients
 			private var possibleScreens:QuestionTextRefusable = new QuestionTextRefusable("possibleScreens","Of the <b><u>____</b></u> total positive prescreens, how many occurred in an area of your clinic where it is <a>possible to receive a full screening</a>?","");
 			private var screensOfPossible:QuestionTextRefusable = new QuestionTextRefusable("screensOfPossible","Of those <b><u>____</b></u> positive patients that were in a clinic area that does full screenings, how many received a full screening?","");			
 			
-			private var screeningsLabel:QuestionClass = new QuestionClass("","<b><br>Of those <u>____</u> full screenings...</b><br>");
-			private var educationScore:QuestionTextRefusable = new QuestionTextRefusable("educationScores","How many scored ‘Education’?","");
-			private var biScore:QuestionTextRefusable = new QuestionTextRefusable("biScores","How many scored ‘Brief Intervention’?","");
-			private var btScore:QuestionTextRefusable = new QuestionTextRefusable("btScores","How many scored ‘Brief Treatment’?","");
-			private var rtScore:QuestionTextRefusable = new QuestionTextRefusable("rtScores","How many scored ‘Referral to Treatment’?","");
+			private var screeningsLabel:QuestionClass = new QuestionClass("","<b>Of those <u>____</u> full screenings...</b>");
+			private var educationScore:QuestionTextRefusable = new QuestionTextRefusable("educationScores","<b>Education Scores -</b> How many patients had 'Education' as their highest score?","");
+			private var biScore:QuestionTextRefusable = new QuestionTextRefusable("biScores","<b>Brief Intervention Scores -</b> How many patients had 'Brief Intervention' as their highest score?","");
+			private var btScore:QuestionTextRefusable = new QuestionTextRefusable("btScores","<b>Brief Treatment Scores -</b> How many patients had 'Brief Treatment' as their highest score?","");
+			private var rtScore:QuestionTextRefusable = new QuestionTextRefusable("rtScores","<b>Referral to Treatment Scores -</b> How many patients had 'Referral to Treatment' as their highest score?","");
 			
 			private var servicesLabel:QuestionClass = new QuestionClass("","<b><a>Services</a></b>");
-			private var biServices:QuestionTextRefusable = new QuestionTextRefusable("bis","How many Brief Interventions were performed?","");
-			private var btServices:QuestionTextRefusable = new QuestionTextRefusable("bts","How many Brief Treatments were performed?","");
-			private var rtServices:QuestionTextRefusable = new QuestionTextRefusable("rts","How many Referrals to Treatment were performed?","");
+			private var biServices:QuestionTextRefusable = new QuestionTextRefusable("bis","<b>Brief Interventions -</b> How many patients received a Brief Intervention as their highest level of service?","");
+			private var btServices:QuestionTextRefusable = new QuestionTextRefusable("bts","<b>Brief Treatments -</b> How many patients received a Brief Treatment as their highest level of service?","");
+			private var rtServices:QuestionTextRefusable = new QuestionTextRefusable("rts","<b>Referrals to Treatment -</b> How many patients received a Referral to Treatment as their highest level of service?","");
 			
-			private var otherComments:QuestionTextArea = new QuestionTextArea("<b>Other comments:</b>","");
+			private var otherComments:QuestionTextArea = new QuestionTextArea("<b>Other comments:</b>","",115);
 			
 			public function initPage():void
 			{
@@ -118,6 +118,7 @@
 				addQuestionNumber(screensOfPossible, reportingForm);
 				
 				reportingForm2.addElement(screeningsLabel);
+				reportingForm2.createText("For each patient, count the highest scoring level only. If a patient scores Brief Treatment on the DAST10 and Brief Intervention on the AUDIT, count that patient as a Brief Treatment only. Each patient should be counted only once.","ital",675);
 				addQuestionNumber(educationScore, reportingForm2);
 				addQuestionNumber(biScore, reportingForm2);
 				addQuestionNumber(btScore, reportingForm2);
@@ -125,7 +126,8 @@
 				reportingForm2.addDivider();
 				
 				reportingForm2.addElement(servicesLabel);
-				servicesLabel.addHelpText("The ‘services performed’ numbers may differ from the above ‘screening scores’ numbers. \n\nThis is because the behavioral health specialist may provide a higher level intervention than the screening score indicates based on clinical judgment. There also may be situations where a service cannot be performed due to time or other constraints.");
+				servicesLabel.addHelpText("The 'services performed' numbers may differ from the above 'screening scores' numbers. \n\nThis is because the behavioral health specialist may provide a higher level intervention than the screening score indicates based on clinical judgment. There also may be situations where a service cannot be performed due to time or other constraints.");
+				reportingForm2.createText("Count the highest service level only. If patient was provided a Brief Intervention and then a Referral to Treatment, count that patient as Referral to Treatment. Each patient should be counted only once.","ital",675);
 				addQuestionNumber(biServices, reportingForm2);
 				addQuestionNumber(btServices, reportingForm2);
 				addQuestionNumber(rtServices, reportingForm2);
@@ -357,7 +359,7 @@
 		<s:NavigatorContent width="100%" height="100%" label="Page 2">
 			<questions:QuestionForm id="reportingForm2" width="100%" height="100%" labelWidth="450">
 			</questions:QuestionForm>
-			<s:Button id="submitButton" x="312" y="495" height="42" label="Save"
+			<s:Button id="submitButton" x="312" y="574" height="42" label="Save"
 					  click="submitButton_clickHandler(event)"/>
 		</s:NavigatorContent>
 	</mx:TabNavigator>
