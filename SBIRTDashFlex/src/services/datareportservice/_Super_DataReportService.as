@@ -54,7 +54,7 @@ internal class _Super_DataReportService extends com.adobe.fiber.services.wrapper
         _serviceControl.operations = operations;
         _serviceControl.convertResultHandler = com.adobe.serializers.utility.TypeUtility.convertResultHandler;
         _serviceControl.source = "DataReportService";
-        _serviceControl.endpoint = "http://localhost//DASH/SBIRTDash/public/gateway.php";
+        _serviceControl.endpoint = "http://localhost/DASH/SBIRTDash/public/gateway.php";
 
 
          preInitializeService();

@@ -24,7 +24,7 @@
 			import valueObjects.DataReportVO;
 			import valueObjects.UserVO;	
 			
-			public static var DEBUG_MODE:int = 0;//0 = release, 1 = remote debug, 2 = local debug
+			public static var DEBUG_MODE:int = 2;//0 = release, 1 = remote debug, 2 = local debug
 			public static var ENDPOINT_RELEASE:String = "https://www.iprctech.org/dash/gateway.php";
 			public var adminMode:Boolean = false;
 			public var adminAutoid:int = 0;

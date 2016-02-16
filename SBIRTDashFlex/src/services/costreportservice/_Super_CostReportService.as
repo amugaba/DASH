@@ -48,7 +48,7 @@ internal class _Super_CostReportService extends com.adobe.fiber.services.wrapper
         _serviceControl.operations = operations;
         _serviceControl.convertResultHandler = com.adobe.serializers.utility.TypeUtility.convertResultHandler;
         _serviceControl.source = "CostReportService";
-        _serviceControl.endpoint = "http://localhost//DASH/SBIRTDash/public/gateway.php";
+        _serviceControl.endpoint = "http://localhost/DASH/SBIRTDash/public/gateway.php";
 
 
          preInitializeService();

@@ -1,8 +1,7 @@
 <?php
 include_once 'UserVO.php';
-	require_once('Zend/Mail/Transport/Smtp.php');
-	require_once 'Zend/Mail.php';
 include_once 'ConnectionManager.php';
+require_once 'MailHelper.php';
 
 class UserService
 
@@ -136,26 +135,10 @@ class UserService
         mysqli_stmt_free_result($stmt);
         mysqli_close($this->connection);
         
-        if($auth)
-        {
-        //Setting used to send mail to user
-       	$config = array('auth' => 'login',
-                'username' => 'david.tidd@angstrom-software.com',
-                'password' => 'squirrelmob',
-    	          'port'     => 465,
-                'ssl' => 'ssl');
-
-        $transport = new Zend_Mail_Transport_Smtp('mail.angstrom-software.com', $config);
-
-    		$mail = new Zend_Mail();
-		    $mail->setBodyText('Your password is '.$pw.'.');
-		    $mail->setFrom('david.tidd@angstrom-software.com', 'SBIRT Dash System');
-		    $mail->addTo($email, 'User');
-		    $mail->setSubject('SBIRT Dash System: Password Recovery');
-		    $mail->send($transport);
-		    return true;
-        }
-        else return false;
+        //email password to user
+        $mailer = new MailHelper('SBIRT Dash System: Password Recovery');
+        $mailer->setBody('<p>Your password is <b>'.pw.'</b></p>');
+        return $mailer->sendMail($user->email,'User');//returns whether the mail was sent successfully
     }
     
 	/**
